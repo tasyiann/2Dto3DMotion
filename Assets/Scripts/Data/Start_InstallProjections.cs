@@ -41,7 +41,7 @@ public class Start_InstallProjections : MonoBehaviour {
 
     private void CreateFiles(string bvhfilename)
     {
-        string positionsFilePath = DatabaseDirectory+ "\\Clusters\\" + (lastFileID);
+        string positionsFilePath = DatabaseDirectory+ "\\Clusters\\" + (lastFileID)+".p";
         string rotationsFilePath = DatabaseDirectory+ "\\Rotations\\" + (lastFileID);
         SaveProjectionsInFiles(bvhfilename, positionsFilePath, rotationsFilePath);
     }
@@ -151,12 +151,12 @@ public class Start_InstallProjections : MonoBehaviour {
             joints[index] = new Vector3(matrix.m03, matrix.m13, matrix.m23);
         }
 
-        BvhProjection newProjection = new BvhProjection(frame, angle, joints);
+        BvhProjection newProjection = new BvhProjection(lastFileID, frame, angle, joints);
         newProjection.convertPositionsToRoot();
         newProjection.rotatePositions(angle);
         //newProjection.convertPositionsToRoot(); // << This should be extra. Fix it.
 
-        tupleStirng += newProjection.frameNum + " " + newProjection.angle + " ";
+        tupleStirng += lastFileID + " " + newProjection.frameNum + " " + newProjection.angle + " ";
         foreach (Vector3 joint in newProjection.joints)
         {
             tupleStirng += joint.x + " " + joint.y + " " + joint.z + " ";
@@ -197,7 +197,7 @@ public class Start_InstallProjections : MonoBehaviour {
             // Save the position of joint
             joints[index] = new Vector3(matrix.m03, matrix.m13, matrix.m23);
         }
-        BvhProjection newProjection = new BvhProjection(-1, 0, joints);
+        BvhProjection newProjection = new BvhProjection(-1,-1, 0, joints);
         return Scaling.getGlobalScaleFactorBVH(newProjection);
     }
 

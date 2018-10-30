@@ -7,18 +7,20 @@ using System.Runtime.Serialization;
 [System.Serializable()]
 public class BvhProjection {
 
-    public int FileID { get; set; }
+    public int clusterID { get; set; }
+    public int rotationFileID;
     public int frameNum;
     public int angle;
     public Vector3[] joints;
 
 
-    public BvhProjection(int frameNumber, int projectAngle, Vector3 [] allJoints, int fileID=0)
+    public BvhProjection(int rotationID, int frameNumber, int projectAngle, Vector3 [] allJoints, int fileID=0)
     {
         frameNum = frameNumber;
         angle = projectAngle;
         joints = allJoints;
-        FileID = fileID;
+        rotationFileID = rotationID;
+        clusterID = fileID;
     }
 
 

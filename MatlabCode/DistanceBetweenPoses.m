@@ -21,7 +21,7 @@ end
 % Initialization
 % -------------------------------------------------------------------------
 numJoints = length(T(:,1))/3;
-numFrames = length(T);
+numFrames = length(T(1,:));
 
 
 for i = 1:numFrames

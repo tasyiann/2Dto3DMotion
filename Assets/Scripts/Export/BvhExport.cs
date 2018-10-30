@@ -41,7 +41,7 @@ public class BvhExport : Base
         List<string> lines = new List<string>();
         foreach(Neighbour n in Estimation)
         {
-            List<Vector3> rotations = base_rotationFiles[n.projection.FileID][n.projection.frameNum].getAllRotations();
+            List<Vector3> rotations = base_rotationFiles[n.projection.rotationFileID][n.projection.frameNum].getAllRotations();
             lines.Add(CreateMLine(Vector3.zero, new Vector3(-0,90,90), rotations));
         }
         return lines;

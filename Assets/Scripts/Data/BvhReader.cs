@@ -82,7 +82,7 @@ public class BvhReader
                     // Save the position of joint
                     joints[index] = new Vector3(matrix.m03, matrix.m13, matrix.m23);
                 }
-                BvhProjection newProjection = new BvhProjection( i, rotateByAngle, joints);
+                BvhProjection newProjection = new BvhProjection(0, i, rotateByAngle, joints);
                 newProjection.convertPositionsToRoot();
                 newProjection.rotatePositions(rotateByAngle += degrees);
                 newProjection.convertPositionsToRoot(); // << This should be extra. Fix it.
@@ -107,7 +107,7 @@ public class BvhReader
             // Save the position of joint
             joints[index] = new Vector3(matrix.m03, matrix.m13, matrix.m23);
         }
-        BvhProjection newProjection = new BvhProjection(-1, 0, joints);
+        BvhProjection newProjection = new BvhProjection(-1,-1, 0, joints);
         return Scaling.getGlobalScaleFactorBVH(newProjection);
     }
 

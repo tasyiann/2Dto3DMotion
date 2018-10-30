@@ -32,7 +32,7 @@ clc % Clean the screan
 % -------------------------------------------------------------------------
 % Select the desired dataset
 % -------------------------------------------------------------------------
-kMW = 20;  % Define the number of clusters for motion-words
+kMW = 100;  % Define the number of clusters for motion-words
 
 
 tic; % Initialize time
@@ -45,10 +45,10 @@ tic; % Initialize time
 % for each line, skip the first 2 numbers, and get the 14 joints.
 % T is a 2d matrix. 
 % lines are the joint positions, and cols represent frames.
-T = CreateTextures('0'); 
+[T,L] = CreateTextures('input'); 
+numJoints = length(T(:,1))/3;
 
-
-clc % Clean the screan
+%clc % Clean the screan
 
 
 %%
@@ -77,13 +77,27 @@ disp('-----------------------------------------------------')
 % -------------------------------------------------------------------------
 tic; % Initialize time
 
-dim = 2; % Give the desired dimension of the data (e.g., dim = 20)
+dim = 2; %numJoints; % Give the desired dimension of the data (e.g., dim = 20)
+
+
+
+% -------------------------------------------------------------------------
+% TODO::
+% For each cluster:
+% Find the frame that is the nearest to its centroid.
+% So, we could say that this frame is the leading one in that cluster.
+% -------------------------------------------------------------------------
 
 Y_full = triangleMDS(D,dim,0);
 % Y_full = mdscale(D,dim);     % Alternative, we can use the MATLAB default MDS Scaling
 
 
 %%
+disp('-------------------------------------------')
+disp('numOfJoints: ')
+disp(numJoints)
+disp('-------------------------------------------');
+
 disp('-----------------------------------------------------')
 disp('Start of Clustering Motion Words')
 disp('-----------------------------------------------------')
@@ -100,5 +114,6 @@ tic; % Initialize time
 % ---------------------------------------------------------------------
 [idx,C] = kmeans(Y_full,kMW);
 
-plotClusters(Y_full,idx,C,kMW,dim)
+plotClusters(Y_full,idx,C,kMW,dim);
 
+writeClusters(L,idx);

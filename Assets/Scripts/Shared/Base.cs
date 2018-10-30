@@ -11,7 +11,7 @@ public class Base : MonoBehaviour {
     public static readonly List<BvhProjection> base_centroids = InitializeCentroids();       // All centroids.
     public static readonly List<List<Rotations>> base_rotationFiles = InitializeRotations(); // All rotation files.
     public static readonly List<List<BvhProjection>> base_clusters = InitializeClusters();   // All clusters.
- 
+    public static int metadataInFile = 3;
 
     // Scenario
     public static Scenario sc = null;
@@ -75,21 +75,24 @@ public class Base : MonoBehaviour {
     }
 
 
-    private static BvhProjection ParseIntoProjection(string tuple, int fileID)
+    private static BvhProjection ParseIntoProjection(string tuple, int clusterID)
     {
         // tuple format: frame rotation joints[]
         int jointsAmount = Enum.GetNames(typeof(EnumJoint)).Length;
         string[] array = tuple.Split(' ');
-        int frame = int.Parse(array[0]);
-        int angle = int.Parse(array[1]);
+        int rotationFileID = int.Parse(array[0]);
+        int frame = int.Parse(array[1]);
+        int angle = int.Parse(array[2]);
         List<Vector3> joints = new List<Vector3>();
-        for (int i = 2; i < 2 + jointsAmount * 3; i += 3)
+        // metadata in file are: fileID_matchWithRotationFiles, frame, degrees
+        metadataInFile = 3;
+        for (int i = metadataInFile; i < metadataInFile + jointsAmount * 3; i += 3)
         {
             joints.Add(new Vector3(float.Parse(array[i], CultureInfo.InvariantCulture),
                 float.Parse(array[i + 1], CultureInfo.InvariantCulture),
                 float.Parse(array[i + 2], CultureInfo.InvariantCulture)));
         }
-        return new BvhProjection(frame, angle, joints.ToArray(), fileID);
+        return new BvhProjection(rotationFileID, frame, angle, joints.ToArray(), clusterID);
     }
 
 

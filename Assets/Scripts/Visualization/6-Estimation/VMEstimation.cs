@@ -89,7 +89,7 @@ public class VMEstimation : Base
             Neighbour chosen = estimation[ChooseProjection];
 
             s += ChooseProjection + "/" + estimation.Length + "\n";
-            s += "File: " + chosen.projection.FileID + "\n";
+            s += "ClusterFile: " + chosen.projection.clusterID + "\n";
             s += "Angle: " + chosen.projection.angle + "\n";
             s += "Distance: " + chosen.distance + "\n";
 

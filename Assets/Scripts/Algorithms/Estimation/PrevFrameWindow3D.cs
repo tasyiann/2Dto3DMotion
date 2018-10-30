@@ -131,10 +131,10 @@ public class PrevFrameWindow3D : AlgorithmEstimation
         for (int i=m; i>=-m; i--)
         {
             // Check if that frame exists in the rotationFile.
-            if (mainFrameNum - m < 0 || mainFrameNum - m >= rotationFiles[projection.FileID].Count)
+            if (mainFrameNum - m < 0 || mainFrameNum - m >= rotationFiles[projection.rotationFileID].Count)
                 window.Add(null);
             else
-                window.Add(rotationFiles[projection.FileID][mainFrameNum-m].getComparableRotations());
+                window.Add(rotationFiles[projection.rotationFileID][mainFrameNum-m].getComparableRotations());
         }
         return window;
     }
