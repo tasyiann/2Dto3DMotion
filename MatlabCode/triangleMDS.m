@@ -7,14 +7,14 @@ function [X, W, stress] = triangleMDS(D, dim, threshold, sampled)
 % stress - the weighted stress result
 
 N = size(D, 1);
+% 
+% if nargin == 3
+%     W = triangle_filter(D, threshold); % Use this one.
+% else
+%     W = triangle_filter(D, threshold, sampled);
+% end
 
-if nargin == 3
-    W = triangle_filter(D, threshold);
-else
-    W = triangle_filter(D, threshold, sampled);
-end
-
-
-[X, stress] = mdscale(D, dim, 'Weights', W, 'Criterion', 'metricstress', 'Start', 'random');
-
+options = optimset('Display','iter');
+% [X, stress] = mdscale(D, dim, 'Weights', W, 'Criterion', 'metricstress', 'Start', 'random', 'Options', options);
+[X, stress] = mdscale(D, dim, 'Criterion', 'metricstress', 'Start', 'random', 'Options', options);
 end

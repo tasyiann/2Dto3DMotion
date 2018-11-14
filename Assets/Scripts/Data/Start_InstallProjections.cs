@@ -44,6 +44,7 @@ public class Start_InstallProjections : MonoBehaviour {
         string positionsFilePath = DatabaseDirectory+ "\\Clusters\\" + (lastFileID)+".p";
         string rotationsFilePath = DatabaseDirectory+ "\\Rotations\\" + (lastFileID);
         SaveProjectionsInFiles(bvhfilename, positionsFilePath, rotationsFilePath);
+        //SaveONEProjectionInFiles(bvhfilename, positionsFilePath, rotationsFilePath);
     }
 
 
@@ -80,6 +81,38 @@ public class Start_InstallProjections : MonoBehaviour {
         positionsStreamWriter.Close();
         rotationsStreamWriter.Close();
     }
+
+
+    private void SaveONEProjectionInFiles(string filename, string positionsFilePath, string rotationsFilePath)
+    {
+        // PUT percentageInfo as a parameter, in order to specify a percentage.
+        BVH bvh = new BVH(filename);
+        int[] order = getOrderOfJoints(bvh);
+
+        // Streams used for positions and rotations.
+        FileStream positionsFile = new FileStream(positionsFilePath, FileMode.Append, FileAccess.Write);
+        StreamWriter positionsStreamWriter = new StreamWriter(positionsFile);
+        FileStream rotationsFile = new FileStream(rotationsFilePath, FileMode.Append, FileAccess.Write);
+        StreamWriter rotationsStreamWriter = new StreamWriter(rotationsFile);
+
+        bvh.scale(getScaleFactor(bvh, order));
+
+        for (int i = 0; i < bvh.frameCount; i++)
+        {
+            int angle = 0;
+                // Write in positions stream.
+                positionsStreamWriter.Write(createPositionTuple(bvh, i, angle, order));
+                // Increase the angle by Degrees.
+                angle += Degrees;
+            // Write in rotation stream. In case we want to use WinterDust methods.
+            //rotationsStreamWriter.Write(createRotationsTupleFULLUsingWinterDust(bvh, i, order)); // CHOICE A
+        }
+        // Close streams and write the rest in file.
+        saveRotationsUsingFile(rotationsStreamWriter, filename); // CHOICE B
+        positionsStreamWriter.Close();
+        rotationsStreamWriter.Close();
+    }
+
 
     /* Not in use. */
     private string createRotationsTuple(BVH bvh, int frame, int [] order)

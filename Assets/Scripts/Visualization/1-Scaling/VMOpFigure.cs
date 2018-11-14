@@ -41,9 +41,9 @@ public class VMOpFigure : Base
      */
     private void OnPostRender()
     {
-        updateText();
-        if (showGrid)
-            gL.drawAxes(Color.white);
+        //updateText();
+        //if (showGrid)
+        //    gL.drawAxes(Color.white);
         float newpos = 0;
         // Idle figure:
         gL.drawFigure(true,Color.white, frames[0].figures[0].joints, frames[0].figures[0].available, new Vector3(0, 0, 0));
@@ -51,18 +51,55 @@ public class VMOpFigure : Base
         if (frames[CurrentFrame].figures.Count > 0)
         {
             OPPose figure = frames[CurrentFrame].figures[0];
-            gL.drawFigure(true,Color.yellow, figure.joints, figure.available, new Vector3(newpos, 0, 0));
-
+            gL.drawFigure(true,Color.white, figure.joints, figure.available, new Vector3(newpos, 0, 0));
+            if(figure.available[(int)EnumJoint.Head] && (figure.available[(int)EnumJoint.RightFoot] || figure.available[(int)EnumJoint.LeftFoot]))
+                drawBoundings(Color.white, figure.joints[(int)EnumJoint.Head], figure.joints[(int)EnumJoint.RightFoot], figure.joints[(int)EnumJoint.LeftFoot], 1000);
+            newpos += 300;
             if (showJSONPosition)
             {
                 gL.drawFigure(true,Color.red, figure.jointsRAW, figure.available, new Vector3(newpos, 0, 0), JSONscale);
+                if (figure.available[(int)EnumJoint.Head] && (figure.available[(int)EnumJoint.RightFoot] || figure.available[(int)EnumJoint.LeftFoot]))
+                    drawBoundings(Color.red, figure.jointsRAW[(int)EnumJoint.Head],figure.jointsRAW[(int)EnumJoint.RightFoot], figure.jointsRAW[(int)EnumJoint.LeftFoot], 1000, JSONscale, newpos);
             }
 
         }
 
-
-
     }
+
+    private void drawBoundings(Color color, Vector3 head, Vector3 rightFoot, Vector3 leftFoot, float length, float scaling=1, float translation=1)
+    {
+        gL.drawHorizontalLine(color, (head*scaling).y, length);
+        gL.drawHorizontalLine(color, minNum((rightFoot*scaling).y, (leftFoot * scaling).y), length);
+    }
+
+    private float minNum(float a, float b)
+    {
+       return a < b ? a : b;
+    }
+
+    /**
+* Updates the text that shows the current frame of the visual. */
+    private void updateText()
+    {
+        string s = "";
+        if (frames != null)
+        {
+            s += CurrentFrame + "/" + frames.Count + "\n";
+            if (frames[CurrentFrame].figures.Count > 0)
+            {
+                foreach (var val in Enum.GetValues(typeof(EnumJoint)))
+                {
+                    s += val.ToString() + ": " + frames[CurrentFrame].figures[0].joints[(int)val] + "\n";
+                }
+            }
+            else
+            {
+                s += "Figure not found in this frame.";
+            }
+            textInfo.text = s;
+        }
+    }
+
 
     /**
      * Move between frames.
@@ -89,7 +126,7 @@ public class VMOpFigure : Base
 
     /**
  * Updates the text that shows the current frame of the visual. */
-    private void updateText()
+    private void updateTextDistancesJoints()
     {
         string s = "";
         if (frames != null)

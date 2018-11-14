@@ -8,22 +8,52 @@ using System.Globalization;
 /* Shared components between classes. */
 public class Base : MonoBehaviour {
 
-    public static readonly List<BvhProjection> base_centroids = InitializeCentroids();       // All centroids.
-    public static readonly List<List<Rotations>> base_rotationFiles = InitializeRotations(); // All rotation files.
-    public static readonly List<List<BvhProjection>> base_clusters = InitializeClusters();   // All clusters.
-    public static int metadataInFile = 3;
+    public static List<BvhProjection> base_representatives;        // All representatives.
+    public static List<List<Rotations>> base_rotationFiles;        // All rotation files.
+    public static List<List<BvhProjection>> base_clusters;         // All clusters.
+    public static int metadataInFile = 3;                                                           // Metadata in a tuple.
+    public static int jointsAmount = Enum.GetNames(typeof(EnumJoint)).Length;                       // Joints in a tuple.
 
-    // Scenario
+    // Current scenario to be displayed.
     public static Scenario sc = null;
     public static void SetCurrentScenario(Scenario s) { sc = s; Debug.Log("Scenario has been set."); }
     public static string base_CurrentDir;
     public static int[] base_order = { 4, 2, 8, 9, 10, 5, 6, 7, 14, 15, 16, 11, 12, 13 };
 
 
-    // -- Initializations
-    private static List<BvhProjection> InitializeCentroids()
+    // Initializations
+    void Awake()
     {
-        return null;
+        base_representatives = InitializeRepresentatives();
+        base_rotationFiles = InitializeRotations();
+        base_clusters = InitializeClusters();
+    }
+
+
+    /**
+     * Each line is a representative of a cluster.
+     * 1st line is the representative of the 1st cluster etc...
+     * 
+     * */
+    private static List<BvhProjection> InitializeRepresentatives()
+    {
+        try {
+            string fileName = "Database\\Representatives\\Representatives";
+            StreamReader sr = File.OpenText(fileName);
+            string tuple = String.Empty;
+            List<BvhProjection> list = new List<BvhProjection>();
+            while ((tuple = sr.ReadLine()) != null)
+            {
+                list.Add(ParseIntoProjection(tuple));
+            }
+            Debug.Log(">Representatives have been read.");
+            return list;
+        } catch(Exception e)
+        {
+            Debug.Log("Representatives file not found.");
+            return null;
+        }
+
     }
 
     private static List<List<BvhProjection>> InitializeClusters()
@@ -43,7 +73,7 @@ public class Base : MonoBehaviour {
             }
             listClusters.Add(cluster);
         }
-        Debug.Log("Clusters have been read.");
+        Debug.Log(">Clusters have been read.");
         return listClusters;
     }
 
@@ -62,23 +92,23 @@ public class Base : MonoBehaviour {
             }
             listRotationsFiles.Add(rotationsFile);
         }
-        Debug.Log("Rotations have been read.");
+        Debug.Log(">Rotations have been read.");
         return listRotationsFiles;
     }
 
 	
 
     // --
+    /*
     public static int getNearestClusterId()
     {
         return 0; /// <<<<<<<<<< TODO
-    }
+    }*/
 
 
-    private static BvhProjection ParseIntoProjection(string tuple, int clusterID)
+    private static BvhProjection ParseIntoProjection(string tuple, int clusterID=0)
     {
         // tuple format: frame rotation joints[]
-        int jointsAmount = Enum.GetNames(typeof(EnumJoint)).Length;
         string[] array = tuple.Split(' ');
         int rotationFileID = int.Parse(array[0]);
         int frame = int.Parse(array[1]);

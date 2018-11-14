@@ -22,9 +22,9 @@
 % -------------------------------------------------------------------------
 % Andreas Aristidou (a.aristidou@ieee.org)
 %     - Created: 2018.09.13
-% - Last Edited: 2018.09.13
+% - Last Edited: 2018.10.31 - By Anastasios Yiannakides
 % -------------------------------------------------------------------------
-
+try
 %%
 clear all
 clc % Clean the screan
@@ -32,7 +32,7 @@ clc % Clean the screan
 % -------------------------------------------------------------------------
 % Select the desired dataset
 % -------------------------------------------------------------------------
-kMW = 100;  % Define the number of clusters for motion-words
+kMW = 30;  % Define the number of clusters for motion-words
 
 
 tic; % Initialize time
@@ -42,15 +42,12 @@ tic; % Initialize time
 % ---------------------------------------------------------------------
 % Create a Table with just the joints.
 % Read a file,
-% for each line, skip the first 2 numbers, and get the 14 joints.
+% for each line, skip the metadata numbers, and get the 14 joints.
 % T is a 2d matrix. 
 % lines are the joint positions, and cols represent frames.
-[T,L] = CreateTextures('input'); 
-numJoints = length(T(:,1))/3;
 
-%clc % Clean the screan
-
-
+[T,L] = CreateTextures('VerySmallSample\Database\Projections');
+% [T,L] = CreateTextures('oneP');
 %%
 disp('-------------------------------------------')
 disp('Start computing the distances between poses')
@@ -62,8 +59,17 @@ disp('-------------------------------------------')
 % -------------------------------------------------------------------------
 
 D = DistanceBetweenPoses(T,'Yes'); % Get the distance with eucledian - Done
-
-
+%load('Distances.mat','D'); 
+disp('   >exec time (s):')
+disp(toc);
+try
+save('Distances.mat','D')
+catch MES
+    savingerrorfile = fopen('error_saving_log.txt','a');
+    fprintf(savingerrorfile,'%s\n',MES.identifier);
+end
+%% CLEAR TABLE T
+clear T;
 %%
 disp('-----------------------------------------------------')
 disp('Start of Multi Dimension Scaling')
@@ -77,27 +83,20 @@ disp('-----------------------------------------------------')
 % -------------------------------------------------------------------------
 tic; % Initialize time
 
-dim = 2; %numJoints; % Give the desired dimension of the data (e.g., dim = 20)
-
-
-
-% -------------------------------------------------------------------------
-% TODO::
-% For each cluster:
-% Find the frame that is the nearest to its centroid.
-% So, we could say that this frame is the leading one in that cluster.
-% -------------------------------------------------------------------------
-
+dim = 2; % Give the desired dimension of the data (e.g., dim = 20)
 Y_full = triangleMDS(D,dim,0);
+disp('   >exec time (s):')
+disp(toc);
 % Y_full = mdscale(D,dim);     % Alternative, we can use the MATLAB default MDS Scaling
-
-
+try
+save('Y_full.mat','Y_full')
+catch MES
+    savingerrorfile = fopen('error_saving_log.txt','a');
+    fprintf(savingerrorfile,'%s\n',MES.identifier);
+end
+%% CLEAR TABLE D
+clear D;
 %%
-disp('-------------------------------------------')
-disp('numOfJoints: ')
-disp(numJoints)
-disp('-------------------------------------------');
-
 disp('-----------------------------------------------------')
 disp('Start of Clustering Motion Words')
 disp('-----------------------------------------------------')
@@ -113,7 +112,31 @@ tic; % Initialize time
 % - Use of the K-means method for clustering
 % ---------------------------------------------------------------------
 [idx,C] = kmeans(Y_full,kMW);
-
+disp('   >exec time (s):')
+disp(toc);
+%%
+% ---------------------------------------------------------------------
+% - Save clusters and representitives
+% ---------------------------------------------------------------------
+disp('-------------------------------------------')
+disp('Start Saving clusters')
+disp('-------------------------------------------')
+directoryName = writeClusters(L,idx);
+disp('-------------------------------------------')
+disp('Start Saving representatives')
+disp('-------------------------------------------')
+WriteRepresentatives(C,Y_full, idx, L, directoryName);
+disp('>directory output:');
+disp(directoryName);
+disp('-------------------------------------------')
+disp('Start Plotting')
+disp('-------------------------------------------')
 plotClusters(Y_full,idx,C,kMW,dim);
-
-writeClusters(L,idx);
+catch ME
+    disp('-----------------------------------------------------')
+    disp('* * * * ERROR. Execution has ended. * * * * ')
+    disp('-----------------------------------------------------')
+    errorfile = fopen('error_log.txt','a');
+    fprintf(errorfile,'%s\n',ME.identifier);
+    rethrow(ME);
+end

@@ -21,6 +21,17 @@ public class GLDraw {
         material = mat;
     }
 
+    public void drawHorizontalLine(Color color, float y, float length)
+    {
+        GL.Begin(GL.LINES);
+        material.SetPass(0);
+        GL.Color(color);
+        GL.Vertex(new Vector3(-length/2,y));
+        GL.Vertex(new Vector3(length/2, y));
+        GL.End();
+    }
+
+
     public void drawFigure(bool direction,Color color, Vector3[] joints, bool[] available, Vector3 offset, float scaling = 1, float rotateAngle = 0)
     {
         GL.Begin(GL.LINES);

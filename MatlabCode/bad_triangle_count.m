@@ -1,7 +1,7 @@
 function cntMat = bad_triangle_count(similarities, sample)
 % returns a matrix that for every edge (i,j) returns the number of triangles it broke.
 % also supports sampling when sample (Sx3 matrix) is provided.
-
+disp('Start of Bad triangle count:');
 N = size(similarities, 1);
 epsilon = min(similarities(similarities>0)); % used for numeric purposes. otherwise is not needed.
 
@@ -22,8 +22,10 @@ if nargin == 2
             cntMat(k, i) = cntMat(i, k);
         end
     end
-else 
-    for i = 1:N
+else % Use this one.
+    for i = 1:N % Size of D (distances).
+        clc ; % Clear console.
+        fprintf('\n Bad_Triangle_Count: Processing pose: %d out of %d \n',i,N);
         for j = i+1:N
             for k = j+1:N
                 d1 = similarities(i, j);

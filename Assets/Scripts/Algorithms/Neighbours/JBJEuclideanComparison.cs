@@ -9,12 +9,14 @@ using System.Text;
 public class JBJEuclideanComparison : AlgorithmSetNeighbours{
 
 
-
-    public override void SetNeighbours(OPPose opPose, int k, int fileIDCluster, List<List<BvhProjection>> clusters)
+    public override void SetNeighbours(OPPose opPose, int k, List<List<BvhProjection>> clusters, List<BvhProjection> representatives)
     {
         int neighboursCounter = 0;
         SortedList<float,Neighbour> sortedList = new SortedList<float,Neighbour>();
-        List<BvhProjection> cluster = clusters[fileIDCluster];
+        // Find the right cluster to search.
+        //int cluster_index = findClusterToSearch(opPose, representatives);
+        int cluster_index = 0; // Just for now, to debug the rest.
+        List<BvhProjection> cluster = clusters[cluster_index];
         foreach(BvhProjection projection in cluster)
         {
             // Get the distance between the projection and the openpose pose, and create Neighbour.
@@ -37,7 +39,7 @@ public class JBJEuclideanComparison : AlgorithmSetNeighbours{
                     if (sortedList.ContainsKey(neighbour.distance) == true)
                         continue;
                     sortedList.RemoveAt(k - 1);                       // Remove the k-th neighbour (max value).
-                    sortedList.Add(neighbour.distance, neighbour);  // Add (sorted) the neighbour.
+                    sortedList.Add(neighbour.distance, neighbour);    // Add (sorted) the neighbour.
                 }
             }
         }

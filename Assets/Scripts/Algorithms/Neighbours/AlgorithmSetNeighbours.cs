@@ -8,7 +8,7 @@ using System.Globalization;
 public abstract class AlgorithmSetNeighbours {
 
 
-    public abstract void SetNeighbours(OPPose opPose, int k, int fileIDCluster, List<List<BvhProjection>> clusters);
+    public abstract void SetNeighbours(OPPose opPose, int k, List<List<BvhProjection>> clusters, List<BvhProjection> representatives);
 
 
     public static void sortNeighbours(List<Neighbour> neighbours)
@@ -19,4 +19,20 @@ public abstract class AlgorithmSetNeighbours {
         });
     }
 
+
+    public static int findClusterToSearch(OPPose opPose, List<BvhProjection> representatives)
+    {
+        float minDist = float.MaxValue;
+        int minRepr = 0;
+        for(int i=0; i<representatives.Count; i++)
+        {
+            float dist = representatives[i].Distance2D(opPose);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                minRepr = i;
+            }
+        }
+        return minRepr;
+    }
 }

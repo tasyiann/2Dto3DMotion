@@ -5,6 +5,7 @@
 [Bb]uilds/
 bvhFiles/
 Database/
+MatlabCode/
 Assets/AssetStoreTools*
 
 # Visual Studio cache directory
@@ -40,3 +41,6 @@ sysinfo.txt
 
 #bvh files
 #*.bvh
+
+#Matlab heavy files
+*.mat

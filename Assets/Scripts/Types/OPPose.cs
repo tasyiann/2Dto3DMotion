@@ -7,7 +7,7 @@ using UnityEngine;
 [System.Serializable()]
 public class OPPose
 {
-    private static int KEYPOINTS_NUMBER = 14;       // We don't care about the rest joints.
+    private static int KEYPOINTS_NUMBER = Base.jointsAmount;
     public int positionInJson;                      // Position in Json.
     public Vector3[] joints;                        // All joints after being processed.
     public Vector3[] jointsRAW;                     // All joints raw from json. 
@@ -15,8 +15,7 @@ public class OPPose
     public float scaleFactor;                       // What is the scale factor of this pose.
     public List<Neighbour> neighbours;              // k-neighbours
     public Neighbour selectedN;                     // The leading neighbour.
-    public Vector3 translation;
-    public int clusterId;
+    public Vector3 translation;                     // The translation of that pose. (not in use)
 
     /* Constructor */
     public OPPose(int jsonPosition)
@@ -28,7 +27,6 @@ public class OPPose
         scaleFactor = 0;
         neighbours = new List<Neighbour>();
         selectedN = null;
-        clusterId = Base.getNearestClusterId();
     }
 
 

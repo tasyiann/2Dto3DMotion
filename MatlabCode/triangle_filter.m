@@ -8,7 +8,7 @@ function [filtM] = triangle_filter(similarities, threshold, sample)
 
 N = size(similarities, 1);
 if nargin == 2
-    cntMat = bad_triangle_count(similarities);
+    cntMat = bad_triangle_count(similarities); % Use this one.
 else
     cntMat = bad_triangle_count(similarities, sample);
 end

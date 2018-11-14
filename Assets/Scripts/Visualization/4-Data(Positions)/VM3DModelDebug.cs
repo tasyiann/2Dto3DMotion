@@ -20,12 +20,13 @@ public class VM3DModelDebug : Base
     private Vector3[] FigureToShow;
     private int offset;
     private int clusterIndex;
+    private int totalProjections = 0;
 
     private void updateText()
     {
-        string s = "";
-        s += "Cluster: " + clusterIndex + "/" + base_clusters.Count+"\n";
-        s += "Projection:"+ projectionIndex + "/" + base_clusters[clusterIndex].Count + "\n";
+        string s = "Total projections: "+totalProjections+"\n";
+        s += "Cluster: " + clusterIndex + "/" + (base_clusters.Count-1) +"\n";
+        s += "Projection:"+ projectionIndex + "/" + (base_clusters[clusterIndex].Count-1) + "\n";
         textInfo.text = s;
     }
 
@@ -34,6 +35,7 @@ public class VM3DModelDebug : Base
     {
         gL = new GLDraw(material);
         m3d = new Model3D(model);
+        totalProjections = base_getNumberOfProjections();
     }
 
     private void Start()
@@ -49,15 +51,15 @@ public class VM3DModelDebug : Base
         if(Input.GetKey("w"))
         {
             projectionIndex += offset;
-            updateText();
             updateFigureToShow();
+            updateText();
             m3d.moveSkeleton(FigureToShow);
         }
         if (Input.GetKey("s"))
         {
             projectionIndex -= offset;
-            updateText();
             updateFigureToShow();
+            updateText();
             m3d.moveSkeleton(FigureToShow);
         }
     }
@@ -75,8 +77,17 @@ public class VM3DModelDebug : Base
             {
                 projectionIndex = 0;
                 clusterIndex = 0;
-                return;
             }
+        }
+        if(projectionIndex < 0)
+        {
+            if (clusterIndex != 0)
+            {
+                clusterIndex--;
+                projectionIndex = base_clusters[clusterIndex].Count - 1;
+            }
+            else
+                projectionIndex = 0;
         }
         FigureToShow = base_clusters[clusterIndex][projectionIndex].joints;
     }

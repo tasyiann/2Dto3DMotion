@@ -82,7 +82,7 @@ public class DataParsing : Base {
             if (frame.figures.Count == 0)
                 continue;
             // Case 2: Figure exists. Use only the figure[0]
-            sc.algNeighbours.SetNeighbours(frame.figures[0], sc.k, frame.figures[0].clusterId, base_clusters);
+            sc.algNeighbours.SetNeighbours(frame.figures[0], sc.k, base_clusters, base_representatives);
         }
     }
 
