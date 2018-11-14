@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<log>
+  <datetime>2018 11 14 21 04 57</datetime>
+  <input>C:/Users/Tasos/Desktop/Thesis/humanTracking/Input-Files/DefaultWalkingBvh</input>
+  <frames>0</frames>
+  <people>1</people>
+  <kNN>JBJEuclideanComparison</kNN>
+  <kNNTime>0</kNNTime>
+  <est>PrevFrame2D</est>
+  <estTime>0</estTime>
+  <k>1</k>
+  <m>1</m>
+  <clusters>7</clusters>
+  <projections>18720</projections>
+</log>

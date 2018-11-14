@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<log>
+  <datetime>2018 11 14 21 10 38</datetime>
+  <input>C:/Users/Tasos/Desktop/Thesis/humanTracking/Input-Files/result2</input>
+  <frames>193</frames>
+  <people>1</people>
+  <kNN>JBJEuclideanComparison</kNN>
+  <kNNTime>1951</kNNTime>
+  <est>PrevFrameWindow3D</est>
+  <estTime>18</estTime>
+  <k>1</k>
+  <m>1</m>
+  <clusters>7</clusters>
+  <projections>18720</projections>
+</log>

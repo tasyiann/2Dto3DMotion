@@ -58,12 +58,12 @@ disp('-------------------------------------------')
 % distances between all poses.
 % -------------------------------------------------------------------------
 
-D = DistanceBetweenPoses(T,'Yes'); % Get the distance with eucledian - Done
-%load('Distances.mat','D'); 
+%D = DistanceBetweenPoses(T,'Yes'); % Get the distance with eucledian - Done
+load('Distances.mat','D'); 
 disp('   >exec time (s):')
 disp(toc);
 try
-save('Distances.mat','D')
+%save('Distances.mat','D')
 catch MES
     savingerrorfile = fopen('error_saving_log.txt','a');
     fprintf(savingerrorfile,'%s\n',MES.identifier);
@@ -89,7 +89,7 @@ disp('   >exec time (s):')
 disp(toc);
 % Y_full = mdscale(D,dim);     % Alternative, we can use the MATLAB default MDS Scaling
 try
-save('Y_full.mat','Y_full')
+save('Y_full.mat','Y_full');
 catch MES
     savingerrorfile = fopen('error_saving_log.txt','a');
     fprintf(savingerrorfile,'%s\n',MES.identifier);
