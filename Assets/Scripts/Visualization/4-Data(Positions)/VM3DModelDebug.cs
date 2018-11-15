@@ -8,21 +8,30 @@ using System.IO;
 
 
 /* OPFigure */
-public class VM3DModelDebug : Base 
+public class VM3DModelDebug : MonoBehaviour 
 {
     public bool clustered;
-    public Transform model;
-    private Model3D m3d;
-    public int ProjectionAngle = 10;
+
+    public Transform model_clusters;
+    private Model3D m3d_clusters;
+
+    public Transform model_representative;
+    private Model3D m3d_representative;
+
+    public int ProjectionAngle = 12;
     public Material material;
     private int projectionIndex = 0;
     public Text textInfo;
     private GLDraw gL;
-    private Vector3[] FigureToShow;
+
+    private Vector3[] FigureToShow_cluster;
+    private Vector3[] FigureToShow_representative;
+
     private int offset;
     private int clusterIndex;
     private int totalProjections = 0;
-    private List<List<BvhProjection>> data;
+    private List<List<BvhProjection>> data = Base.base_clusters;
+    private List<BvhProjection> representatives = Base.base_representatives;
 
     private void updateText()
     {
@@ -37,25 +46,19 @@ public class VM3DModelDebug : Base
     private void Awake()
     {
         gL = new GLDraw(material);
-        m3d = new Model3D(model);
-        totalProjections = base_getNumberOfProjections();
+        m3d_clusters = new Model3D(model_clusters);
+        m3d_representative = new Model3D(model_representative);
+        totalProjections = Base.base_getNumberOfProjections();
     }
 
     private void Start()
     {
-        FigureToShow = new Vector3[14];
+        FigureToShow_cluster = new Vector3[14];
+        FigureToShow_representative = new Vector3[14];
     }
 
     void Update()
     {
-        if (clustered)
-        {
-            data = Base.base_clusters;
-        }
-        else
-        {
-            data = Base.base_not_clustered;
-        }
 
         if (ProjectionAngle == 0 || ProjectionAngle == 1) ProjectionAngle = 360; // so it will go to the next immediate projection
         offset = 360 / ProjectionAngle;
@@ -65,14 +68,16 @@ public class VM3DModelDebug : Base
             projectionIndex += offset;
             updateFigureToShow();
             updateText();
-            m3d.moveSkeleton(FigureToShow);
+            m3d_clusters.moveSkeleton(FigureToShow_cluster);
+            m3d_representative.moveSkeleton(FigureToShow_representative);
         }
         if (Input.GetKey("s"))
         {
             projectionIndex -= offset;
             updateFigureToShow();
             updateText();
-            m3d.moveSkeleton(FigureToShow);
+            m3d_clusters.moveSkeleton(FigureToShow_cluster);
+            m3d_representative.moveSkeleton(FigureToShow_representative);
         }
     }
 
@@ -101,11 +106,18 @@ public class VM3DModelDebug : Base
             else
                 projectionIndex = 0;
         }
-        FigureToShow = data[clusterIndex][projectionIndex].joints;
+        FigureToShow_cluster = data[clusterIndex][projectionIndex].joints;
+        FigureToShow_representative = representatives[clusterIndex].joints;
+
     }
 
-    public Vector3[] getJointsToShow()
+
+
+
+    private void OnPostRender()
     {
-        return FigureToShow;
+        gL.drawFigure(true, Color.white, FigureToShow_cluster, null, new Vector3(model_clusters.transform.position.x, 0, 0));
+        gL.drawFigure(true, Color.white, FigureToShow_representative, null, new Vector3(model_representative.transform.position.x, 0, 0));
     }
+
 }

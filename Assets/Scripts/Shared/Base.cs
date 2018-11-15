@@ -6,13 +6,13 @@ using System;
 using System.Globalization;
 
 /* Shared components between classes. */
-public class Base : MonoBehaviour {
+public static class Base {
 
     public static string Path = "Database_30";
-    public static List<BvhProjection> base_representatives = InitializeRepresentatives();       // All representatives.
-    public static List<List<Rotations>> base_rotationFiles = InitializeRotations();             // All rotation files.
-    public static List<List<BvhProjection>> base_clusters = InitializeClusters();               // All clusters.
-    public static List<List<BvhProjection>> base_not_clustered = InitializeNotClustered();      // All projections not clustered.
+    public static List<BvhProjection> base_representatives;          // All representatives.
+    public static List<List<Rotations>> base_rotationFiles;          // All rotation files.
+    public static List<List<BvhProjection>> base_clusters;           // All clusters.
+    public static List<List<BvhProjection>> base_not_clustered;      // All projections not clustered.
 
     public static int metadataInFile = 3;                                                           // Metadata in a tuple.
     public static int jointsAmount = Enum.GetNames(typeof(EnumJoint)).Length;                       // Joints in a tuple.
@@ -23,23 +23,22 @@ public class Base : MonoBehaviour {
     public static string base_CurrentDir;
     public static int[] base_orderOfComparableRotations = { 4, 2, 8, 9, 10, 5, 6, 7, 14, 15, 16, 11, 12, 13 };
 
-    /*
-    private void Awake()
+
+
+    public static void initialize()
     {
         base_representatives = InitializeRepresentatives();      // All representatives.
         base_rotationFiles = InitializeRotations();              // All rotation files.
         base_clusters = InitializeClusters();                    // All clusters.
         base_not_clustered = InitializeNotClustered();           // All projections not clustered.
-
     }
-    */
 
-/**
- * Each line is a representative of a cluster.
- * 1st line is the representative of the 1st cluster etc...
- * 
- * */
-private static List<BvhProjection> InitializeRepresentatives()
+    /**
+     * Each line is a representative of a cluster.
+     * 1st line is the representative of the 1st cluster etc...
+     * 
+     * */
+    private static List<BvhProjection> InitializeRepresentatives()
     {
         try {
             string fileName = Path + "\\Representatives\\Representatives";

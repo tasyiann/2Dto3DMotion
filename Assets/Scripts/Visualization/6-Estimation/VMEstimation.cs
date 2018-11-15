@@ -6,8 +6,12 @@ using UnityEngine.UI;
 using Winterdust;
 
 /* OPFigure */
-public class VMEstimation : Base
+public class VMEstimation : MonoBehaviour
 {
+    private static List<List<BvhProjection>> base_clusters = Base.base_clusters;
+    private static List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;
+    private static Scenario sc = Base.sc;
+
     public GameObject VideoplayerGO;
     private UnityEngine.Video.VideoPlayer videoPlayer;
     public Transform model;

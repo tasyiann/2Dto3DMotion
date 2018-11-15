@@ -9,8 +9,11 @@ using UnityEngine.UI;
  * Each 2d point represents a joint in a 2d World. The input of the program
  * is from the output of OpenPose (JSON files).
 */
-public class VMFIGURES : Base
+public class VMFIGURES : MonoBehaviour
 {
+
+    private static Scenario sc = Base.sc;
+
     public GameObject VideoplayerGO;
     private UnityEngine.Video.VideoPlayer videoPlayer;
 

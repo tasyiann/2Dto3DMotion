@@ -7,7 +7,8 @@ using UnityEngine.UI;
 /**
  * In this visualisation we visualize the k-Neighbours of each frame.
  */
-public class VMNeighbours : Base {
+public class VMNeighbours {
+
 
     public int MaxFiguresToShow;        // Max Figures to be presented.
     public float offset = 8.0f;         // The space between neighbours.
@@ -17,7 +18,7 @@ public class VMNeighbours : Base {
     public Material Material;           // The material used in gl lines.
     public Text textInfo;               // Text (not in use yet.)
     private GLDraw gL;                  // GL lines.
-    List<OPFrame> frames = sc.frames;
+    List<OPFrame> frames = Base.sc.frames;
 
     /**
      * Initialisation.

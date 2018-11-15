@@ -8,8 +8,11 @@ using System.IO;
 
 
 /* Purpose of this class, is to Visualize the rotations (ONLY the rotations), of our Database. */
-public class Rotations3D : Base
+public class Rotations3D : MonoBehaviour
 {
+    private static List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;
+
+
     public int choice = 0;
     public Transform model;
     private Model3DBeta m3d;

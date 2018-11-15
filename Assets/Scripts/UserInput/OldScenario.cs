@@ -27,7 +27,17 @@ public class OldScenario : MonoBehaviour {
         }
         Scenario scenario = (Scenario)DataParsing.readBinaryfile(scenarioFileName);
         scenario.SetInputDir(url);
-        Base.SetCurrentScenario(scenario);
+        Base.SetCurrentScenario(scenario); // <<<
+
+        if (Base.sc == null)
+        {
+            Debug.Log("scenario is null!");
+        }
+        else
+        {
+            Debug.Log("Hello");
+        }
+
         DataParsing.CalculateEstimation();
         UnityEngine.SceneManagement.SceneManager.LoadScene(7); // Estimation Scene
     }

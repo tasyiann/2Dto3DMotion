@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class VMLog : Base {
+public class VMLog : MonoBehaviour {
 
+    private static Scenario sc = Base.sc;
     public Text text;
 	// Use this for initialization
 	void Start () {

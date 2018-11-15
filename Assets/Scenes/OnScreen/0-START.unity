@@ -1015,7 +1015,7 @@ GameObject:
   - component: {fileID: 425066917}
   - component: {fileID: 425066916}
   - component: {fileID: 425066915}
-  - component: {fileID: 425066919}
+  - component: {fileID: 425066920}
   m_Layer: 0
   m_Name: Main
   m_TagString: MainCamera
@@ -1090,7 +1090,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &425066919
+--- !u!114 &425066920
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1098,10 +1098,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 425066914}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c2afb0ab6f9b8c4d87ac56f513809ce, type: 3}
+  m_Script: {fileID: 11500000, guid: 311f9137d8cc38745b25a274409855ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DatabasePath: Database
 --- !u!1 &508576071
 GameObject:
   m_ObjectHideFlags: 0

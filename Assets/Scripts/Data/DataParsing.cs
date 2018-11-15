@@ -9,7 +9,12 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 
 
-public class DataParsing : Base {
+public class DataParsing {
+
+    private static Scenario sc = Base.sc;
+    private static List<List<BvhProjection>> base_clusters = Base.base_clusters;
+    private static List<BvhProjection> base_representatives = Base.base_representatives;
+    private static List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;
 
     public static Neighbour[] estimation;      // Temporary for debugs. (review this comment please.)
     private static float kNNAlgorithmTime;
@@ -63,7 +68,7 @@ public class DataParsing : Base {
         sc.log.frames = frames.Count;
         sc.log.people = 1;
         sc.log.NumberOfClusters = base_clusters.Count;
-        sc.log.NumberOfProjections = base_getNumberOfProjections();
+        sc.log.NumberOfProjections = Base.base_getNumberOfProjections();
         sc.log.kNNAlgorithmTime = kNNAlgorithmTime;
         sc.log.estimationAlgorithmTime = EstimationAlgorithmTime;
     }
@@ -110,7 +115,9 @@ public class DataParsing : Base {
     private static Neighbour[] getEstimationArray()
     {
         List<Neighbour> result = new List<Neighbour>();
-        foreach (OPFrame frame in sc.frames)
+        // Make sure scenario is the updated one from Base.
+        sc = Base.sc;
+        foreach (OPFrame frame in sc.frames) // <<<<<<<
         {
             if (frame.figures.Count == 0)
                 result.Add(null);

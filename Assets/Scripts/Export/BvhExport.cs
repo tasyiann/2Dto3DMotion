@@ -7,8 +7,9 @@ using System.Text;
 /* Important:
    Make sure that: the template, and all the bvh used in this program, have the same HIERARCHY. */
 
-public class BvhExport : Base
+public class BvhExport
 {
+    private List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;
 
     private string HierarchyBody { get; set; }
     private string MotionBody { get; set; }
