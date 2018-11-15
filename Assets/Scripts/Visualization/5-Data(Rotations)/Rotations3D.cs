@@ -10,6 +10,7 @@ using System.IO;
 /* Purpose of this class, is to Visualize the rotations (ONLY the rotations), of our Database. */
 public class Rotations3D : Base
 {
+    public int choice = 0;
     public Transform model;
     private Model3DBeta m3d;
     public Material material;
@@ -18,6 +19,7 @@ public class Rotations3D : Base
     private GLDraw gL;
     private Vector3[] rotations;
     int RotationFileIndex = 0;
+    
 
     private void updateText()
     {
@@ -43,7 +45,14 @@ public class Rotations3D : Base
             RotationIndex ++;
             updateText();
             updateRotationsToShow();
-            m3d.moveSkeleton(rotations);
+            m3d.moveSkeleton(rotations,choice);
+        }
+        if (Input.GetKey("s"))
+        {
+            RotationIndex--;
+            updateText();
+            updateRotationsToShow();
+            m3d.moveSkeleton(rotations, choice);
         }
 
     }
@@ -66,7 +75,17 @@ public class Rotations3D : Base
                 return;
             }
         }
-        rotations = base_rotationFiles[RotationFileIndex][RotationIndex].getComparableRotations().ToArray();
+        if (RotationIndex < 0)
+        {
+            if (RotationIndex != 0)
+            {
+                RotationFileIndex--;
+                RotationIndex = base_rotationFiles[RotationFileIndex].Count - 1;
+            }
+            else
+                RotationIndex = 0;
+        }
+        rotations = base_rotationFiles[RotationFileIndex][RotationIndex].getAllRotations().ToArray();
     }
 
 

@@ -46,8 +46,16 @@ public class UserInput : MonoBehaviour {
 
     public void GO()
     {
-        SavePreferences();
-        DataParsing.Calculate3D();
+        try
+        {
+            SavePreferences();
+            DataParsing.Calculate3D();
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Invalid path!");
+            return;
+        }
         UnityEngine.SceneManagement.SceneManager.LoadScene(7); // Estimation Scene
     }
 

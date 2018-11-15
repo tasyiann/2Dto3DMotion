@@ -36,6 +36,9 @@ EditorBuildSettings:
     path: Assets/Scenes/OnScreen/9-Log.unity
     guid: 1f3cc025581c10849bc1d9c9a143f126
   - enabled: 1
-    path: Assets/Scenes/OnScreen/Database.unity
+    path: Assets/Scenes/OnScreen/10-Data(bvh).unity
     guid: 8a5422012c8572f4184dbc55fe3e17a0
+  - enabled: 1
+    path: Assets/Scenes/OnScreen/6-DebugRotations.unity
+    guid: 02362aa581493c44f8c66910e173d4e3
   m_configObjects: {}

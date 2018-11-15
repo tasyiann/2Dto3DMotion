@@ -25,40 +25,11 @@ public class Model3DBeta
         {
             Transform result = model.FindDeepChild(val.ToString());
             if (!result)
-                Debug.Log("THE JOINT IS NULL >>>>>>>>>>>>>>>>>>>>>>>>>" + val.ToString());
+                Debug.Log("Joint on model, not found! : " + val.ToString());
+
             dictionary.Add(val.ToString(),result);
         }
         return dictionary;
-    }
-
-
-
-
-    private Quaternion getRotation(Quaternion qX, Quaternion qY, Quaternion qZ)
-    {
-        return Quaternion.Euler(new Vector3(qX.eulerAngles.x, qY.eulerAngles.y, qZ.eulerAngles.z));
-    }
-
-
-    Quaternion XLookRotation(Vector3 right, Vector3 up)
-    {
-
-        Quaternion rightToForward = Quaternion.Euler(0f, -90f, 0f);
-        Quaternion forwardToTarget = Quaternion.LookRotation(right, up);
-
-        return forwardToTarget * rightToForward;
-    }
-
-
-
-
-    Quaternion YLookRotation(Vector3 up, Vector3 upwards)
-    {
-
-        Quaternion UpToForward = Quaternion.Euler(90f, 0f, 0f); // Correct, it's 90 degrees to make the positive y, into positive forward.
-        Quaternion forwardToTarget = Quaternion.LookRotation(up, upwards);
-
-        return forwardToTarget * UpToForward;
     }
 
 
@@ -69,34 +40,77 @@ public class Model3DBeta
      * https://gamedev.stackexchange.com/questions/136712/locking-a-rotation-on-an-axisyaw-pitch-roll-based-on-a-parental-transform/136743#136743
        https://gamedev.stackexchange.com/questions/139515/lookrotation-make-x-axis-face-the-target-instead-of-z
      */
-    public void moveSkeleton(Vector3[] rotations, Vector3[] positions=null)
+    public void moveSkeleton(Vector3[] rotations, int choice)
     {
-        if (positions == null)
-        {
-            // Keep hips at initial rotation and position.
-        }
-        else
-        {
-            // Hips: Works fine!
-            Vector3 root = (positions[8] + positions[11]) / 2;
-            Quaternion hips_x = YLookRotation((positions[1] - root), Vector3.up);
-            Quaternion hips_yz = XLookRotation(positions[8] - positions[11], Vector3.up);
-            Joints["Hips"].rotation = getRotation(hips_x, hips_yz, hips_yz);
-        }
- 
-        Joints["RightArm"].rotation = XLookRotation(-rotations[2], Vector3.up);
-        Joints["RightForeArm"].rotation = XLookRotation(-rotations[3], Vector3.up);
-        Joints["RightHand"].rotation = XLookRotation(-rotations[4], Vector3.up);
+        setRotation(Joints["Hips"], rotations[0], choice);
 
-        Joints["LeftArm"].rotation = XLookRotation(-rotations[5], Vector3.up);
-        Joints["LeftForeArm"].rotation = XLookRotation(-rotations[6], Vector3.up);
-        Joints["LeftHand"].rotation = XLookRotation(-rotations[7], Vector3.up);
 
- 
+        // Mporei na ginei me for loop,
+        // iparxoun sto Base.base_order
+       
+        setRotation(Joints["RightArm"], rotations[8],choice);
+        setRotation(Joints["RightForeArm"],rotations[9],choice);
+        setRotation(Joints["RightHand"], rotations[10],choice);
+
+        setRotation(Joints["LeftArm"], rotations[5], choice);
+        setRotation(Joints["LeftForeArm"], rotations[6], choice);
+        setRotation(Joints["LeftHand"], rotations[7], choice);
+
+        setRotation(Joints["RightUpLeg"],rotations[14], choice);
+        setRotation(Joints["RightLeg"], rotations[15], choice);
+        setRotation(Joints["RightFoot"], rotations[16], choice);
+
+        setRotation(Joints["LeftUpLeg"], rotations[11], choice);
+        setRotation(Joints["LeftLeg"], rotations[12], choice);
+        setRotation(Joints["LeftFoot"], rotations[13], choice);
+        
 
     }
+    // https://forums.adobe.com/thread/1475746
+    // https://gamedev.stackexchange.com/questions/140579/euler-right-handed-to-quaternion-left-handed-conversion-in-unity
+    // http://forums.cgsociety.org/t/converting-rotation-values-for-bvh/1166576/11
+    // The x, y, and z angles represent a rotation z 
+    // degrees around the z axis, x degrees around the x axis,
+    // and y degrees around the y axis (in that order).
+    void setRotation(Transform t, Vector3 rotation, int choice)
+    {
+        Debug.Log("Choice: " + choice);
+        float x = rotation.x;
+        float y = rotation.y;
+        float z = rotation.z;
+        Vector3 zz = Vector3.forward;
+        Vector3 xx = Vector3.right;
+        Vector3 yy = Vector3.up;
 
+        switch (choice)
+        {
+            case 0: rot(t, x, xx, y, yy, z, zz);break;
+            case 1: rot(t, x, xx, z, zz, y, yy); break;
+            case 2: rot(t, z, zz, y, yy, x, xx); break;
+            case 3: rot(t, z, zz, x, xx, y, yy); break;
+            case 4: rot(t, x, xx, -y, yy, -z, zz); break;
+            case 5: rot(t, x, xx, -z, zz, -y, yy); break;
+            case 6: rot(t, -z, zz, -y, yy, x, xx); break;
+            case 7: rot(t, -z, zz, x, xx, -y, yy); break;
+            case 8: rot(t, y, yy, x, xx, z, zz); break;
+            case 9: rot(t, y, yy, z, zz, z, xx); break;
+            case 10: rot(t, -y, yy, x, xx, -z, zz); break;
+            case 11: rot(t, -y, yy, -z, zz, x, xx); break;
+            case 12: rot(t, -z, Vector3.forward, -x, Vector3.left, -y, Vector3.up); break;
+            case 13: rot(t, -y, Vector3.up, -x, Vector3.left, -z, Vector3.forward); break;
+            case 14: rot(t, -y, Vector3.up, x, Vector3.left, -z, Vector3.forward); break;
+            case 15: rot(t, z, Vector3.forward, -x, Vector3.right, y, Vector3.up); break;
+            case 16: rot(t, y, Vector3.up, -x, Vector3.right, z, Vector3.forward); break;
+            case 17: rot(t, x, xx, y, yy, -z, zz); break;
+            case 18: rot(t, z, zz, y, yy, x, xx); break;
+            case 19: rot(t, x, xx, z, zz, y, yy); break;
+        }
+    }
 
+    private void rot(Transform t, float a, Vector3 aa, float b, Vector3 bb, float c, Vector3 cc)
+    {
+        t.localRotation = Quaternion.AngleAxis(a, aa) * Quaternion.AngleAxis(b, bb) * Quaternion.AngleAxis(c, cc);
+    }
 
 
 

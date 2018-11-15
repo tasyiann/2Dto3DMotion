@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<log>
+  <datetime>2018 11 14 23 12 48</datetime>
+  <input>C:/Users/Tasos/Desktop/Thesis/humanTracking/Input-Files/stand-still-hands-open-wide</input>
+  <frames>965</frames>
+  <people>1</people>
+  <kNN>JBJEuclideanComparison</kNN>
+  <kNNTime>9989</kNNTime>
+  <est>PrevFrameWindow3D</est>
+  <estTime>100</estTime>
+  <k>1</k>
+  <m>1</m>
+  <clusters>7</clusters>
+  <projections>18720</projections>
+</log>

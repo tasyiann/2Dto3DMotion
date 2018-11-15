@@ -42,7 +42,8 @@ public class BvhExport : Base
         foreach(Neighbour n in Estimation)
         {
             List<Vector3> rotations = base_rotationFiles[n.projection.rotationFileID][n.projection.frameNum].getAllRotations();
-            lines.Add(CreateMLine(Vector3.zero, new Vector3(-0,90,90), rotations));
+            //Vector3 rootRotation = new Vector3(90, 90, 0); // Default
+            lines.Add(CreateMLine(Vector3.zero, rotations[0] + new Vector3(n.projection.angle,0, 0), rotations));
         }
         return lines;
     }
@@ -70,7 +71,7 @@ public class BvhExport : Base
         StringBuilder s = new StringBuilder();
         s.Append("MOTION\nFrames: " + MotionLines.Count + "\nFrame Time: " + 0.0083333 + "\n");
         // First line T-pose
-        s.Append("6.90105 11.8871 -0.957331 -0 90 90 9.69808e-018 1.34041e-020 0.158382 1.41245e-030 7.06225e-031 2.48481e-017 -7.30747e-017 7.61111e-019 -1.19349 3.40995e-017 1.65719e-019 0.556895 -2.12238e-008 -1.53545e-005 -90.1584 -2.50273e-005 -2.47192e-012 6.55612e-006 1.52588e-005 -6.98387e-015 174.455 180 -4.60993e-005 -89.8417 -5.49628e-005 -2.25992e-011 3.612e-005 1.52588e-005 6.98387e-015 174.455 -3.94791 -0.248796 -175.995 -8.56334 0.17593 -0.870008 4.60942 -0.0775208 176.868 177.984 -0.125371 -176.036 -4.37326 0.0836638 -0.877309 2.35438 -0.0332512 176.598\n");
+        s.Append("0 0 0 -0 90 90 9.69808e-018 1.34041e-020 0.158382 1.41245e-030 7.06225e-031 2.48481e-017 -7.30747e-017 7.61111e-019 -1.19349 3.40995e-017 1.65719e-019 0.556895 -2.12238e-008 -1.53545e-005 -90.1584 -2.50273e-005 -2.47192e-012 6.55612e-006 1.52588e-005 -6.98387e-015 174.455 180 -4.60993e-005 -89.8417 -5.49628e-005 -2.25992e-011 3.612e-005 1.52588e-005 6.98387e-015 174.455 -3.94791 -0.248796 -175.995 -8.56334 0.17593 -0.870008 4.60942 -0.0775208 176.868 177.984 -0.125371 -176.036 -4.37326 0.0836638 -0.877309 2.35438 -0.0332512 176.598\n");
         foreach (string line in MotionLines)
         {
             s.Append(line);
@@ -81,11 +82,10 @@ public class BvhExport : Base
 
     public void CreateBvhFile(string filename)
     {
-        debugRotations();
         System.IO.File.WriteAllText(filename, HierarchyBody + MotionBody);
     }
-
-    public void debugRotations()
+    
+    public void debugRotationsAxis()
     {
         debugRotationsVersion(-1, -1, -1, "1.bvh");
         debugRotationsVersion(-1, -1,  1, "2.bvh");
@@ -96,7 +96,7 @@ public class BvhExport : Base
         debugRotationsVersion( 1,  1, -1, "7.bvh");
         debugRotationsVersion( 1,  1,  1, "8.bvh");
     }
-
+    
     private void debugRotationsVersion(int x, int y, int z, string filename)
     {
         string s = HierarchyBody;

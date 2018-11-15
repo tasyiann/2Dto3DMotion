@@ -18,7 +18,7 @@ public class DisplayDatabaseBvh : MonoBehaviour {
 
     void loadBvhFiles()
     {
-        string dirName = "Database\\BvhFiles\\";
+        string dirName = "Database_30\\BvhFiles\\";
         string[] fileEntries = Directory.GetFiles(dirName);
         int framesCount = 0;
         double timeCount = 0;

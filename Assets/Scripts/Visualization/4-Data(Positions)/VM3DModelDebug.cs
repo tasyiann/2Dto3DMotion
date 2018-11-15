@@ -10,6 +10,7 @@ using System.IO;
 /* OPFigure */
 public class VM3DModelDebug : Base 
 {
+    public bool clustered;
     public Transform model;
     private Model3D m3d;
     public int ProjectionAngle = 10;
@@ -21,12 +22,14 @@ public class VM3DModelDebug : Base
     private int offset;
     private int clusterIndex;
     private int totalProjections = 0;
+    private List<List<BvhProjection>> data;
 
     private void updateText()
     {
-        string s = "Total projections: "+totalProjections+"\n";
-        s += "Cluster: " + clusterIndex + "/" + (base_clusters.Count-1) +"\n";
-        s += "Projection:"+ projectionIndex + "/" + (base_clusters[clusterIndex].Count-1) + "\n";
+        string s = "";
+        s += "Cluster: " + clusterIndex + "/" + (data.Count-1) +"\n\n";
+        s += "Projection:"+ projectionIndex + "/" + (data[clusterIndex].Count-1) + "\n";
+        s+= "Total projections: "+totalProjections+"\n";
         textInfo.text = s;
     }
 
@@ -45,6 +48,15 @@ public class VM3DModelDebug : Base
 
     void Update()
     {
+        if (clustered)
+        {
+            data = Base.base_clusters;
+        }
+        else
+        {
+            data = Base.base_not_clustered;
+        }
+
         if (ProjectionAngle == 0 || ProjectionAngle == 1) ProjectionAngle = 360; // so it will go to the next immediate projection
         offset = 360 / ProjectionAngle;
 
@@ -66,11 +78,11 @@ public class VM3DModelDebug : Base
 
     private void updateFigureToShow()
     {
-        if (projectionIndex >= base_clusters[clusterIndex].Count)
+        if (projectionIndex >= data[clusterIndex].Count)
         {
-            if (base_clusters.Count-1 > clusterIndex)
+            if (data.Count-1 > clusterIndex)
             {
-                projectionIndex -= base_clusters[clusterIndex].Count;
+                projectionIndex -= data[clusterIndex].Count;
                 clusterIndex++;
             }
             else
@@ -84,12 +96,12 @@ public class VM3DModelDebug : Base
             if (clusterIndex != 0)
             {
                 clusterIndex--;
-                projectionIndex = base_clusters[clusterIndex].Count - 1;
+                projectionIndex = data[clusterIndex].Count - 1;
             }
             else
                 projectionIndex = 0;
         }
-        FigureToShow = base_clusters[clusterIndex][projectionIndex].joints;
+        FigureToShow = data[clusterIndex][projectionIndex].joints;
     }
 
     public Vector3[] getJointsToShow()

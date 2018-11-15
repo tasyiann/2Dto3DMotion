@@ -42,11 +42,9 @@ public class VMOpFigure : Base
     private void OnPostRender()
     {
         //updateText();
-        //if (showGrid)
-        //    gL.drawAxes(Color.white);
+
         float newpos = 0;
-        // Idle figure:
-        gL.drawFigure(true,Color.white, frames[0].figures[0].joints, frames[0].figures[0].available, new Vector3(0, 0, 0));
+
         // Draw figure[0] at current frame.
         if (frames[CurrentFrame].figures.Count > 0)
         {

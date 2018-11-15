@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<log>
+  <datetime>2018 11 15 11 03 51</datetime>
+  <input>C:/Users/Tasos/Desktop/Thesis/humanTracking/Input-Files/intense-walking</input>
+  <frames>221</frames>
+  <people>1</people>
+  <kNN>JBJEuclideanComparison</kNN>
+  <kNNTime>1155</kNNTime>
+  <est>PrevFrameWindow3D</est>
+  <estTime>800</estTime>
+  <k>20</k>
+  <m>3</m>
+  <clusters>30</clusters>
+  <projections>18720</projections>
+</log>

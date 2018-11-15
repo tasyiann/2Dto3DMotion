@@ -14,8 +14,8 @@ public class JBJEuclideanComparison : AlgorithmSetNeighbours{
         int neighboursCounter = 0;
         SortedList<float,Neighbour> sortedList = new SortedList<float,Neighbour>();
         // Find the right cluster to search.
-        //int cluster_index = findClusterToSearch(opPose, representatives);
-        int cluster_index = 0; // Just for now, to debug the rest.
+        int cluster_index = findClusterToSearch(opPose, representatives);
+        //int cluster_index = 0; // Just for now, to debug the rest.
         List<BvhProjection> cluster = clusters[cluster_index];
         foreach(BvhProjection projection in cluster)
         {

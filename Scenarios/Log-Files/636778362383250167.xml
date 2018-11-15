@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<log>
+  <datetime>2018 11 14 23 50 38</datetime>
+  <input>C:/Users/Tasos/Desktop/Thesis/humanTracking/Input-Files/walk-jumps-in-circles</input>
+  <frames>553</frames>
+  <people>1</people>
+  <kNN>JBJEuclideanComparison</kNN>
+  <kNNTime>5618</kNNTime>
+  <est>PrevFrameWindow3D</est>
+  <estTime>58</estTime>
+  <k>1</k>
+  <m>1</m>
+  <clusters>7</clusters>
+  <projections>18720</projections>
+</log>

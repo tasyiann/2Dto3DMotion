@@ -8,9 +8,12 @@ using System.Globalization;
 /* Shared components between classes. */
 public class Base : MonoBehaviour {
 
-    public static List<BvhProjection> base_representatives;        // All representatives.
-    public static List<List<Rotations>> base_rotationFiles;        // All rotation files.
-    public static List<List<BvhProjection>> base_clusters;         // All clusters.
+    public static string Path = "Database_30";
+    public static List<BvhProjection> base_representatives = InitializeRepresentatives();       // All representatives.
+    public static List<List<Rotations>> base_rotationFiles = InitializeRotations();             // All rotation files.
+    public static List<List<BvhProjection>> base_clusters = InitializeClusters();               // All clusters.
+    public static List<List<BvhProjection>> base_not_clustered = InitializeNotClustered();      // All projections not clustered.
+
     public static int metadataInFile = 3;                                                           // Metadata in a tuple.
     public static int jointsAmount = Enum.GetNames(typeof(EnumJoint)).Length;                       // Joints in a tuple.
 
@@ -18,27 +21,28 @@ public class Base : MonoBehaviour {
     public static Scenario sc = null;
     public static void SetCurrentScenario(Scenario s) { sc = s; Debug.Log("Scenario has been set."); }
     public static string base_CurrentDir;
-    public static int[] base_order = { 4, 2, 8, 9, 10, 5, 6, 7, 14, 15, 16, 11, 12, 13 };
+    public static int[] base_orderOfComparableRotations = { 4, 2, 8, 9, 10, 5, 6, 7, 14, 15, 16, 11, 12, 13 };
 
-
-    // Initializations
-    void Awake()
+    /*
+    private void Awake()
     {
-        base_representatives = InitializeRepresentatives();
-        base_rotationFiles = InitializeRotations();
-        base_clusters = InitializeClusters();
+        base_representatives = InitializeRepresentatives();      // All representatives.
+        base_rotationFiles = InitializeRotations();              // All rotation files.
+        base_clusters = InitializeClusters();                    // All clusters.
+        base_not_clustered = InitializeNotClustered();           // All projections not clustered.
+
     }
+    */
 
-
-    /**
-     * Each line is a representative of a cluster.
-     * 1st line is the representative of the 1st cluster etc...
-     * 
-     * */
-    private static List<BvhProjection> InitializeRepresentatives()
+/**
+ * Each line is a representative of a cluster.
+ * 1st line is the representative of the 1st cluster etc...
+ * 
+ * */
+private static List<BvhProjection> InitializeRepresentatives()
     {
         try {
-            string fileName = "Database\\Representatives\\Representatives";
+            string fileName = Path + "\\Representatives\\Representatives";
             StreamReader sr = File.OpenText(fileName);
             string tuple = String.Empty;
             List<BvhProjection> list = new List<BvhProjection>();
@@ -58,7 +62,7 @@ public class Base : MonoBehaviour {
 
     private static List<List<BvhProjection>> InitializeClusters()
     {
-        string dirName = "Database\\Clusters\\";
+        string dirName = Path+"\\Clusters\\";
         List<List<BvhProjection>> listClusters = new List<List<BvhProjection>>();
         string[] fileEntries = Directory.GetFiles(dirName);
      
@@ -77,10 +81,34 @@ public class Base : MonoBehaviour {
         return listClusters;
     }
 
+
+    private static List<List<BvhProjection>> InitializeNotClustered()
+    {
+        string dirName = Path+"\\Projections\\";
+        List<List<BvhProjection>> listClusters = new List<List<BvhProjection>>();
+        string[] fileEntries = Directory.GetFiles(dirName);
+
+        foreach (string fileName in fileEntries)
+        {
+            List<BvhProjection> cluster = new List<BvhProjection>();
+            StreamReader sr = File.OpenText(fileName);
+            string tuple = String.Empty;
+            while ((tuple = sr.ReadLine()) != null)
+            {
+                cluster.Add(ParseIntoProjection(tuple, Int32.Parse(fileName.Replace(dirName, ""))));
+            }
+            listClusters.Add(cluster);
+        }
+        Debug.Log(">Clusters have been read.");
+        return listClusters;
+    }
+
     private static List<List<Rotations>> InitializeRotations()
     {
         List<List<Rotations>> listRotationsFiles = new List<List<Rotations>>();
-        string[] fileEntries = Directory.GetFiles("Database\\Rotations");
+        string dirname = Path + "\\Rotations";
+        Debug.Log(dirname);
+        string[] fileEntries = Directory.GetFiles(dirname);
         foreach (string fileName in fileEntries)
         {
             List<Rotations> rotationsFile = new List<Rotations>();
@@ -164,5 +192,6 @@ public class Base : MonoBehaviour {
         }
         return counter;
     }
+
 
 }

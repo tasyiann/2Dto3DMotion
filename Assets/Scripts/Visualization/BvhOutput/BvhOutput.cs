@@ -41,7 +41,7 @@ public class BvhOutput : MonoBehaviour {
         else
         {
             BVH bvh = new BVH(bvhfilename);
-            bvh.makeDebugSkeleton();
+            bvh.makeDebugSkeleton(true, "ffffff", 0.5f);
         }
     }
 }

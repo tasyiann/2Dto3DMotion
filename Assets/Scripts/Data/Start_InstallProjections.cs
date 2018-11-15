@@ -145,6 +145,8 @@ public class Start_InstallProjections : MonoBehaviour {
         return tupleString;
     }
     /* In use. */
+    /* We save the rotations in file as z,x,y! */
+    /* Later, we should parse them and convert them to x,y,z! */
     private void saveRotationsUsingFile(StreamWriter sw, string filename)
     {
         //string alltext = System.IO.File.ReadAllText(filename);                  // Get the whole text.

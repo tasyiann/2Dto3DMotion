@@ -14,7 +14,7 @@ public class Rotations  {
     public List<Vector3> getComparableRotations()
     {
         List<Vector3> list = new List<Vector3>();
-        int[] indexes = Base.base_order;
+        int[] indexes = Base.base_orderOfComparableRotations;
         foreach (int rotationIndex in indexes)
         {
             list.Add(rotations[rotationIndex]);
