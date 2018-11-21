@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/OnScreen/0-START.unity
     guid: 6c70a4e90f3801c4884d71090c1fae4b
   - enabled: 1
-    path: Assets/Scenes/OnScreen/1-DataParsing.unity
+    path: Assets/Scenes/OnScreen/not used/1-DataParsing.unity
     guid: d7383e107d342334f91aa42c9a5d4eca
   - enabled: 1
     path: Assets/Scenes/OnScreen/2-Scaling.unity
@@ -24,7 +24,7 @@ EditorBuildSettings:
     path: Assets/Scenes/OnScreen/5-Data(Positions).unity
     guid: 9ff05be61ece6fe4c8e87a0ce1b03270
   - enabled: 1
-    path: Assets/Scenes/OnScreen/6-Data(Rotation).unity
+    path: Assets/Scenes/OnScreen/not used/6-Data(Rotation).unity
     guid: f158038a79fb23b4db2e9d2f4852a1e2
   - enabled: 1
     path: Assets/Scenes/OnScreen/7-Estimation.unity
@@ -39,6 +39,6 @@ EditorBuildSettings:
     path: Assets/Scenes/OnScreen/10-Data(bvh).unity
     guid: 8a5422012c8572f4184dbc55fe3e17a0
   - enabled: 1
-    path: Assets/Scenes/OnScreen/6-DebugRotations.unity
+    path: Assets/Scenes/OnScreen/6-Projections.unity
     guid: 02362aa581493c44f8c66910e173d4e3
   m_configObjects: {}

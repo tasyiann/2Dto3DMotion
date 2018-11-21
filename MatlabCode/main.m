@@ -32,7 +32,7 @@ clc % Clean the screan
 % -------------------------------------------------------------------------
 % Select the desired dataset
 % -------------------------------------------------------------------------
-kMW = 30;  % Define the number of clusters for motion-words
+kMW = 4;  % Define the number of clusters for motion-words
 
 
 tic; % Initialize time
@@ -46,8 +46,8 @@ tic; % Initialize time
 % T is a 2d matrix. 
 % lines are the joint positions, and cols represent frames.
 
-[T,L] = CreateTextures('VerySmallSample\Database\Projections');
-% [T,L] = CreateTextures('oneP');
+% [T,L] = CreateTextures('VerySmallSample\Database\Projections');
+ [T,L] = CreateTextures('oneP');
 %%
 disp('-------------------------------------------')
 disp('Start computing the distances between poses')
@@ -58,8 +58,8 @@ disp('-------------------------------------------')
 % distances between all poses.
 % -------------------------------------------------------------------------
 
-%D = DistanceBetweenPoses(T,'Yes'); % Get the distance with eucledian - Done
-load('Distances.mat','D'); 
+D = DistanceBetweenPoses(T,'Yes'); % Get the distance with eucledian - Done
+%load('Distances.mat','D'); 
 disp('   >exec time (s):')
 disp(toc);
 try
@@ -85,11 +85,12 @@ tic; % Initialize time
 
 dim = 2; % Give the desired dimension of the data (e.g., dim = 20)
 Y_full = triangleMDS(D,dim,0);
+%load('Y_full.mat','Y_full');
 disp('   >exec time (s):')
 disp(toc);
 % Y_full = mdscale(D,dim);     % Alternative, we can use the MATLAB default MDS Scaling
 try
-save('Y_full.mat','Y_full');
+%save('Y_full.mat','Y_full');
 catch MES
     savingerrorfile = fopen('error_saving_log.txt','a');
     fprintf(savingerrorfile,'%s\n',MES.identifier);

@@ -8,17 +8,23 @@ public class UserInput : MonoBehaviour {
 
     public Text textUrl;
     public string url;
+
     public Dropdown kNNAlg_dropdown;
     public Dropdown EstAlg_dropdown;
+    public Dropdown Databases_dropdown;
+    public Dropdown Clusters_dropdown;
     public InputField k_input;
     public InputField m_input;
+
     public enum EnumAlgorithms                  // Select Neighbours Algorithm.
     { JBJEuclidean }
     public enum EnumNN                          // Select Estimation Algorithm.
     { PrevFrame2D, PrevFrameWindow3D, Nearest }
 
+    /* Initialize the dropdowns */
     private void Awake()
     {
+        // 1st dropdown.
         kNNAlg_dropdown.ClearOptions();
         List<string> list = new List<string>();
         foreach(string s in Enum.GetNames(typeof(EnumAlgorithms))){
@@ -26,6 +32,7 @@ public class UserInput : MonoBehaviour {
         }
         kNNAlg_dropdown.AddOptions(list);
 
+        // 2nd dropdown.
         EstAlg_dropdown.ClearOptions();
         list = new List<string>();
         foreach (string s in Enum.GetNames(typeof(EnumNN)))
@@ -34,6 +41,7 @@ public class UserInput : MonoBehaviour {
         }
         EstAlg_dropdown.AddOptions(list);
 
+        // 3rd dropdown.
     }
 
 

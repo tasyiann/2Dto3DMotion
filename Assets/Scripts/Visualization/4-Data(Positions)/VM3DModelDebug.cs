@@ -11,7 +11,7 @@ using System.IO;
 public class VM3DModelDebug : MonoBehaviour 
 {
     public bool clustered;
-
+    private float distanceFromCluster;
     public Transform model_clusters;
     private Model3D m3d_clusters;
 
@@ -20,7 +20,7 @@ public class VM3DModelDebug : MonoBehaviour
 
     public int ProjectionAngle = 12;
     public Material material;
-    private int projectionIndex = 0;
+    public int projectionIndex = 0;
     public Text textInfo;
     private GLDraw gL;
 
@@ -28,17 +28,23 @@ public class VM3DModelDebug : MonoBehaviour
     private Vector3[] FigureToShow_representative;
 
     private int offset;
-    private int clusterIndex;
+    public int clusterIndex;
     private int totalProjections = 0;
     private List<List<BvhProjection>> data = Base.base_clusters;
     private List<BvhProjection> representatives = Base.base_representatives;
 
+    private string p_data;
+    private string r_data;
+
     private void updateText()
     {
         string s = "";
-        s += "Cluster: " + clusterIndex + "/" + (data.Count-1) +"\n\n";
+        s += "Cluster: " + clusterIndex + "/" + (data.Count-1) +"\n";
+        s += "Distance from cluster: " + distanceFromCluster+"\n";
         s += "Projection:"+ projectionIndex + "/" + (data[clusterIndex].Count-1) + "\n";
         s+= "Total projections: "+totalProjections+"\n";
+        s += "Proj joints: " + p_data+"\n";
+        s += "Repr joints: " + r_data+"\n";
         textInfo.text = s;
     }
 
@@ -56,6 +62,8 @@ public class VM3DModelDebug : MonoBehaviour
         FigureToShow_cluster = new Vector3[14];
         FigureToShow_representative = new Vector3[14];
     }
+
+    
 
     void Update()
     {
@@ -108,10 +116,27 @@ public class VM3DModelDebug : MonoBehaviour
         }
         FigureToShow_cluster = data[clusterIndex][projectionIndex].joints;
         FigureToShow_representative = representatives[clusterIndex].joints;
+        float distance = data[clusterIndex][projectionIndex].Distance2D(representatives[clusterIndex]);
+        if ( distance < 0.1f )
+            Debug.Log("<<<<<<< found!>>>>>>>");
+        distanceFromCluster = distance;
+        Vector3[] a = data[clusterIndex][projectionIndex].joints;
+        Vector3[] b = representatives[clusterIndex].joints;
+        // Den vgenei 0 i diafora tous...!
+        p_data = displayJoints(a);
+        r_data = displayJoints(b);
 
     }
 
-
+    private string displayJoints(Vector3[] joints)
+    {
+        string s = "";
+        foreach (Vector3 j in joints )
+        {
+            s += j.x + " " + j.y + " " + j.z + " ";
+        }
+        return s;
+    }
 
 
     private void OnPostRender()
@@ -120,4 +145,6 @@ public class VM3DModelDebug : MonoBehaviour
         gL.drawFigure(true, Color.white, FigureToShow_representative, null, new Vector3(model_representative.transform.position.x, 0, 0));
     }
 
+
+    
 }

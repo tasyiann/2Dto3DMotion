@@ -8,7 +8,8 @@ using System.Globalization;
 /* Shared components between classes. */
 public static class Base {
 
-    public static string Path = "Database_30";
+    public static string Path = "Databases\\v1-18720";
+    public static string Clustering = "400x_clusters";
     public static List<BvhProjection> base_representatives;          // All representatives.
     public static List<List<Rotations>> base_rotationFiles;          // All rotation files.
     public static List<List<BvhProjection>> base_clusters;           // All clusters.
@@ -41,7 +42,7 @@ public static class Base {
     private static List<BvhProjection> InitializeRepresentatives()
     {
         try {
-            string fileName = Path + "\\Representatives\\Representatives";
+            string fileName = Path + "\\Clusters\\"+Clustering+"\\Representatives\\Representatives";
             StreamReader sr = File.OpenText(fileName);
             string tuple = String.Empty;
             List<BvhProjection> list = new List<BvhProjection>();
@@ -59,12 +60,53 @@ public static class Base {
 
     }
 
+
+
+    private static string[] sortFilesNumerically(string[] fileEntries, string dirName)
+    {
+        List<string> list = new List<string>();
+
+        // Keep only the filenames (number).
+        foreach (string s in fileEntries)
+            list.Add(s.Replace(dirName, ""));
+
+        try
+        {
+            list.Sort((s, t) => System.Collections.Comparer.Default.Compare(Int32.Parse(s), Int32.Parse(t)));
+        }
+        catch (Exception e)
+        {
+            Debug.Log("File names should be just numbers!!");
+            foreach (string s in list)
+                Debug.Log(s);
+            throw (e);
+        }
+
+        List<string> list2 = new List<string>();
+        foreach (string s in list)
+        {
+            list2.Add(dirName + s);
+        }
+
+        fileEntries = list2.ToArray();
+        foreach (string s in fileEntries)
+            Debug.Log(s);
+
+        return list2.ToArray();
+    }
+
+
+
     private static List<List<BvhProjection>> InitializeClusters()
     {
-        string dirName = Path+"\\Clusters\\";
-        List<List<BvhProjection>> listClusters = new List<List<BvhProjection>>();
-        string[] fileEntries = Directory.GetFiles(dirName);
-     
+        string dirName = Path + "\\Clusters\\" + Clustering+"\\";
+
+        List <List<BvhProjection>> listClusters = new List<List<BvhProjection>>();
+
+        // -- Sort file entries by their numerical name. --
+        string[] fileEntries = sortFilesNumerically(Directory.GetFiles(dirName),dirName);
+
+
         foreach (string fileName in fileEntries)
         {
             List<BvhProjection> cluster = new List<BvhProjection>();
@@ -72,7 +114,16 @@ public static class Base {
             string tuple = String.Empty;
             while ((tuple = sr.ReadLine()) != null )
             {
-                cluster.Add(ParseIntoProjection(tuple,Int32.Parse(fileName.Replace(dirName,""))));
+                try
+                {
+                    cluster.Add(ParseIntoProjection(tuple, Int32.Parse(fileName.Replace(dirName, ""))));
+                }
+                catch (Exception e)
+                {
+                    Debug.Log("dirName is: " + dirName + "and filename is: "+fileName);
+                    throw e;
+                }
+                
             }
             listClusters.Add(cluster);
         }
@@ -85,7 +136,7 @@ public static class Base {
     {
         string dirName = Path+"\\Projections\\";
         List<List<BvhProjection>> listClusters = new List<List<BvhProjection>>();
-        string[] fileEntries = Directory.GetFiles(dirName);
+        string[] fileEntries = sortFilesNumerically(Directory.GetFiles(dirName), dirName);
 
         foreach (string fileName in fileEntries)
         {
@@ -105,9 +156,9 @@ public static class Base {
     private static List<List<Rotations>> InitializeRotations()
     {
         List<List<Rotations>> listRotationsFiles = new List<List<Rotations>>();
-        string dirname = Path + "\\Rotations";
+        string dirname = Path + "\\Rotations\\";
         Debug.Log(dirname);
-        string[] fileEntries = Directory.GetFiles(dirname);
+        string[] fileEntries = sortFilesNumerically(Directory.GetFiles(dirname), dirname);
         foreach (string fileName in fileEntries)
         {
             List<Rotations> rotationsFile = new List<Rotations>();
@@ -123,14 +174,7 @@ public static class Base {
         return listRotationsFiles;
     }
 
-	
 
-    // --
-    /*
-    public static int getNearestClusterId()
-    {
-        return 0; /// <<<<<<<<<< TODO
-    }*/
 
 
     private static BvhProjection ParseIntoProjection(string tuple, int clusterID=0)
