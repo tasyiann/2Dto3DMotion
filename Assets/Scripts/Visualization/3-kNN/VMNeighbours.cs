@@ -7,7 +7,8 @@ using UnityEngine.UI;
 /**
  * In this visualisation we visualize the k-Neighbours of each frame.
  */
-public class VMNeighbours {
+public class VMNeighbours : MonoBehaviour
+{
 
 
     public int MaxFiguresToShow;        // Max Figures to be presented.

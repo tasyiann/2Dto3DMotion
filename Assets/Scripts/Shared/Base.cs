@@ -9,7 +9,7 @@ using System.Globalization;
 public static class Base {
 
     public static string Path = "Databases\\v1-18720";
-    public static string Clustering = "400x_clusters";
+    public static string Clustering = "500_clusters";
     public static List<BvhProjection> base_representatives;          // All representatives.
     public static List<List<Rotations>> base_rotationFiles;          // All rotation files.
     public static List<List<BvhProjection>> base_clusters;           // All clusters.

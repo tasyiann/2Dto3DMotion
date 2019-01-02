@@ -44,3 +44,9 @@ sysinfo.txt
 
 #Matlab heavy files
 *.mat
+
+#Scenarios
+Scenarios/
+
+#Database
+Databases/

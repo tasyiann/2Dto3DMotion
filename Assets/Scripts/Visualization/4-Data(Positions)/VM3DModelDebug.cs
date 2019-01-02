@@ -22,6 +22,8 @@ public class VM3DModelDebug : MonoBehaviour
     public Material material;
     public int projectionIndex = 0;
     public Text textInfo;
+    public Text cluster_title;
+    public Text projection_id_text;
     private GLDraw gL;
 
     private Vector3[] FigureToShow_cluster;
@@ -40,12 +42,12 @@ public class VM3DModelDebug : MonoBehaviour
     {
         string s = "";
         s += "Cluster: " + clusterIndex + "/" + (data.Count-1) +"\n";
-        s += "Distance from cluster: " + distanceFromCluster+"\n";
+        s += "Distance from Representative: " + distanceFromCluster+"\n";
         s += "Projection:"+ projectionIndex + "/" + (data[clusterIndex].Count-1) + "\n";
         s+= "Total projections: "+totalProjections+"\n";
-        s += "Proj joints: " + p_data+"\n";
-        s += "Repr joints: " + r_data+"\n";
         textInfo.text = s;
+        cluster_title.text = "Cluster: "+clusterIndex+" / "+ (data.Count - 1);
+        projection_id_text.text = "Projection:" + projectionIndex + "/" + (data[clusterIndex].Count - 1);
     }
 
 
@@ -120,12 +122,6 @@ public class VM3DModelDebug : MonoBehaviour
         if ( distance < 0.1f )
             Debug.Log("<<<<<<< found!>>>>>>>");
         distanceFromCluster = distance;
-        Vector3[] a = data[clusterIndex][projectionIndex].joints;
-        Vector3[] b = representatives[clusterIndex].joints;
-        // Den vgenei 0 i diafora tous...!
-        p_data = displayJoints(a);
-        r_data = displayJoints(b);
-
     }
 
     private string displayJoints(Vector3[] joints)
