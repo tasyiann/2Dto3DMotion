@@ -50,9 +50,8 @@ public class BvhProjection {
     }
 
     /* Scale positions, by multiplying with a scaleFactor. */
-    public void scalePositions()
+    public void scalePositions(float scaleFactor)
     {
-        float scaleFactor = Scaling.getGlobalScaleFactorBVH(this); // <<<
         for (int i = 0; i < joints.Length; i++)
         {
             joints[i] *= scaleFactor;

@@ -7,7 +7,10 @@ using System.Text;
 using Winterdust;
 
 /* Installs projections in files. */
+
 public class Start_InstallProjections : MonoBehaviour {
+
+    private EnumScaleMethod scalingMethod = Base.ScaleMethod;
 
     public string BvhFilesDirectory;
     public string DatabaseDirectory;
@@ -18,9 +21,10 @@ public class Start_InstallProjections : MonoBehaviour {
 
 
 	void Start () {
-        lastFileID = getFileCounterFromLogFile();
-        AddInDatabase();
-        logLastID();
+        CountSecondsOfClips("Big-Database-smaller\\bvh");
+        //lastFileID = getFileCounterFromLogFile();
+        //AddInDatabase();
+        //logLastID();
     }
 	
     private void AddInDatabase()
@@ -39,9 +43,30 @@ public class Start_InstallProjections : MonoBehaviour {
     }
 
 
+    private void CountSecondsOfClips(string dir)
+    {
+        int counterFiles = 0;
+        double seconds = 0f;
+        // For each bvh file in the directory, get the projections.
+        string[] fileEntries = Directory.GetFiles(dir);
+        foreach (string bvhFileName in fileEntries)
+        {
+            if (Path.GetExtension(bvhFileName).CompareTo(".bvh") == 0)
+            {
+                BVH bvh = new BVH(bvhFileName);
+                seconds = seconds + bvh.getDurationSec();
+                counterFiles++;
+            }
+
+        }
+        Debug.Log("Total Seconds: "+ seconds+" of "+counterFiles+" files.");
+    }
+
+
+
     private void CreateFiles(string bvhfilename)
     {
-        string positionsFilePath = DatabaseDirectory+ "\\Clusters\\" + (lastFileID)+".p";
+        string positionsFilePath = DatabaseDirectory+ "\\Projections\\" + (lastFileID)+".p";
         string rotationsFilePath = DatabaseDirectory+ "\\Rotations\\" + (lastFileID);
         SaveProjectionsInFiles(bvhfilename, positionsFilePath, rotationsFilePath);
         //SaveONEProjectionInFiles(bvhfilename, positionsFilePath, rotationsFilePath);
@@ -59,7 +84,8 @@ public class Start_InstallProjections : MonoBehaviour {
         StreamWriter positionsStreamWriter = new StreamWriter(positionsFile);
         FileStream rotationsFile = new FileStream(rotationsFilePath, FileMode.Append, FileAccess.Write);
         StreamWriter rotationsStreamWriter = new StreamWriter(rotationsFile);
-
+        
+        // Scale the animation (same scaling as OpenPose).
         bvh.scale(getScaleFactor(bvh, order));
       
         for (int i = 0; i < bvh.frameCount; i++)
@@ -189,7 +215,6 @@ public class Start_InstallProjections : MonoBehaviour {
         BvhProjection newProjection = new BvhProjection(lastFileID, frame, angle, joints);
         newProjection.convertPositionsToRoot();
         newProjection.rotatePositions(angle);
-        //newProjection.convertPositionsToRoot(); // << This should be extra. Fix it.
 
         tupleStirng += lastFileID + " " + newProjection.frameNum + " " + newProjection.angle + " ";
         foreach (Vector3 joint in newProjection.joints)
@@ -205,12 +230,12 @@ public class Start_InstallProjections : MonoBehaviour {
 
     private void logLastID()
     {
-        System.IO.File.WriteAllText("Database\\log.txt", (lastFileID)+"");
+        System.IO.File.WriteAllText(DatabaseDirectory + "\\log.txt", (lastFileID)+"");
     }
 
     private int getFileCounterFromLogFile()
     {
-        using (TextReader reader = File.OpenText("Database\\log.txt"))
+        using (TextReader reader = File.OpenText(DatabaseDirectory+"\\log.txt"))
         {
             return int.Parse(reader.ReadLine());
         }
@@ -233,7 +258,13 @@ public class Start_InstallProjections : MonoBehaviour {
             joints[index] = new Vector3(matrix.m03, matrix.m13, matrix.m23);
         }
         BvhProjection newProjection = new BvhProjection(-1,-1, 0, joints);
-        return Scaling.getGlobalScaleFactorBVH(newProjection);
+
+        // Determine Scaling Method (No need to use previousFactor parameter because
+        // scaling factor is applied once in every animation).
+        if (scalingMethod == EnumScaleMethod.SCALE_LIMBS)
+            return Scaling.getGlobalScaleFactor_USING_LIMBS(newProjection.joints);
+        else
+            return Scaling.getGlobalScaleFactor_USING_HEIGHT(newProjection.joints);
     }
 
 

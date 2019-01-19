@@ -8,64 +8,50 @@ using Newtonsoft.Json;
 
 public class OpenPoseJSON {
 
-    public static int figuresCounterInJson = 0;         // Counter of figures in a json file.
-    //private static int KEYPOINTS_NUMBER = 14;         
-    public List<OPFrame> frames = new List<OPFrame>();  // List of Frames.
-    public List<Person> people = new List<Person>();    // List of people [THIS SHOULD BE OUR FINAL OBJECT].
+    private readonly List<OPFrame> frames;          // The reference of Video Frames.
 
-
-    /* Parse all frames from a video. Takes the directory as a parameter. */
-    public List<OPFrame> parseAllFiles(string path)
+    public OpenPoseJSON(List<OPFrame> Frames)
     {
-        /* Get the list of files in the directory. */
+        frames = Frames;    // Set the reference of Frames, so we can apply changes on that.
+                            // We keep track and store the frames of the video.
+    }
+
+    ///<summary>Parse all frames from a video.</summary>
+    ///<param name="path">The directory path of OpenPose JSON files.</param>
+    public List<OPFrame> ParseAllFiles(string path)
+    {
+        // Get the list of files in the directory.
+        int frameIndexCounter = 0;
         string[] fileEntries = Directory.GetFiles(path);
         foreach (string fileName in fileEntries)
         {
-            if(Path.GetExtension(fileName).CompareTo(".json")==0)
-                frames.Add(parsefile(fileName));
+            if (Path.GetExtension(fileName).CompareTo(".json") == 0)
+            {
+                frames.Add(Parsefile(fileName,frameIndexCounter));
+                frameIndexCounter++;
+            }
+                
         }
 
         Debug.Log("Reading OpenPose figures.. Done!");
         return frames;
     }
 
-    /* Parse just one frame. */
-    public OPFrame parsefile(string path)
+    ///<summary>Parse just one frame from a video.</summary>
+    ///<param name="path">The directory path of OpenPose JSON file.</param>
+    public OPFrame Parsefile(string path, int currentFrameIndex)
     {
-        /* Reset the people counter. */
-        figuresCounterInJson = 0;
-
-        /* Parse Json file and Create a Json Object with all info */
+        // Parse Json file and Create a Json Object with all info.
         JsonFileStruct jsonObj = JsonConvert.DeserializeObject<JsonFileStruct>(File.ReadAllText(@path));
-
-        /* Create the frame. */
         OPFrame frame = new OPFrame();
-
-        /* Iterate poses in json Object */
+        // Iterate poses in json Object : For each figure in the frame.
         foreach (Keypoints k in jsonObj.people)
         {
-            /* Initialise a pose */
-            OPPose pose = new OPPose(figuresCounterInJson);
+            // Initialise a pose, fill bodypositions, normalize data, identification : all done in contructor.
+            // Use last frames, to interpolate scaling.
+            OPPose pose = new OPPose(k, frames, currentFrameIndex);
             frame.figures.Add(pose);
-            // Fill person's bodypositions
-            pose.fillBodyPositions(k);
-            figuresCounterInJson++;
         }
-
-
-        // Calculations na ginoun panw sta people.
-
-        /* * * * * * * * DO THE CALCULATIONS ON PEOPLE. * * * *  * * */
-        /* Convert x,y positions ----> positions from root */
-        for(int i=0; i<frame.figures.Count; i++)
-        {
-            // Step 1: Might not be usefull.
-            frame.figures[i].convertPositionsToRoot();
-            // Step 2: Scaling is important.
-            frame.figures[i].scalePositions();
-        }
-        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
         return frame;
     }
 

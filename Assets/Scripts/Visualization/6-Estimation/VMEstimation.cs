@@ -95,7 +95,7 @@ public class VMEstimation : MonoBehaviour
             s += ChooseProjection + "/" + estimation.Length + "\n";
             s += "ClusterFile: " + chosen.projection.clusterID + "\n";
             s += "Angle: " + chosen.projection.angle + "\n";
-            s += "Distance: " + chosen.distance + "\n";
+            s += "2D-Distance: " + chosen.distance2D + "\n";
 
             textInfo.text = s;
         }

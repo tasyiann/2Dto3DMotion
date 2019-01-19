@@ -57,11 +57,11 @@ public class UserInput : MonoBehaviour {
         try
         {
             SavePreferences();
-            DataParsing.Calculate3D();
+            DataParsing.MainPipeline();
         }
         catch (Exception e)
         {
-            Debug.Log("Invalid path!");
+            Debug.Log(e.Message+"\n"+e.StackTrace);
             return;
         }
         UnityEngine.SceneManagement.SceneManager.LoadScene(7); // Estimation Scene

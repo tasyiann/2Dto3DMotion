@@ -18,6 +18,7 @@ public class Scenario  {
 
     public Scenario(string inputdir, int kNN, int mWindow, AlgorithmEstimation algEst, AlgorithmSetNeighbours algNN)
     {
+        frames = new List<OPFrame>();
         inputDir = inputdir;
         k = kNN;
         m = mWindow;

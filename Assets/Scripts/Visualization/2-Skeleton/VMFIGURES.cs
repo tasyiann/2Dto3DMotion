@@ -49,7 +49,8 @@ public class VMFIGURES : MonoBehaviour
      */
     private void OnPostRender()
     {
-        updateText();
+        // No need to show text.
+        // updateText();
         if (showGrid)
             gL.drawAxes(Color.gray);
 

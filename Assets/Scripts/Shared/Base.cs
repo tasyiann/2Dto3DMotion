@@ -8,15 +8,19 @@ using System.Globalization;
 /* Shared components between classes. */
 public static class Base {
 
+    // Variables
+    public static EnumScaleMethod ScaleMethod = EnumScaleMethod.SCALE_LIMBS;
     public static string Path = "Databases\\v1-18720";
     public static string Clustering = "500_clusters";
+    
+    // Data
     public static List<BvhProjection> base_representatives;          // All representatives.
     public static List<List<Rotations>> base_rotationFiles;          // All rotation files.
     public static List<List<BvhProjection>> base_clusters;           // All clusters.
     public static List<List<BvhProjection>> base_not_clustered;      // All projections not clustered.
 
-    public static int metadataInFile = 3;                                                           // Metadata in a tuple.
-    public static int jointsAmount = Enum.GetNames(typeof(EnumJoint)).Length;                       // Joints in a tuple.
+    public static int metadataInFile = 3;                                            // Metadata in a tuple.
+    public static int jointsAmount = Enum.GetNames(typeof(EnumJoint)).Length;        // Joints in a tuple.
 
     // Current scenario to be displayed.
     public static Scenario sc = null;
@@ -89,9 +93,10 @@ public static class Base {
         }
 
         fileEntries = list2.ToArray();
-        foreach (string s in fileEntries)
+        /* Debug selection of files:
+         * foreach (string s in fileEntries)
             Debug.Log(s);
-
+        */
         return list2.ToArray();
     }
 
@@ -127,7 +132,7 @@ public static class Base {
             }
             listClusters.Add(cluster);
         }
-        Debug.Log(">Clusters have been read.");
+        Debug.Log(">Clustered Projections have been read.");
         return listClusters;
     }
 
@@ -149,7 +154,7 @@ public static class Base {
             }
             listClusters.Add(cluster);
         }
-        Debug.Log(">Clusters have been read.");
+        Debug.Log(">Unclustered Projections have been read.");
         return listClusters;
     }
 
@@ -157,7 +162,6 @@ public static class Base {
     {
         List<List<Rotations>> listRotationsFiles = new List<List<Rotations>>();
         string dirname = Path + "\\Rotations\\";
-        Debug.Log(dirname);
         string[] fileEntries = sortFilesNumerically(Directory.GetFiles(dirname), dirname);
         foreach (string fileName in fileEntries)
         {

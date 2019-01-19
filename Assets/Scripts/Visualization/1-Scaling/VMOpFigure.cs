@@ -24,11 +24,24 @@ public class VMOpFigure : MonoBehaviour
     public int CurrentFrame = 0;        // Current frame to show.
     public bool showJSONPosition;       // True for showing the raw input.
     [Range(1f, 0.01f)]
-    public float JSONscale = 0.025f;    // Scaling the raw input.
+
+
+    public float JSONscale = 0.025f;            // Scaling the raw input.
+    private float scalingFactor_ACTUAL_USED;    // That was used in the algorithm.
+    private float scalingFactor_LIMBS;         
+    private float scalingFactor_HEIGHT;
+
+
     public Material Material;           // The material of GL visuals.
     public Text textInfo;               // The text to show the current frame.
     private GLDraw gL;                  // GL visuals.
     private List<OPFrame> frames;       // The frames of 2d motion. 
+
+
+    public Text Raw_text;               
+    public Text Scaled_text;            
+    public Text Limbs_text;             
+    public Text Height_text;            
 
     /**
      * Initialisation. 
@@ -53,22 +66,43 @@ public class VMOpFigure : MonoBehaviour
         if (frames[CurrentFrame].figures.Count > 0)
         {
             OPPose figure = frames[CurrentFrame].figures[0];
-            gL.drawFigure(true,Color.white, figure.joints, figure.available, new Vector3(newpos, 0, 0));
+            // NORMALIZED DATA
+            scalingFactor_ACTUAL_USED = figure.scaleFactor;
+            gL.drawFigure(true, Color.green, figure.joints, figure.available, new Vector3(newpos, 0, 0));
+            if (figure.available[(int)EnumJoint.Head] && (figure.available[(int)EnumJoint.RightFoot] || figure.available[(int)EnumJoint.LeftFoot]))
+                drawBoundings(Color.green, figure.joints[(int)EnumJoint.Head], figure.joints[(int)EnumJoint.RightFoot], figure.joints[(int)EnumJoint.LeftFoot], 1000);
+            newpos += 10;
+
+           
+            // SCALE_LIMBS
+            scalingFactor_LIMBS = Scaling.getGlobalScaleFactor_USING_LIMBS(figure.jointsRAW,figure.getPreviousScaleFactors(frames,CurrentFrame,OPPose.amountOfPreviousScalingFactors,figure.id));
+            gL.drawFigure(true,Color.white, figure.jointsRAW, figure.available, new Vector3(newpos, 0, 0),scalingFactor_LIMBS);
             if(figure.available[(int)EnumJoint.Head] && (figure.available[(int)EnumJoint.RightFoot] || figure.available[(int)EnumJoint.LeftFoot]))
-                drawBoundings(Color.white, figure.joints[(int)EnumJoint.Head], figure.joints[(int)EnumJoint.RightFoot], figure.joints[(int)EnumJoint.LeftFoot], 1000);
-            newpos += 300;
+                drawBoundings(Color.white, figure.jointsRAW[(int)EnumJoint.Head], figure.jointsRAW[(int)EnumJoint.RightFoot], figure.jointsRAW[(int)EnumJoint.LeftFoot], 1000, scalingFactor_LIMBS);
+            newpos += 10;
+
+
+            // SCALE_HEIGHT
+            scalingFactor_HEIGHT = Scaling.getGlobalScaleFactor_USING_HEIGHT(figure.jointsRAW, figure.getPreviousScaleFactors(frames, CurrentFrame, OPPose.amountOfPreviousScalingFactors, figure.id));
+            gL.drawFigure(true, Color.yellow, figure.jointsRAW, figure.available, new Vector3(newpos, 0, 0), scalingFactor_HEIGHT);
+            if (figure.available[(int)EnumJoint.Head] && (figure.available[(int)EnumJoint.RightFoot] || figure.available[(int)EnumJoint.LeftFoot]))
+                drawBoundings(Color.yellow, figure.jointsRAW[(int)EnumJoint.Head], figure.jointsRAW[(int)EnumJoint.RightFoot], figure.jointsRAW[(int)EnumJoint.LeftFoot], 1000, scalingFactor_HEIGHT);
+            newpos += 10;
+
+
+            // JSON POSITION
             if (showJSONPosition)
             {
                 gL.drawFigure(true,Color.red, figure.jointsRAW, figure.available, new Vector3(newpos, 0, 0), JSONscale);
                 if (figure.available[(int)EnumJoint.Head] && (figure.available[(int)EnumJoint.RightFoot] || figure.available[(int)EnumJoint.LeftFoot]))
-                    drawBoundings(Color.red, figure.jointsRAW[(int)EnumJoint.Head],figure.jointsRAW[(int)EnumJoint.RightFoot], figure.jointsRAW[(int)EnumJoint.LeftFoot], 1000, JSONscale, newpos);
+                    drawBoundings(Color.red, figure.jointsRAW[(int)EnumJoint.Head],figure.jointsRAW[(int)EnumJoint.RightFoot], figure.jointsRAW[(int)EnumJoint.LeftFoot], 1000, JSONscale);
             }
-
+            updateScalingFactors();
         }
 
     }
 
-    private void drawBoundings(Color color, Vector3 head, Vector3 rightFoot, Vector3 leftFoot, float length, float scaling=1, float translation=1)
+    private void drawBoundings(Color color, Vector3 head, Vector3 rightFoot, Vector3 leftFoot, float length, float scaling=1f)
     {
         gL.drawHorizontalLine(color, (head*scaling).y, length);
         gL.drawHorizontalLine(color, minNum((rightFoot*scaling).y, (leftFoot * scaling).y), length);
@@ -81,7 +115,7 @@ public class VMOpFigure : MonoBehaviour
 
     /**
 * Updates the text that shows the current frame of the visual. */
-    private void updateText()
+    private void updateInfo()
     {
         string s = "";
         if (frames != null)
@@ -102,6 +136,14 @@ public class VMOpFigure : MonoBehaviour
         }
     }
 
+
+    private void updateScalingFactors()
+    {
+        Raw_text.text = "Raw Figure scaled by " + JSONscale +" just to fit in frame.";
+        Scaled_text.text = "Figure scaled by " + scalingFactor_ACTUAL_USED + " using "+Base.ScaleMethod.ToString();
+        Limbs_text.text = "Scaling method using LIMBS: " + scalingFactor_LIMBS;
+        Height_text.text = "SCaling method using HEIGHT: "+ scalingFactor_HEIGHT+ " with fixed height = "+Scaling.scalingHeightFixed;
+    }
 
     /**
      * Move between frames.
@@ -165,5 +207,6 @@ public class VMOpFigure : MonoBehaviour
         videoPlayer.url = url + "\\video.mp4";
         videoPlayer.Pause();
     }
+
 
 }

@@ -4,63 +4,80 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 
 
 public class DataParsing {
 
-    private static Scenario sc = Base.sc;
-    private static List<List<BvhProjection>> base_clusters = Base.base_clusters;
-    private static List<BvhProjection> base_representatives = Base.base_representatives;
-    private static List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;
+    private static Scenario sc = Base.sc;                                                   // Scenario to be saved.
+    private static List<List<BvhProjection>> base_clusters = Base.base_clusters;            // Clustered projections.
+    private static List<BvhProjection> base_representatives = Base.base_representatives;    // Representatives.
+    private static List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;      // Rotations.
 
-    public static Neighbour[] estimation;      // Temporary for debugs. (review this comment please.)
-    private static float kNNAlgorithmTime;
-    private static float EstimationAlgorithmTime;
-    private static List<OPFrame> frames;
+    public static Neighbour[] estimation;             // Estimation to Debug. We will not debug all figures at the same time.
+    private static float kNNAlgorithmTime;            // Execution time of k-BM Algorithm.
+    private static float EstimationAlgorithmTime;     // Execution time of Best 3D Algorithm.
+    private static List<OPFrame> frames = sc.frames;  // 
 
-    public static void Calculate3D()
+    /// <summary> The pipeline of estimating the 3D of OpenPose Output.</summary>
+    public static void MainPipeline()
     {
-        // Read the OpenPose output (JSON files).
-        OpenPoseJSON parser = new OpenPoseJSON();
-        frames = parser.parseAllFiles(sc.inputDir);
-        sc.SetFrames(frames);
-
-
-
-        Debug.Log("Frames (from OpenPose JSON) have been set.");
-
-        try
+        bool OFFLINE = true;
+        if (OFFLINE)
         {
-            // Execute the algorithms for person [0].
+            // ATTENTION. ATTENTION. THE FOLLOWING CODE IS A MOCK OF HOW TO
+            // PROCEED IN REAL-TIME. OFFLINE IS EASY, BUT HOW CAN WE PROCEED THE
+            // STEPS IN REAL-TIME?
 
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            generateNeighbours();
-            watch.Stop();
-            kNNAlgorithmTime = watch.ElapsedMilliseconds;
-
-            var watch2 = System.Diagnostics.Stopwatch.StartNew();
-            generateEstimations();
-            watch2.Stop();
-            EstimationAlgorithmTime = watch2.ElapsedMilliseconds;
-        
-            // Save the estimation as an array in a variable, so it can be used from other scripts.
-            estimation = getEstimationArray();
+            Debug.Log("Entering OFFLINE mode.");
+            // Read next frame OpenPose output (JSON files)
+            int frameCounter = 0;
+            OpenPoseJSON parser = new OpenPoseJSON(frames);
+            string[] fileEntries = Directory.GetFiles(sc.inputDir);
+            foreach (string fileName in fileEntries)
+            {
+                if (Path.GetExtension(fileName).CompareTo(".json") == 0)
+                {
+                    OPFrame currFrame = parser.Parsefile(fileName, frameCounter);
+                    frames.Add(currFrame);
+                    // For each figure in the frame, calculate its 3D:
+                    foreach(OPPose currFigure in currFrame.figures)
+                    {
+                        // STEP_A: Find k-BM.
+                        sc.algNeighbours.SetNeighbours(currFigure, sc.k, base_clusters, base_representatives);
+                        // STEP_B: Find Best 3D.
+                        OPPose prevFigure = null;
+                        if (frameCounter != 0)
+                        {
+                            // Get access to the previous frame figure with the same ID. How? Figure it out!
+                            // << Attention. It might be null (not existed in prev frame).
+                            // I Need to handle this.
+                            prevFigure = frames[frameCounter - 1].figures[currFigure.id];
+                        }
+                        currFigure.selectedN = sc.algEstimation.GetEstimation(prevFigure, currFigure, sc.m, base_rotationFiles);
+                        // Offline implementation is done. But with real-time, we need to display each frame.
+                        // So, we need somehow to render the current 3D on screen. (On every input from pipes).
+                    }
+                    frameCounter++;
+                }
+            }
         }
-        catch (Exception e)
+        else
         {
-            Debug.Log("Error. Couldn't execute algorithms: "+sc.algNeighbours+" "+ sc.algEstimation);
-            throw e;
-            
+            // REAL-TIME implementation will be done later on.
         }
+        // Iterate frames, and create a list of the 3D estimation frames, for each figure appeared in video.
+        estimation = getEstimationArray(0);
+        Debug.Log("Estimation Done.");
         // Set log
         setLog();
         // Save the scenario.
         sc.Save();
-        Debug.Log("Done.");
+        Debug.Log("Saving Done.");
     }
+
+
 
     public static void setLog()
     {
@@ -73,56 +90,19 @@ public class DataParsing {
         sc.log.estimationAlgorithmTime = EstimationAlgorithmTime;
     }
 
-    public static void CalculateEstimation()
-    {
-        // Save the estimation as an array in a variable, so it can be used from other scripts.
-        estimation = getEstimationArray();
-    }
-
-    private static void generateNeighbours()
-    {
-        foreach (OPFrame frame in sc.frames)
-        {
-            // Case 1: None figures found in this frame.
-            if (frame.figures.Count == 0)
-                continue;
-            // Case 2: Figure exists. Use only the figure[0]
-            sc.algNeighbours.SetNeighbours(frame.figures[0], sc.k, base_clusters, base_representatives);
-        }
-    }
 
 
-
-    private static void generateEstimations()
-    {
-        OPPose previous = null;
-        for (int i = 0; i < sc.frames.Count; i++)
-        {
-            // Case 1: None figures found in this frame.
-            if (sc.frames[i].figures.Count == 0)
-            {
-                previous = null;
-                continue;
-            }
-            // Case 2: Figure exists. Use only the figure[0]
-            sc.frames[i].figures[0].selectedN = sc.algEstimation.GetEstimation(previous, sc.frames[i].figures[0], sc.m, base_rotationFiles);
-            previous = sc.frames[i].figures[0];
-        }
-    }
-
-
-
-    private static Neighbour[] getEstimationArray()
+    private static Neighbour[] getEstimationArray(int person_index)
     {
         List<Neighbour> result = new List<Neighbour>();
-        // Make sure scenario is the updated one from Base.
-        sc = Base.sc;
-        foreach (OPFrame frame in sc.frames) // <<<<<<<
+        // Make sure scenario is the updated one from Base. <<< Why?
+        foreach(OPFrame frame in frames)
         {
-            if (frame.figures.Count == 0)
+            // CHECK IF THIS ID EXIST IN THE FRAME! fIND A waY tO do ThaT
+            if (frame.figures[person_index] == null)
                 result.Add(null);
             else
-                result.Add(frame.figures[0].selectedN);
+                result.Add(frame.figures[person_index].selectedN);
         }
         return result.ToArray();
     }

@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using Winterdust;
 public class DisplayDatabaseBvh : MonoBehaviour {
 
+    private string dirName = Base.Path + "\\BvhFiles\\";
     private string info = "";
     public Text text;
 
@@ -18,7 +19,7 @@ public class DisplayDatabaseBvh : MonoBehaviour {
 
     void loadBvhFiles()
     {
-        string dirName = "Database_30\\BvhFiles\\";
+
         string[] fileEntries = Directory.GetFiles(dirName);
         int framesCount = 0;
         double timeCount = 0;

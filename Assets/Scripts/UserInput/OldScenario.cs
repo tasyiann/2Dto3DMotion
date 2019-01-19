@@ -37,8 +37,8 @@ public class OldScenario : MonoBehaviour {
         {
             Debug.Log("Hello");
         }
-
-        DataParsing.CalculateEstimation();
+        // TODO::
+        //DataParsing.CalculateEstimation();
         UnityEngine.SceneManagement.SceneManager.LoadScene(7); // Estimation Scene
     }
 

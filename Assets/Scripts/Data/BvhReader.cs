@@ -108,7 +108,7 @@ public class BvhReader
             joints[index] = new Vector3(matrix.m03, matrix.m13, matrix.m23);
         }
         BvhProjection newProjection = new BvhProjection(-1,-1, 0, joints);
-        return Scaling.getGlobalScaleFactorBVH(newProjection);
+        return Scaling.getGlobalScaleFactor_USING_LIMBS(newProjection.joints);
     }
 
 

@@ -32,7 +32,7 @@ public class GLDraw {
     }
 
 
-    public void drawFigure(bool direction,Color color, Vector3[] joints, bool[] available, Vector3 offset, float scaling = 1, float rotateAngle = 0)
+    public void drawFigure(bool direction,Color color, Vector3[] joints, bool[] available, Vector3 offset, float scaling = 1f)
     {
         GL.Begin(GL.LINES);
         material.SetPass(0);
@@ -46,15 +46,15 @@ public class GLDraw {
                 if (direction && (i==2 || i==3 || i==8 || i==9))
                     GL.Color(Color.magenta);
 
-                GL.Vertex( Quaternion.Euler(0, rotateAngle, 0) * (joints[jointPairs[i, 0]] + offset) * scaling );
-                GL.Vertex( Quaternion.Euler(0, rotateAngle, 0) * (joints[jointPairs[i, 1]] + offset) * scaling);
+                GL.Vertex(   (joints[jointPairs[i, 0]]*scaling + offset)  );
+                GL.Vertex(   (joints[jointPairs[i, 1]]*scaling + offset)  );
                 GL.Color(color);
             }
         }
         GL.End();
     }
 
-    public void drawFigureDebug(bool direction, Color color, Vector3[] joints, bool[] available, Vector3 offset, float scaling = 1, float rotateAngle = 0)
+    public void drawFigureDebug(bool direction, Color color, Vector3[] joints, bool[] available, Vector3 offset, float scaling = 1f)
     {
         GL.Begin(GL.LINES);
         material.SetPass(0);
@@ -75,8 +75,8 @@ public class GLDraw {
                 //    GL.Color(Color.yellow);
 
 
-                GL.Vertex(Quaternion.Euler(0, rotateAngle, 0) * (joints[jointPairs[i, 0]] + offset) * scaling);
-                GL.Vertex(Quaternion.Euler(0, rotateAngle, 0) * (joints[jointPairs[i, 1]] + offset) * scaling);
+                GL.Vertex( (joints[jointPairs[i, 0]]*scaling + offset) );
+                GL.Vertex( (joints[jointPairs[i, 1]]*scaling + offset) );
                 GL.Color(color);
             }
         }

@@ -210,8 +210,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ae2fdf7bccf77044ba16e3e3ecace56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BvhFilesDirectory: Database\\BvhFiles
-  DatabaseDirectory: Database
+  BvhFilesDirectory: Big-Database-smaller\\bvh
+  DatabaseDirectory: Big-Database-smaller
   Degrees: 12
 --- !u!1 &1926758031
 GameObject:
