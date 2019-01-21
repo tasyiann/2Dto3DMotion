@@ -42,11 +42,9 @@ sysinfo.txt
 #bvh files
 #*.bvh
 
-#Matlab heavy files
-*.mat
 
 #Scenarios
 Scenarios/
 
 #Database
-Databases/
+Databases/v1-18720_Faulty
