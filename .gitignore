@@ -50,18 +50,10 @@ Scenarios/
 Databases/v1-18720_Faulty
 
 #OpenPose - models
-<<<<<<< HEAD
-Assets\StreamingAssets\models\pose\body_25\pose_iter_584000.caffemodel
-Assets\StreamingAssets\models\pose\body_25\pose_iter_440000.caffemodel
-Assets\StreamingAssets\models\pose\body_25\pose_iter_160000.caffemodel
-Assets\StreamingAssets\models\hand\pose_iter_102000.caffemodel
-Assets\StreamingAssets\models\face\pose_iter_116000.caffemodel
-Assets\StreamingAssets\models\pose\coco\pose_iter_440000.caffemodel
-Assets\StreamingAssets\models\pose\mpi\pose_iter_160000.caffemodel
-=======
 Assets/StreamingAssets/models/pose/body_25/pose_iter_584000.caffemodel
 Assets/StreamingAssets/models/pose/body_25/pose_iter_440000.caffemodel
 Assets/StreamingAssets/models/pose/body_25/pose_iter_160000.caffemodel
 Assets/StreamingAssets/models/hand/pose_iter_102000.caffemodel
 Assets/StreamingAssets/models/face/pose_iter_116000.caffemodel
->>>>>>> 2e4a7743135630814a9aff1d7452aeb95216381c
+Assets/StreamingAssets/models/pose/coco/pose_iter_440000.caffemodel
+Assets/StreamingAssets/models/pose/mpi/pose_iter_160000.caffemodel
