@@ -26,17 +26,6 @@ public class BvhProjection {
 
     
 
-    public string[] getJointsToString()
-    {
-        string[] s = new string[joints.Length];
-        for(int i=0; i<s.Length; i++)
-        {
-            s[i] = joints[i].ToString();
-        }
-        return s;
-    }
-
-
 
     /* Repositioning according to root. << IS THIS CORRECT?? */
     public void convertPositionsToRoot()
@@ -111,7 +100,17 @@ public class BvhProjection {
         return sum;
     }
 
-
+    public string jointsToString()
+    {
+        string s = "";
+        Vector3[] jointsToDisplay;
+        jointsToDisplay = joints;
+        foreach (Vector3 v in jointsToDisplay)
+        {
+            s += v.x + " " + v.y + " " + v.z + "\n";
+        }
+        return s;
+    }
 
 }
 

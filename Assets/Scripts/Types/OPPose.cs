@@ -13,7 +13,7 @@ public class OPPose
     private static readonly float threshold_Figures_Differ = 10;           // Threshold : maximum distance between 2 figures of same ID.
     private static int id_counter = -1;                                    // Increase counter when new figure appears in video.
 
-    private static int KEYPOINTS_NUMBER = Base.jointsAmount;
+    public static int KEYPOINTS_NUMBER = Base.jointsAmount;
     public Vector3[] joints;                        // All joints after being processed.
     public Vector3[] jointsRAW;                     // All joints raw from json. 
     public bool[] available;                        // Is the joint[] available.
@@ -40,7 +40,24 @@ public class OPPose
         scaleFactor = scalePositions(getPreviousScaleFactors(frames, currFrameIndex, amountOfPreviousScalingFactors, id));
     }
 
-
+    public OPPose(Vector3[] joints_input, bool[] available_input,  List<OPFrame> frames = null, int currFrameIndex = 0)
+    {
+        // Initialisation
+        joints = new Vector3[KEYPOINTS_NUMBER];
+        jointsRAW = new Vector3[KEYPOINTS_NUMBER];
+        available = new bool[KEYPOINTS_NUMBER];
+        Array.Copy(joints_input, joints,joints_input.Length);
+        Array.Copy(joints_input, jointsRAW, joints_input.Length);
+        Array.Copy(available_input, available, available_input.Length);
+        scaleFactor = 0;
+        neighbours = new List<Neighbour>();
+        selectedN = null;
+        id = 0; // << SET FIGURE ID TO ZERO FOR ALL
+                // There is a problem because Openpose is asychronous
+        // Normalize data
+        convertPositionsToRoot(true);
+        scaleFactor = scalePositions(getPreviousScaleFactors(frames, currFrameIndex, amountOfPreviousScalingFactors, id));
+    }
 
 
     // To identification na ginetai joint to joint 2D eucledian? 
@@ -138,7 +155,7 @@ public class OPPose
 
 
     /* Convert Position from image positions to positions from root. */
-    private void convertPositionsToRoot()
+    private void convertPositionsToRoot(bool flipImage=false)
     {
         /* Joint - Root */
         Vector3 rootRAW = (jointsRAW[8] + jointsRAW[11]) / 2;
@@ -149,6 +166,11 @@ public class OPPose
             else
             {
                 joints[i] = jointsRAW[i] - rootRAW;
+
+                if (flipImage)
+                {
+                    joints[i] = -joints[i];
+                }
                 jointsRAW[i] = joints[i]; // Translate also the RAW joints.
             }
                 
@@ -180,15 +202,45 @@ public class OPPose
     public float[] getPreviousScaleFactors(List<OPFrame> frames, int currentFrameIndex, int amountOfPreviousFrames, int figureID)
     {
         List<float> previousScalingFactors = new List<float>();
+        // The first frame does not have any previous scale factors, or there arent any figures in prev frame
+        if (currentFrameIndex == 0 || frames[currentFrameIndex-1].figures.Count==0)
+            return previousScalingFactors.ToArray();
+
         int counter = 0;
         for (int i = currentFrameIndex-1; i >= 0 && counter < amountOfPreviousFrames; i--)
         {
-            previousScalingFactors.Add(frames[i].figures[figureID].scaleFactor);
-            counter++;
+            try
+            {
+                previousScalingFactors.Add(frames[i].figures[figureID].scaleFactor);
+                counter++;
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                Debug.Log(e.Message+"\nError in getPreviousScalingFactors:\n"+
+                    "The index of frames is:"+i+"\nBut the frames length is:"+frames.Count+
+                    (frames.Count<=i?"\nframes Index is out of range!\n":"")+
+                    (frames.Count > i?("\nThe index of figures is:"+figureID+ 
+                     (frames[i].figures != null?("\nBut the length of figures is:" +frames[i].figures.Count):("figures in frame "+i+" is null!!"))):"")+
+                    "\n\nStack Trace:\n"+e.StackTrace);
+            }
+
         }
         return previousScalingFactors.ToArray();
     }
 
     
-
+    public string jointsToString(bool isRaw)
+    {
+        string s = "";
+        Vector3[] j;
+        if (isRaw)
+            j = jointsRAW;
+        else
+            j= joints; 
+        for(int i=0; i<j.Length; i++)
+        {
+            s += j[i].x + " " + j[i].y + " " + j[i].z + (available[i]==true?"":" N\\A") + "\n";
+        }
+        return s;
+    }
 }

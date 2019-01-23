@@ -52,12 +52,12 @@ public class UserInput : MonoBehaviour {
         textUrl.text = url;
     }
 
-    public void GO()
+    public void GO_OFFLINE()
     {
         try
         {
             SavePreferences();
-            DataParsing.MainPipeline();
+            DataParsing.OFFLINE_Pipeline();
         }
         catch (Exception e)
         {
@@ -66,6 +66,22 @@ public class UserInput : MonoBehaviour {
         }
         UnityEngine.SceneManagement.SceneManager.LoadScene(7); // Estimation Scene
     }
+
+    public void GO_REALTIME()
+    {
+        try
+        {
+            SavePreferences();
+            DataParsing.REALTIME_Pipeline();
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.Message + "\n" + e.StackTrace);
+            return;
+        }
+        UnityEngine.SceneManagement.SceneManager.LoadScene(12); // Estimation Scene
+    }
+
 
     private void SavePreferences()
     {

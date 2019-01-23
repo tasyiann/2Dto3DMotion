@@ -21,11 +21,9 @@ public class DataParsing {
     private static List<OPFrame> frames = sc.frames;  // 
 
     /// <summary> The pipeline of estimating the 3D of OpenPose Output.</summary>
-    public static void MainPipeline()
+    public static void OFFLINE_Pipeline()
     {
-        bool OFFLINE = true;
-        if (OFFLINE)
-        {
+       
             // ATTENTION. ATTENTION. THE FOLLOWING CODE IS A MOCK OF HOW TO
             // PROCEED IN REAL-TIME. OFFLINE IS EASY, BUT HOW CAN WE PROCEED THE
             // STEPS IN REAL-TIME?
@@ -62,11 +60,6 @@ public class DataParsing {
                     frameCounter++;
                 }
             }
-        }
-        else
-        {
-            // REAL-TIME implementation will be done later on.
-        }
         // Iterate frames, and create a list of the 3D estimation frames, for each figure appeared in video.
         estimation = getEstimationArray(0);
         Debug.Log("Estimation Done.");
@@ -77,6 +70,11 @@ public class DataParsing {
         Debug.Log("Saving Done.");
     }
 
+
+    public static void REALTIME_Pipeline()
+    {
+
+    }
 
 
     public static void setLog()
