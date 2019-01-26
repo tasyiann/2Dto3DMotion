@@ -169,7 +169,7 @@ public class OPPose
 
                 if (flipImage)
                 {
-                    joints[i] = -joints[i];
+                    joints[i].y = -joints[i].y;
                 }
                 jointsRAW[i] = joints[i]; // Translate also the RAW joints.
             }

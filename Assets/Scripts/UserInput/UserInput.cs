@@ -72,7 +72,6 @@ public class UserInput : MonoBehaviour {
         try
         {
             SavePreferences();
-            DataParsing.REALTIME_Pipeline();
         }
         catch (Exception e)
         {

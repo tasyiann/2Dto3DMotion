@@ -36,7 +36,7 @@ public class VMOpFigure : MonoBehaviour
     public Text textInfo;               // The text to show the current frame.
     private GLDraw gL;                  // GL visuals.
     private List<OPFrame> frames;       // The frames of 2d motion. 
-
+    private OPPose figure;
 
     public Text Raw_text;               
     public Text Scaled_text;            
@@ -53,6 +53,7 @@ public class VMOpFigure : MonoBehaviour
         setVideoPlayer();
     }
 
+
     /**
      * GL lines are applied on the camera. We use them to represent our figures.
      */
@@ -62,10 +63,6 @@ public class VMOpFigure : MonoBehaviour
 
         float newpos = 0;
 
-        // Draw figure[0] at current frame.
-        if (frames[CurrentFrame].figures.Count > 0)
-        {
-            OPPose figure = frames[CurrentFrame].figures[0];
             // NORMALIZED DATA
             scalingFactor_ACTUAL_USED = figure.scaleFactor;
             gL.drawFigure(true, Color.green, figure.joints, figure.available, new Vector3(newpos, 0, 0));
@@ -98,8 +95,7 @@ public class VMOpFigure : MonoBehaviour
                     drawBoundings(Color.red, figure.jointsRAW[(int)EnumJoint.Head],figure.jointsRAW[(int)EnumJoint.RightFoot], figure.jointsRAW[(int)EnumJoint.LeftFoot], 1000, JSONscale);
             }
             updateScalingFactors();
-        }
-
+        
     }
 
     private void drawBoundings(Color color, Vector3 head, Vector3 rightFoot, Vector3 leftFoot, float length, float scaling=1f)
@@ -150,7 +146,6 @@ public class VMOpFigure : MonoBehaviour
      */
     void Update()
     {
-        Vector3 pos = transform.position;
         if (Input.GetKey("w"))
         {
             CurrentFrame++;
@@ -165,6 +160,11 @@ public class VMOpFigure : MonoBehaviour
         }
         /* Show video on Current frame. */
         videoPlayer.frame = CurrentFrame; // <<<<<
+
+        if (frames[CurrentFrame].figures.Count > 0)
+        {
+            figure = frames[CurrentFrame].figures[0];
+        }
     }
 
 

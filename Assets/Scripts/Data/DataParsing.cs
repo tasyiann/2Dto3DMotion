@@ -8,7 +8,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 
 
-public class DataParsing {
+public class DataParsing
+{
 
     private static Scenario sc = Base.sc;                                                   // Scenario to be saved.
     private static List<List<BvhProjection>> base_clusters = Base.base_clusters;            // Clustered projections.
@@ -23,43 +24,38 @@ public class DataParsing {
     /// <summary> The pipeline of estimating the 3D of OpenPose Output.</summary>
     public static void OFFLINE_Pipeline()
     {
-       
-            // ATTENTION. ATTENTION. THE FOLLOWING CODE IS A MOCK OF HOW TO
-            // PROCEED IN REAL-TIME. OFFLINE IS EASY, BUT HOW CAN WE PROCEED THE
-            // STEPS IN REAL-TIME?
-
-            Debug.Log("Entering OFFLINE mode.");
-            // Read next frame OpenPose output (JSON files)
-            int frameCounter = 0;
-            OpenPoseJSON parser = new OpenPoseJSON(frames);
-            string[] fileEntries = Directory.GetFiles(sc.inputDir);
-            foreach (string fileName in fileEntries)
+        Debug.Log("Entering OFFLINE mode.");
+        // Read next frame OpenPose output (JSON files)
+        int frameCounter = 0;
+        OpenPoseJSON parser = new OpenPoseJSON(frames);
+        string[] fileEntries = Directory.GetFiles(sc.inputDir);
+        foreach (string fileName in fileEntries)
+        {
+            if (Path.GetExtension(fileName).CompareTo(".json") == 0)
             {
-                if (Path.GetExtension(fileName).CompareTo(".json") == 0)
+                OPFrame currFrame = parser.Parsefile(fileName, frameCounter);
+                frames.Add(currFrame);
+                // For each figure in the frame, calculate its 3D:
+                foreach (OPPose currFigure in currFrame.figures)
                 {
-                    OPFrame currFrame = parser.Parsefile(fileName, frameCounter);
-                    frames.Add(currFrame);
-                    // For each figure in the frame, calculate its 3D:
-                    foreach(OPPose currFigure in currFrame.figures)
+                    // STEP_A: Find k-BM.
+                    sc.algNeighbours.SetNeighbours(currFigure, sc.k, base_clusters, base_representatives);
+                    // STEP_B: Find Best 3D.
+                    OPPose prevFigure = null;
+                    if (frameCounter != 0)
                     {
-                        // STEP_A: Find k-BM.
-                        sc.algNeighbours.SetNeighbours(currFigure, sc.k, base_clusters, base_representatives);
-                        // STEP_B: Find Best 3D.
-                        OPPose prevFigure = null;
-                        if (frameCounter != 0)
-                        {
-                            // Get access to the previous frame figure with the same ID. How? Figure it out!
-                            // << Attention. It might be null (not existed in prev frame).
-                            // I Need to handle this.
-                            prevFigure = frames[frameCounter - 1].figures[currFigure.id];
-                        }
-                        currFigure.selectedN = sc.algEstimation.GetEstimation(prevFigure, currFigure, sc.m, base_rotationFiles);
-                        // Offline implementation is done. But with real-time, we need to display each frame.
-                        // So, we need somehow to render the current 3D on screen. (On every input from pipes).
+                        // Get access to the previous frame figure with the same ID. How? Figure it out!
+                        // << Attention. It might be null (not existed in prev frame).
+                        // I Need to handle this.
+                        prevFigure = frames[frameCounter - 1].figures[currFigure.id];
                     }
-                    frameCounter++;
+                    currFigure.selectedN = sc.algEstimation.GetEstimation(prevFigure, currFigure, sc.m, base_rotationFiles);
+                    // Offline implementation is done. But with real-time, we need to display each frame.
+                    // So, we need somehow to render the current 3D on screen. (On every input from pipes).
                 }
+                frameCounter++;
             }
+        }
         // Iterate frames, and create a list of the 3D estimation frames, for each figure appeared in video.
         estimation = getEstimationArray(0);
         Debug.Log("Estimation Done.");
@@ -70,11 +66,6 @@ public class DataParsing {
         Debug.Log("Saving Done.");
     }
 
-
-    public static void REALTIME_Pipeline()
-    {
-
-    }
 
 
     public static void setLog()
@@ -94,7 +85,7 @@ public class DataParsing {
     {
         List<Neighbour> result = new List<Neighbour>();
         // Make sure scenario is the updated one from Base. <<< Why?
-        foreach(OPFrame frame in frames)
+        foreach (OPFrame frame in frames)
         {
             // CHECK IF THIS ID EXIST IN THE FRAME! fIND A waY tO do ThaT
             if (frame.figures[person_index] == null)

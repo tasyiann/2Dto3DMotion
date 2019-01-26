@@ -21,13 +21,13 @@ public class GLDraw {
         material = mat;
     }
 
-    public void drawHorizontalLine(Color color, float y, float length)
+    public void drawHorizontalLine(Color color, float y, float length, float x=0)
     {
         GL.Begin(GL.LINES);
         material.SetPass(0);
         GL.Color(color);
-        GL.Vertex(new Vector3(-length/2,y));
-        GL.Vertex(new Vector3(length/2, y));
+        GL.Vertex(new Vector3(-length/2+x,y));
+        GL.Vertex(new Vector3(length/2+x, y));
         GL.End();
     }
 
