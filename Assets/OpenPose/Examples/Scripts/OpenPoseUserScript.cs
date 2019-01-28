@@ -179,12 +179,17 @@ namespace OpenPose.Example {
         private static int currentframeIndex = 0;
         // HERE
         // This fuction is made by me
-        private Vector3[] setFigure(ref OPDatum datum, int bodyIndex, float scoreThres, OPFrame frame)
+        private Vector3[] setFigure(ref OPDatum datum, int personID, float scoreThres, OPFrame frame)
         {
-            if (datum.poseKeypoints == null || bodyIndex >= datum.poseKeypoints.GetSize(0))
+            if (datum.poseKeypoints == null || personID >= datum.poseKeypoints.GetSize(0))
             {
                 return null;
             }
+
+            // Identification TODO::::
+            long id = datum.poseIds.Get(personID);
+            Debug.Log("The id is:"+id);
+
 
             // Pose
             Vector3[] joints = new Vector3[OPPose.KEYPOINTS_NUMBER];
@@ -192,7 +197,7 @@ namespace OpenPose.Example {
             for (int i = 0; i < joints.Length; i++)
             {
                 // Compare score
-                if (datum.poseKeypoints.Get(bodyIndex, i, 2) <= scoreThres)
+                if (datum.poseKeypoints.Get(personID, i, 2) <= scoreThres)
                 {
                     available[i] = false;
                 }
@@ -201,7 +206,7 @@ namespace OpenPose.Example {
                     // Save new positions
                     available[i] = true; 
                     // people x bodyparts x (x,y,score)
-                    joints[i] = new Vector3(datum.poseKeypoints.Get(bodyIndex, i, 0), datum.poseKeypoints.Get(bodyIndex, i, 1), 0f);
+                    joints[i] = new Vector3(datum.poseKeypoints.Get(personID, i, 0), datum.poseKeypoints.Get(personID, i, 1), 0f);
                 }
             }
             // SET NEW FIGURE!
@@ -243,7 +248,8 @@ namespace OpenPose.Example {
 
 
                 // Visualize 3D
-                Vector3[] estimation = setFigure(ref datum, 0, renderThreshold, currframe);
+                int personID = 0;
+                Vector3[] estimation = setFigure(ref datum, personID, renderThreshold, currframe);
                 estimation_to_debug = estimation;
                 if (estimation != null)
                 {
