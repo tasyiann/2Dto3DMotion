@@ -20,6 +20,7 @@ public class BvhOutput : MonoBehaviour {
         initialiseBVH(Base.base_CurrentDir);        // Initialise BVH instance.
         position = t_camera.position;               // Set the position of bvh.
         skeleton.transform.position = new Vector3(position.x, position.y, position.z+35f);     // Translate the skeleton, so it is visible from camera.
+        Debug.Log("Bvh length:" + bvh.frameCount);
 	}
 
     private void Update()

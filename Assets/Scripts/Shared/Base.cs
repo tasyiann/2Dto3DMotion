@@ -10,9 +10,10 @@ public static class Base {
 
     // Variables
     public static EnumScaleMethod ScaleMethod = EnumScaleMethod.SCALE_LIMBS;
-    public static string Path = "Databases\\v1-18720";//"Databases\\6of8";
-    public static string Clustering = "500_clusters";
-    
+    public static string Path = "Databases\\Big-Database"; 
+    public static string Clustering = "500-clusters";
+    public static int numClustersToSearch = 20;
+
     // Data
     public static List<BvhProjection> base_representatives;          // All representatives.
     public static List<List<Rotations>> base_rotationFiles;          // All rotation files.

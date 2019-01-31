@@ -8,13 +8,13 @@ using System.Text;
 [System.Serializable()]
 public class JBJEuclideanComparison : AlgorithmSetNeighbours{
 
-    private static int amountOfClustersToSeach = 10;
+    private static int amountOfClustersToSearch = Base.numClustersToSearch;
 
     public override void SetNeighbours(OPPose opPose, int k, List<List<BvhProjection>> clusters, List<BvhProjection> representatives)
     {
         SortedList<float,Neighbour> sortedList = new SortedList<float,Neighbour>();
         // Find the nearest clusters to search.
-        IList<int> nearestClusters = nearestClustersToSearch(opPose, representatives, amountOfClustersToSeach);
+        IList<int> nearestClusters = nearestClustersToSearch(opPose, representatives, amountOfClustersToSearch);
         int nearestNeighboursCounter = 0;
         // For each near cluster, search the projections!
         foreach (int clusterId in nearestClusters)

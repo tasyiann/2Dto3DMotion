@@ -16,7 +16,6 @@ public class VMEstimation : MonoBehaviour
     private UnityEngine.Video.VideoPlayer videoPlayer;
     public Transform model;
     private Model3D m3d;
-    private float frame;
 
     public float Speed=5;
     public bool automatic;
@@ -39,10 +38,9 @@ public class VMEstimation : MonoBehaviour
     List<OPFrame> frames;
   
     public Text textInfo;
-    bool rendered = false;
 
     private int currentFrame;
-
+    private int framesLength;
     private GLDraw gL;
 
     private void Start()
@@ -53,6 +51,8 @@ public class VMEstimation : MonoBehaviour
         m3d = new Model3D(model);       // Set the 3D Model
         setTitles();                    // Set the titles of algorithms.
         setVideoPlayer();               // Set the videoplayer.
+        framesLength = DataParsing.estimation.Length;
+
     }
 
 
@@ -148,7 +148,7 @@ public class VMEstimation : MonoBehaviour
         if (automatic)
         {
             ChooseProjection = (int)(Timer * Speed);
-            if (ChooseProjection > DataParsing.estimation.Length - 1)
+            if (ChooseProjection > framesLength - 1)
             {
                 ChooseProjection = 0;
                 Timer = 0;
@@ -163,14 +163,14 @@ public class VMEstimation : MonoBehaviour
         if (Input.GetKeyDown("w"))
         {
             ChooseProjection ++;
-            if (ChooseProjection >= DataParsing.estimation.Length)
+            if (ChooseProjection >= framesLength)
                 ChooseProjection = 0;
         }
         if (Input.GetKeyDown("s"))
         {
             ChooseProjection --;
             if (ChooseProjection < 0)
-                ChooseProjection = DataParsing.estimation.Length - 1;
+                ChooseProjection = framesLength - 1;
         }
 
 

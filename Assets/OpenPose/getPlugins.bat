@@ -1,8 +1,8 @@
 :: Avoid printing all the comments in the Windows cmd
 @echo off
 
-SET UNZIP_EXE=..\..\..\3rdparty\unzip\unzip.exe
-SET WGET_EXE=..\..\..\3rdparty\wget\wget.exe
+SET UNZIP_EXE=..\3rdparty\unzip\unzip.exe
+SET WGET_EXE=..\3rdparty\wget\wget.exe
 
 :: Download temporary zip
 echo ----- Downloading Plugins -----

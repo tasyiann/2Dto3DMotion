@@ -3,7 +3,7 @@
 
 echo ------------------------- BODY, FOOT, FACE, AND HAND MODELS -------------------------
 echo ----- Downloading body pose (COCO and MPI), face and hand models -----
-SET WGET_EXE=..\..\..\..\3rdparty\wget\wget.exe
+SET WGET_EXE=..\..\3rdparty\wget\wget.exe
 SET OPENPOSE_URL=http://posefs1.perception.cs.cmu.edu/OpenPose/models/
 SET POSE_FOLDER=pose/
 SET FACE_FOLDER=face/
