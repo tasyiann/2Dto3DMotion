@@ -8,7 +8,7 @@ using System.Text;
 [System.Serializable()]
 public class JBJEuclideanComparison : AlgorithmSetNeighbours{
 
-    private static int amountOfClustersToSeach = 3;
+    private static int amountOfClustersToSeach = 10;
 
     public override void SetNeighbours(OPPose opPose, int k, List<List<BvhProjection>> clusters, List<BvhProjection> representatives)
     {

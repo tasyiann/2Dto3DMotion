@@ -12,6 +12,7 @@ public class DataParsing
 {
 
     private static Scenario sc = Base.sc;                                                   // Scenario to be saved.
+    private static List<OPFrame> frames = Base.getFrames();                                 // The same instance as scenario (Please review this).
     private static List<List<BvhProjection>> base_clusters = Base.base_clusters;            // Clustered projections.
     private static List<BvhProjection> base_representatives = Base.base_representatives;    // Representatives.
     private static List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;      // Rotations.
@@ -19,11 +20,12 @@ public class DataParsing
     public static Neighbour[] estimation;             // Estimation to Debug. We will not debug all figures at the same time.
     private static float kNNAlgorithmTime;            // Execution time of k-BM Algorithm.
     private static float EstimationAlgorithmTime;     // Execution time of Best 3D Algorithm.
-    private static List<OPFrame> frames = sc.frames;  // 
+
 
     /// <summary> The pipeline of estimating the 3D of OpenPose Output.</summary>
     public static void OFFLINE_Pipeline()
     {
+        // First thing to do: INITIALISE 
         Debug.Log("Entering OFFLINE mode.");
         // Read next frame OpenPose output (JSON files)
         int frameCounter = 0;

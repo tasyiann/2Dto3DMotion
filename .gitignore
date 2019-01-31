@@ -3,9 +3,12 @@
 [Oo]bj/
 [Bb]uild/
 [Bb]uilds/
+
+# FOLDERS - PLEASE BE CAREFULL WHEN IGNORING THESE
 bvhFiles/
-Database/
+Databases/
 MatlabCode/
+
 Assets/AssetStoreTools*
 
 # Visual Studio cache directory
@@ -47,7 +50,7 @@ Scenarios/
 #Database
 Databases/v1-18720_Faulty
 
-#OpenPose - models
+#OpenPose - models - BIG FILES - CAN NOT BE UPLOADED!
 Assets/StreamingAssets/models/pose/body_25/pose_iter_584000.caffemodel
 Assets/StreamingAssets/models/pose/body_25/pose_iter_440000.caffemodel
 Assets/StreamingAssets/models/pose/body_25/pose_iter_160000.caffemodel

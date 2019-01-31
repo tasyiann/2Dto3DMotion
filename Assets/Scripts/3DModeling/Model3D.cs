@@ -109,7 +109,7 @@ public class Model3D
     }
 
 
-    Quaternion XLookRotation(Vector3 right, Vector3 up)
+    static Quaternion XLookRotation(Vector3 right, Vector3 up)
     {
 
         Quaternion rightToForward = Quaternion.Euler(0f, -90f, 0f);
@@ -121,7 +121,7 @@ public class Model3D
 
 
 
-    Quaternion YLookRotation(Vector3 up, Vector3 upwards)
+    static Quaternion YLookRotation(Vector3 up, Vector3 upwards)
     {
 
         Quaternion UpToForward = Quaternion.Euler(90f, 0f, 0f); // Correct, it's 90 degrees to make the positive y, into positive forward.
@@ -190,11 +190,51 @@ public class Model3D
 
 
 
+    /// <summary>
+    /// Used in BvhExport. We want to find a way of getting the root rotation.
+    /// </summary>
+    /// <param name="joints"></param>
+    /// <returns></returns>
+    public static Quaternion getRootRotation_Euler(Vector3 [] joints)
+    {
+        // Hips: Works fine!
+        // Get Root:
+        Vector3 rootPosition = (joints[8] + joints[11]) / 2;
+        var x = YLookRotation((joints[1] - rootPosition), Vector3.up);
+        var y = XLookRotation(joints[8] - joints[11], Vector3.up);
+        var z = y;
+
+        Vector3 xyz = new Vector3(x.eulerAngles.x, y.eulerAngles.y, z.eulerAngles.z);
+        return BvhToUnityRotation(xyz,AxisOrder.ZYX);
+    }
+
+    public enum AxisOrder
+    {
+        XYZ, XZY, YXZ, YZX, ZXY, ZYX, None
+    }
 
 
+    static public Quaternion BvhToUnityRotation(Vector3 eulerAngles, AxisOrder rotationOrder)
+    {
+        // BVH's x+ axis is Unity's left (x-)
+        var xRot = Quaternion.AngleAxis(-eulerAngles.x, Vector3.left);
+        // Unity & BVH agree on the y & z axes
+        var yRot = Quaternion.AngleAxis(-eulerAngles.y, Vector3.up);
+        var zRot = Quaternion.AngleAxis(-eulerAngles.z, Vector3.forward);
 
+        switch (rotationOrder)
+        {
+            // Reproduce rotation order (no need for parentheses - it's associative)
+            case AxisOrder.XYZ: return xRot * yRot * zRot;
+            case AxisOrder.XZY: return xRot * zRot * yRot;
+            case AxisOrder.YXZ: return yRot * xRot * zRot;
+            case AxisOrder.YZX: return yRot * zRot * xRot;
+            case AxisOrder.ZXY: return zRot * xRot * yRot;
+            case AxisOrder.ZYX: return zRot * yRot * xRot;
+        }
 
-
+        return Quaternion.identity;
+    }
 
 
     private float timeCount = 0.0f;

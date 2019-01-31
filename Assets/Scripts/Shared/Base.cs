@@ -10,7 +10,7 @@ public static class Base {
 
     // Variables
     public static EnumScaleMethod ScaleMethod = EnumScaleMethod.SCALE_LIMBS;
-    public static string Path = "Databases\\v1-18720";
+    public static string Path = "Databases\\v1-18720";//"Databases\\6of8";
     public static string Clustering = "500_clusters";
     
     // Data
@@ -240,5 +240,11 @@ public static class Base {
         return counter;
     }
 
-
+    public static List<OPFrame> getFrames()
+    {
+        if (sc == null)
+            return null;
+        else
+            return sc.frames;
+    }
 }

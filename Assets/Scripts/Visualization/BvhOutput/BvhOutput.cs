@@ -6,13 +6,37 @@ using Winterdust;
 
 public class BvhOutput : MonoBehaviour {
 
+    public Transform t_camera;
+    private Vector3 position;
+    BVH bvh = null;
+    GameObject skeleton = null;
+    private int currentFrame = -1;
+    int numOfFrames = 0;
+    public VMEstimation estimationScript;
 
-	void Start () {
-        previewBvh(Base.base_CurrentDir);
+
+    void Start () {
+
+        initialiseBVH(Base.base_CurrentDir);        // Initialise BVH instance.
+        position = t_camera.position;               // Set the position of bvh.
+        skeleton.transform.position = new Vector3(position.x, position.y, position.z+35f);     // Translate the skeleton, so it is visible from camera.
 	}
-	
 
-    public void previewBvh(string dir)
+    private void Update()
+    {
+        currentFrame = estimationScript.ChooseProjection;
+
+        // Set frame to skeleton
+        if (skeleton != null)
+        {
+            bvh.moveSkeleton(skeleton, currentFrame);
+        }
+
+
+        
+    }
+
+    public void initialiseBVH(string dir)
     {
         /* Get the list of files in the directory. */
         if (dir == null)
@@ -40,8 +64,10 @@ public class BvhOutput : MonoBehaviour {
         }
         else
         {
-            BVH bvh = new BVH(bvhfilename);
-            bvh.makeDebugSkeleton(true, "ffffff", 0.5f);
+            bvh = new BVH(bvhfilename);
+            numOfFrames = bvh.frameCount;
+            skeleton = bvh.makeDebugSkeleton(false, "ffffff", 0.5f);
+            
         }
     }
 }

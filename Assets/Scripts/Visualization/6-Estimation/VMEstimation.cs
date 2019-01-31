@@ -33,10 +33,10 @@ public class VMEstimation : MonoBehaviour
     public Material redMaterial;
     public Text Best3DAlgText;
     public Text AlgText;
-
+    public Button buttonAutomatic;
 
     Neighbour[] estimation = DataParsing.estimation;
-    List<OPFrame> frames = sc.frames;
+    List<OPFrame> frames;
   
     public Text textInfo;
     bool rendered = false;
@@ -47,6 +47,8 @@ public class VMEstimation : MonoBehaviour
 
     private void Start()
     {
+        buttonAutomatic.onClick.AddListener(setAutomaticVisualisation);
+        frames = sc.frames;
         gL = new GLDraw(whiteMaterial); // Set the Material
         m3d = new Model3D(model);       // Set the 3D Model
         setTitles();                    // Set the titles of algorithms.
@@ -54,7 +56,13 @@ public class VMEstimation : MonoBehaviour
     }
 
 
-
+    private void setAutomaticVisualisation()
+    {
+        if (automatic == false)
+            automatic = true;
+        else
+            automatic = false;
+    }
 
     private void setVideoPlayer()
     {
@@ -152,13 +160,13 @@ public class VMEstimation : MonoBehaviour
 
 
         Vector3 pos = transform.position;
-        if (Input.GetKey("w"))
+        if (Input.GetKeyDown("w"))
         {
             ChooseProjection ++;
             if (ChooseProjection >= DataParsing.estimation.Length)
                 ChooseProjection = 0;
         }
-        if (Input.GetKey("s"))
+        if (Input.GetKeyDown("s"))
         {
             ChooseProjection --;
             if (ChooseProjection < 0)

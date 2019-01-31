@@ -36,15 +36,22 @@ public class BvhExport
         return text;
     }
 
-
+    /// <summary>
+    /// TODO: Apply rotation and translation of root.
+    /// </summary>
+    /// <returns></returns>
     private List<string> CreateMotionLines()
     {
         List<string> lines = new List<string>();
         foreach(Neighbour n in Estimation)
         {
             List<Vector3> rotations = base_rotationFiles[n.projection.rotationFileID][n.projection.frameNum].getAllRotations();
-            //Vector3 rootRotation = new Vector3(90, 90, 0); // Default
-            lines.Add(CreateMLine(Vector3.zero, rotations[0] + new Vector3(n.projection.angle,0, 0), rotations));
+            Vector3 defaultRootRotation = new Vector3(90, 90, 0); // Default. Please don't delete this. It is useful to debug.
+            Vector3 rootRotation = defaultRootRotation;
+            rootRotation = rotations[0];
+            rootRotation.y = rootRotation.y + 2;
+            //rootRotation = Model3D.BvhToUnityRotation(rootRotation, Model3D.AxisOrder.XYZ).eulerAngles;
+            lines.Add(CreateMLine(Vector3.zero, rootRotation, rotations));
         }
         return lines;
     }
