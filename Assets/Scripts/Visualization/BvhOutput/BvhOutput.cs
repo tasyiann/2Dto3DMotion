@@ -28,7 +28,7 @@ public class BvhOutput : MonoBehaviour {
         currentFrame = estimationScript.ChooseProjection;
 
         // Set frame to skeleton
-        if (skeleton != null)
+        if (skeleton != null && currentFrame<numOfFrames)
         {
             bvh.moveSkeleton(skeleton, currentFrame);
         }

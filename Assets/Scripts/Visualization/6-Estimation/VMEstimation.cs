@@ -99,6 +99,8 @@ public class VMEstimation : MonoBehaviour
             }
            
             Neighbour chosen = estimation[ChooseProjection];
+            if (chosen == null)
+                return;
 
             s += ChooseProjection + "/" + estimation.Length + "\n";
             s += "ClusterFile: " + chosen.projection.clusterID + "\n";

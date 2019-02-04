@@ -109,7 +109,7 @@ public class Model3D
     }
 
 
-    static Quaternion XLookRotation(Vector3 right, Vector3 up)
+    public static Quaternion XLookRotation(Vector3 right, Vector3 up)
     {
 
         Quaternion rightToForward = Quaternion.Euler(0f, -90f, 0f);
@@ -121,7 +121,7 @@ public class Model3D
 
 
 
-    static Quaternion YLookRotation(Vector3 up, Vector3 upwards)
+    public static Quaternion YLookRotation(Vector3 up, Vector3 upwards)
     {
 
         Quaternion UpToForward = Quaternion.Euler(90f, 0f, 0f); // Correct, it's 90 degrees to make the positive y, into positive forward.
@@ -195,7 +195,7 @@ public class Model3D
     /// </summary>
     /// <param name="joints"></param>
     /// <returns></returns>
-    public static Quaternion getRootRotation_Euler(Vector3 [] joints)
+    public static Vector3 getRootRotation_Euler(Vector3 [] joints)
     {
         // Hips: Works fine!
         // Get Root:
@@ -205,7 +205,8 @@ public class Model3D
         var z = y;
 
         Vector3 xyz = new Vector3(x.eulerAngles.x, y.eulerAngles.y, z.eulerAngles.z);
-        return BvhToUnityRotation(xyz,AxisOrder.ZYX);
+        return xyz;
+        //return BvhToUnityRotation(xyz,AxisOrder.ZYX);
     }
 
     public enum AxisOrder

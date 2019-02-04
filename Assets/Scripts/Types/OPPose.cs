@@ -33,7 +33,7 @@ public class OPPose
         scaleFactor = 0;
         neighbours = new List<Neighbour>();
         selectedN = null;
-        id = identifyFigure(frames, currFrameIndex);
+        id = 0; //identifyFigure(frames, currFrameIndex);
         // Normalize data
         fillBodyPositions(k);
         convertPositionsToRoot();
@@ -203,20 +203,39 @@ public class OPPose
     {
         List<float> previousScalingFactors = new List<float>();
         // The first frame does not have any previous scale factors, or there arent any figures in prev frame
-        if (currentFrameIndex == 0 || frames[currentFrameIndex-1].figures.Count==0)
-            return previousScalingFactors.ToArray();
+        try
+        {
+            if (currentFrameIndex == 0 || frames[currentFrameIndex - 1].figures.Count < figureID)
+                return previousScalingFactors.ToArray();
+        }
+        catch (ArgumentOutOfRangeException e)
+        {
+            int i = currentFrameIndex;
+            Debug.LogError(e.Message + "\nError in getPreviousScalingFactors:\n" +
+                   "The index of frames is:" + i + "\nBut the frames length is:" + frames.Count +
+                   (frames.Count <= i ? "\nframes Index is out of range!\n" : "") +
+                   (frames.Count > i ? ("\nThe index of figures is:" + figureID +
+                    (frames[i].figures != null ? ("\nBut the length of figures is:" + frames[i].figures.Count) : ("figures in frame " + i + " is null!!"))) : "") +
+                   "\n\nStack Trace:\n" + e.StackTrace);
+        }
+
 
         int counter = 0;
         for (int i = currentFrameIndex-1; i >= 0 && counter < amountOfPreviousFrames; i--)
         {
+            counter++;
             try
             {
+                if(frames[i].figures.Count <= figureID)
+                {
+                    continue;
+                }
+
                 previousScalingFactors.Add(frames[i].figures[figureID].scaleFactor);
-                counter++;
             }
             catch (ArgumentOutOfRangeException e)
             {
-                Debug.Log(e.Message+"\nError in getPreviousScalingFactors:\n"+
+                Debug.LogError(e.Message+"\nError in getPreviousScalingFactors:\n"+
                     "The index of frames is:"+i+"\nBut the frames length is:"+frames.Count+
                     (frames.Count<=i?"\nframes Index is out of range!\n":"")+
                     (frames.Count > i?("\nThe index of figures is:"+figureID+ 

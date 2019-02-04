@@ -61,7 +61,7 @@ public class UserInput : MonoBehaviour {
         }
         catch (Exception e)
         {
-            Debug.Log(e.Message+"\n"+e.StackTrace);
+            Debug.LogError(e.Message+"\n"+e.StackTrace);
             return;
         }
         UnityEngine.SceneManagement.SceneManager.LoadScene(7); // Estimation Scene

@@ -16,9 +16,11 @@ namespace OpenPose.Example {
         private Model3D m3d;
         private static Scenario sc = Base.sc;
         private static List<List<BvhProjection>> base_clusters = Base.base_clusters;            // Clustered projections.
+        public static List<BvhProjection> base_main_representatives = Base.base_main_representatives;        // All main representatives.
+        public static List<List<BvhProjection>> base_main_clusters = Base.base_main_clusters;                // All main clusters.
         private static List<BvhProjection> base_representatives = Base.base_representatives;    // Representatives.
         private static List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;      // Rotations.
-        public static Vector3[] estimation_to_debug = null;                          // To debug 2D figure
+        public static Vector3[] estimation_to_debug = null;                                     // To debug 2D figure
         public static Vector3[] rawInputToDebug = null;
         public static OPPose figureToDebug = null;
 
@@ -226,7 +228,7 @@ namespace OpenPose.Example {
         private Vector3[] getEstimation(OPPose figure)
         {
             // STEP_A: Find k-BM.
-            sc.algNeighbours.SetNeighbours(figure, sc.k, base_clusters, base_representatives);
+            sc.algNeighbours.SetNeighbours(figure, sc.k, base_clusters, base_representatives, base_main_representatives, base_main_clusters);
             // STEP_B: Find Best 3D.
             figure.selectedN = sc.algEstimation.GetEstimation(prevFigure, figure, sc.m, base_rotationFiles);
             //Debug.Log("Estimation of frame "+currentframeIndex+ ":\n"+figure.selectedN.projection.jointsToString());

@@ -10,14 +10,21 @@ public static class Base {
 
     // Variables
     public static EnumScaleMethod ScaleMethod = EnumScaleMethod.SCALE_LIMBS;
-    public static string Path = "Databases\\Big-Database"; 
+    private static string small_DB = "Databases\\v1-18720";
+    private static string big_DB = "Databases\\Big-Database";
+    public static string Path = small_DB; 
     public static string Clustering = "500-clusters";
-    public static int numClustersToSearch = 20;
+    public static string ClusteringMain = "500-clusters";  // not curr used
+    public static int numClustersToSearch = 5;
+    public static int numMainClustersToSearch = 2;         // not curr used
+    public static bool multiLevelClustering = false;
 
     // Data
     public static List<BvhProjection> base_representatives;          // All representatives.
+    public static List<BvhProjection> base_main_representatives;     // All main representatives.
     public static List<List<Rotations>> base_rotationFiles;          // All rotation files.
     public static List<List<BvhProjection>> base_clusters;           // All clusters.
+    public static List<List<BvhProjection>> base_main_clusters;      // All main clusters.
     public static List<List<BvhProjection>> base_not_clustered;      // All projections not clustered.
 
     public static int metadataInFile = 3;                                            // Metadata in a tuple.
@@ -33,10 +40,24 @@ public static class Base {
 
     public static void initialize()
     {
-        base_representatives = InitializeRepresentatives();      // All representatives.
+        base_representatives = InitializeRepresentatives(Path + "\\Clusters\\" + Clustering + "\\Representatives\\Representatives");        // All representatives.
         base_rotationFiles = InitializeRotations();              // All rotation files.
         base_clusters = InitializeClusters();                    // All clusters.
         base_not_clustered = InitializeNotClustered();           // All projections not clustered.
+
+        if(multiLevelClustering == true)
+        {
+            base_main_representatives = InitializeRepresentatives(Path + "\\MainClusters\\" + ClusteringMain + "\\Representatives\\Representatives"); // All main representatives
+            base_main_clusters = InitializeMainClusters();           // All main clusters
+        }else
+        {
+            base_main_representatives = null;   // All main representatives
+            base_main_clusters = null;          // All main clusters
+        }
+
+
+
+        Debug.Log("Initialization is done!");
     }
 
     /**
@@ -44,11 +65,10 @@ public static class Base {
      * 1st line is the representative of the 1st cluster etc...
      * 
      * */
-    private static List<BvhProjection> InitializeRepresentatives()
+    private static List<BvhProjection> InitializeRepresentatives(string filename)
     {
         try {
-            string fileName = Path + "\\Clusters\\"+Clustering+"\\Representatives\\Representatives";
-            StreamReader sr = File.OpenText(fileName);
+            StreamReader sr = File.OpenText(filename);
             string tuple = String.Empty;
             List<BvhProjection> list = new List<BvhProjection>();
             while ((tuple = sr.ReadLine()) != null)
@@ -56,12 +76,14 @@ public static class Base {
                 list.Add(ParseIntoProjection(tuple));
             }
             Debug.Log(">Representatives have been read.");
+            sr.Close();
             return list;
         } catch(Exception e)
         {
             Debug.Log("Representatives file not found.");
             return null;
         }
+        
 
     }
 
@@ -132,10 +154,51 @@ public static class Base {
                 
             }
             listClusters.Add(cluster);
+            sr.Close();
         }
         Debug.Log(">Clustered Projections have been read.");
         return listClusters;
     }
+
+
+
+    private static List<List<BvhProjection>> InitializeMainClusters()
+    {
+        string dirName = Path + "\\MainClusters\\" + ClusteringMain + "\\";
+
+        List<List<BvhProjection>> listClusters = new List<List<BvhProjection>>();
+
+        // -- Sort file entries by their numerical name. --
+        string[] fileEntries = sortFilesNumerically(Directory.GetFiles(dirName), dirName);
+
+
+        foreach (string fileName in fileEntries)
+        {
+            List<BvhProjection> cluster = new List<BvhProjection>();
+            StreamReader sr = File.OpenText(fileName);
+            string tuple = String.Empty;
+            while ((tuple = sr.ReadLine()) != null)
+            {
+                try
+                {
+                    cluster.Add(ParseIntoProjection(tuple, Int32.Parse(fileName.Replace(dirName, ""))));
+                }
+                catch (Exception e)
+                {
+                    Debug.Log("dirName is: " + dirName + "and filename is: " + fileName);
+                    throw e;
+                }
+
+            }
+            listClusters.Add(cluster);
+            sr.Close();
+        }
+
+        Debug.Log(">Clustered Projections have been read.");
+        return listClusters;
+    }
+
+
 
 
     private static List<List<BvhProjection>> InitializeNotClustered()
@@ -153,6 +216,7 @@ public static class Base {
             {
                 cluster.Add(ParseIntoProjection(tuple, Int32.Parse(fileName.Replace(dirName, ""))));
             }
+            sr.Close();
             listClusters.Add(cluster);
         }
         Debug.Log(">Unclustered Projections have been read.");
@@ -174,6 +238,7 @@ public static class Base {
                 rotationsFile.Add(StringToRotations(tuple));
             }
             listRotationsFiles.Add(rotationsFile);
+            sr.Close();
         }
         Debug.Log(">Rotations have been read.");
         return listRotationsFiles;

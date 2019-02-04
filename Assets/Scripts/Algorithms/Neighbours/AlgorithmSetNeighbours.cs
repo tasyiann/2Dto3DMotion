@@ -8,7 +8,7 @@ using System.Globalization;
 public abstract class AlgorithmSetNeighbours {
 
 
-    public abstract void SetNeighbours(OPPose opPose, int k, List<List<BvhProjection>> clusters, List<BvhProjection> representatives);
+    public abstract void SetNeighbours(OPPose opPose, int k, List<List<BvhProjection>> clusters, List<BvhProjection> representatives, List<BvhProjection> mainRepresentatives = null, List<List<BvhProjection>> mainClusters=null);
 
 
     public static void sortNeighbours(List<Neighbour> neighbours)
