@@ -15,7 +15,7 @@ public static class Base {
     public static string Path = small_DB; 
     public static string Clustering = "500-clusters";
     public static string ClusteringMain = "500-clusters";  // not curr used
-    public static int numClustersToSearch = 5;
+    public static int numClustersToSearch = 16;
     public static int numMainClustersToSearch = 2;         // not curr used
     public static bool multiLevelClustering = false;
 

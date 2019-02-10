@@ -6,17 +6,9 @@ public class InitiateBase : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        Scaling.setNewScalingStandard();
         Base.initialize();
+        // ConfigureLIMBS.runTests();
     }
 
-    private void Awake()
-    {
-        
-
-    }
-
-    // Update is called once per frame
-    void Update () {
-		
-	}
 }

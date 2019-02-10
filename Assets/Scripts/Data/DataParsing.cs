@@ -105,7 +105,7 @@ public class DataParsing
         foreach (OPFrame frame in frames)
         {
             // CHECK IF THIS ID EXIST IN THE FRAME! fIND A waY tO do ThaT
-            Debug.Log("Frame:" + frame.number + "\nFigures count: " + frame.figures.Count + "\nIndex: " + person_index);
+            // Debug.Log("Frame:" + frame.number + "\nFigures count: " + frame.figures.Count + "\nIndex: " + person_index);
             // Check if figure exist in that frame.
             if (frame.figures.Count <= person_index || frame.figures[person_index] == null)
                 result.Add(null);

@@ -190,7 +190,7 @@ namespace OpenPose.Example {
 
             // Identification TODO::::
             long id = datum.poseIds.Get(personID);
-            Debug.Log("The id is:"+id);
+            //Debug.Log("The id is:"+id);
 
 
             // Pose

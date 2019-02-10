@@ -56,6 +56,7 @@ public class BvhExport
     /// <returns></returns>
     private List<string> CreateMotionLines()
     {
+        int counter = 0;
         List<string> lines = new List<string>();
         foreach(Neighbour n in Estimation)
         {
@@ -67,9 +68,10 @@ public class BvhExport
             Vector3 defaultRootRotation = new Vector3(90, 90, 0); // Default. Please don't delete this. It is useful to debug.
             Vector3 rootRotation = defaultRootRotation;
             float angle = n.projection.angle;
-            rootRotation = getFinalRootRotation(rotations[0], angle);
+            rootRotation = getFinalRootRotation(rotations[0],angle,counter);
             //rootRotation = Model3D.BvhToUnityRotation(rootRotation, Model3D.AxisOrder.XYZ).eulerAngles;
             lines.Add(CreateMLine(Vector3.zero, rootRotation, rotations));
+            counter++;
         }
         return lines;
     }
@@ -100,79 +102,67 @@ public class BvhExport
         Quaternion x = Model3D.YLookRotation((joints[1] - rootPosition), Vector3.up);
         Quaternion y = Model3D.XLookRotation(joints[8] - joints[11], Vector3.up);
         Quaternion z = y;
+        // Quaternion qBefore = y * x * y; // Multiply them in the rotation order, in case of ZXY.
 
-        // Make a rotation matrix out of every Euler value from the bvh file. 
-        Matrix4x4 lRotationX_Matrix, lRotationY_Matrix, lRotationZ_Matrix;
-        // Instead of "euler" use "angle-axis"
-        lRotationX_Matrix = Matrix4x4.Rotate(x);
-        lRotationY_Matrix = Matrix4x4.Rotate(y);
-        lRotationZ_Matrix = Matrix4x4.Rotate(z);
 
-        //Multiply them in the rotation order, in you case ZXY, to get the complete rotation matrix.
-        Matrix4x4 lRotationMatrix = lRotationY_Matrix * lRotationX_Matrix * lRotationZ_Matrix;
-
-        //Get the Euler rotation values in XYZ rotation order, because KFbxXMatrix::GetR() only return rotation vector in XYZ rotation order.
-        Vector3 lRotationInXYZOrder = lRotationMatrix.rotation.eulerAngles;
-
-        //Set lRotationInXYZOrder,lRotationInXYZOrder,lRotationInXYZOrder as x, y, z rotation Euler angle to the animcurve.
-        //What the above did is actually to convert the Euler rotation angle in ZXY order to XYZ order.
-        return lRotationInXYZOrder;
+        return Model3D.getRootRotation_Euler(joints);
     }
 
 
-    private Vector3 getFinalRootRotation(Vector3 rotationFromBvh, float angle=0)
+    private Vector3 getFinalRootRotation(Vector3 rotationFromBvh, float angle=0, int counter=0)
     {
-       
 
-        // Make a rotation matrix out of every Euler value from the bvh file. 
-        /*
-        Vector3 lRotationX, lRotationY, lRotationZ;
-        lRotationX = new Vector3(rotationFromBvh.x, 0.0f, 0.0f);
-        lRotationY = new Vector3(0.0f, rotationFromBvh.y, 0.0f);
-        lRotationZ = new Vector3(0.0f, 0.0f, rotationFromBvh.z);
-        */
-        Matrix4x4 lRotationX_Matrix, lRotationY_Matrix, lRotationZ_Matrix, lRotationY_Angle_Matrix_OK, lRotationY_Angle_Matrix_INVERSE;
-        /*
-        lRotationX_Matrix = Matrix4x4.Rotate(Quaternion.Euler(lRotationX));
-        lRotationY_Matrix = Matrix4x4.Rotate(Quaternion.Euler(lRotationY));
-        lRotationZ_Matrix = Matrix4x4.Rotate(Quaternion.Euler(lRotationZ));
-        */
+
+        // [INITIALIZE]: Convert Euler to Quaternion for each axis. 
+        Quaternion qX = Quaternion.AngleAxis(rotationFromBvh.x, Vector3.right);
+        Quaternion qY = Quaternion.AngleAxis(rotationFromBvh.y, Vector3.up);
+        Quaternion qZ = Quaternion.AngleAxis(rotationFromBvh.z, Vector3.forward);
+        Quaternion qBefore = qY * qX * qZ; // Multiply them in the rotation order, in case of ZXY.
+
+        // [ROTATE]: Get the quaternion of rotating around y axis.
+        Quaternion YawRotationQuaternion = Quaternion.AngleAxis(angle, Vector3.up);
+
+        // [DEBUG ANGLE]
+        Vector3 debugangleaxis; float debugangle;
+        YawRotationQuaternion.ToAngleAxis(out debugangle, out debugangleaxis);
+        Debug.Log(angle + " >> ANGLE AXIS: "+ debugangleaxis + "debug angle: "+debugangle);
         
-        // Instead of "euler" use "angle-axis"
-        lRotationX_Matrix = Matrix4x4.Rotate(Quaternion.AngleAxis(rotationFromBvh.x, Vector3.right));
-        lRotationY_Matrix = Matrix4x4.Rotate(Quaternion.AngleAxis(rotationFromBvh.y, Vector3.up));
-        lRotationZ_Matrix = Matrix4x4.Rotate(Quaternion.AngleAxis(rotationFromBvh.z, Vector3.forward));
-        lRotationY_Angle_Matrix_OK = Matrix4x4.Rotate(Quaternion.AngleAxis(angle, Vector3.up));
-        lRotationY_Angle_Matrix_INVERSE = Matrix4x4.Rotate(Quaternion.AngleAxis((360+angle), Vector3.up));
-
-        //Multiply them in the rotation order, in you case ZXY, to get the complete rotation matrix.
-        Matrix4x4 lRotationMatrix = lRotationY_Matrix * lRotationX_Matrix * lRotationZ_Matrix;
-        // Apply the angle rotation
-        //lRotationMatrix = lRotationMatrix * lRotationY_Angle_Matrix;
-
-        float debugangle = Quaternion.Angle(lRotationMatrix.rotation, (lRotationMatrix * lRotationY_Angle_Matrix_OK).rotation);
-        if (Mathf.Abs(debugangle - angle) < 1f)
-        {
-            lRotationMatrix = lRotationMatrix * lRotationY_Angle_Matrix_OK;
-            Debug.Log(" OK: Angle to rotate: " + angle + " Actual rotation: " + debugangle);
-        }
-        else
-        {
-            debugangle = Quaternion.Angle(lRotationMatrix.rotation, (lRotationMatrix * lRotationY_Angle_Matrix_INVERSE).rotation);
-            lRotationMatrix = lRotationMatrix * lRotationY_Angle_Matrix_INVERSE;
-            Debug.Log(" INVERSE: Angle to rotate: " + angle + " Actual rotation: " + debugangle);
-        }
-
-        //Get the Euler rotation values in XYZ rotation order, because KFbxXMatrix::GetR() only return rotation vector in XYZ rotation order.
-        Vector3 lRotationInXYZOrder = lRotationMatrix.rotation.eulerAngles;
+        // [APPLY ROTATION AROUND Y]
+        Quaternion qAfter = qBefore * YawRotationQuaternion;
+        qAfter = qBefore * YawRotationQuaternion;
         
-        //Set lRotationInXYZOrder,lRotationInXYZOrder,lRotationInXYZOrder as x, y, z rotation Euler angle to the animcurve.
-        //What the above did is actually to convert the Euler rotation angle in ZXY order to XYZ order.
-        return lRotationInXYZOrder;
+
+        // [EXTRA CALCULATIONS]:
+        float signedAngle = GetSignedAngle(qBefore, qAfter, Vector3.up);
+        // Angle axis of signed angle:
+        Vector3 angleAxis;
+        Quaternion x = (qAfter * Quaternion.Inverse(qBefore));
+        x.ToAngleAxis(out angle, out angleAxis);
+        // more
+        Quaternion qInverseAfter = Quaternion.Inverse(qAfter);
+        Quaternion qCenterBefore = Quaternion.Inverse(qBefore);
+        float y_RotationAngle = Quaternion.Angle(qBefore, qAfter);
+        float y_AngleBefore = qBefore.eulerAngles.y;
+        float y_AngleAfter = qAfter.eulerAngles.y;
+
+        // [RETURN IN XYZ FORM]
+        return qAfter.eulerAngles;
     }
 
 
-
+    public static float GetSignedAngle(Quaternion A, Quaternion B, Vector3 axis)
+    {
+        float angle = 0f;
+        Vector3 angleAxis = Vector3.zero;
+        Quaternion x = (B * Quaternion.Inverse(A));
+        x.ToAngleAxis(out angle, out angleAxis);
+        if (Vector3.Angle(axis, angleAxis) > 90f)
+        {
+            angle = -angle;
+        }
+        Debug.Log("Angle axis: "+angleAxis +"angle: "+angle+" singed angle: "+Mathf.DeltaAngle(0f,angle));
+        return Mathf.DeltaAngle(0f, angle);
+    }
 
 
 

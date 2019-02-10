@@ -18,6 +18,7 @@ public class OPPose
     public Vector3[] jointsRAW;                     // All joints raw from json. 
     public bool[] available;                        // Is the joint[] available.
     public float scaleFactor;                       // What is the scale factor of this pose.
+    public EnumBONES limbFactor;                    // Which limb is used to scale.
     public List<Neighbour> neighbours;              // k-neighbours
     public Neighbour selectedN;                     // The leading neighbour.
     public Vector3 translation;                     // The translation of that pose. (not in use)
@@ -37,7 +38,7 @@ public class OPPose
         // Normalize data
         fillBodyPositions(k);
         convertPositionsToRoot();
-        scaleFactor = scalePositions(getPreviousScaleFactors(frames, currFrameIndex, amountOfPreviousScalingFactors, id));
+        scaleFigure(getPreviousScaleFactors(frames, currFrameIndex, amountOfPreviousScalingFactors, id));
     }
 
     public OPPose(Vector3[] joints_input, bool[] available_input,  List<OPFrame> frames = null, int currFrameIndex = 0)
@@ -56,7 +57,7 @@ public class OPPose
                 // There is a problem because Openpose is asychronous
         // Normalize data
         convertPositionsToRoot(true);
-        scaleFactor = scalePositions(getPreviousScaleFactors(frames, currFrameIndex, amountOfPreviousScalingFactors, id));
+        scaleFigure(getPreviousScaleFactors(frames, currFrameIndex, amountOfPreviousScalingFactors, id));
     }
 
 
@@ -178,11 +179,11 @@ public class OPPose
     }
 
     /* Scale positions, by multiplying with a scaleFactor. */
-    private float scalePositions(float [] previousScaleFactors)
+    private void scaleFigure(float [] previousScaleFactors)
     {
         // Determine Scaling Factor
         if (scalingMethod == EnumScaleMethod.SCALE_LIMBS)
-            scaleFactor = Scaling.getGlobalScaleFactor_USING_LIMBS(this.joints, previousScaleFactors);
+            Scaling.getGlobalScaleFactor_USING_LIMBS(this.joints, out limbFactor, out scaleFactor, previousScaleFactors);
         else
             scaleFactor = Scaling.getGlobalScaleFactor_USING_HEIGHT(this.joints, previousScaleFactors);
         // Apply scaling
@@ -190,7 +191,7 @@ public class OPPose
         {
             joints[i] *= scaleFactor;
         }
-        return scaleFactor;
+
     }
 
     /// <summary>

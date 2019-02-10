@@ -7,6 +7,7 @@ using Winterdust;
 public class BvhOutput : MonoBehaviour {
 
     public Transform t_camera;
+    public Transform model;
     private Vector3 position;
     BVH bvh = null;
     GameObject skeleton = null;
@@ -25,12 +26,21 @@ public class BvhOutput : MonoBehaviour {
 
     private void Update()
     {
-        currentFrame = estimationScript.ChooseProjection;
+        currentFrame = estimationScript.ChooseProjection + 1; // Plus one, because T-Pose is at position 0.
 
         // Set frame to skeleton
         if (skeleton != null && currentFrame<numOfFrames)
         {
             bvh.moveSkeleton(skeleton, currentFrame);
+            // Debug root rotation
+            Quaternion qrot = bvh.allBones[0].localFrameRotations[currentFrame];
+            Vector3 rotationFromBvh = qrot.eulerAngles;
+            // [INITIALIZE]: Convert Euler to Quaternion for each axis. 
+            Quaternion qX = Quaternion.AngleAxis(rotationFromBvh.x, Vector3.right);
+            Quaternion qY = Quaternion.AngleAxis(rotationFromBvh.y, Vector3.up);
+            Quaternion qZ = Quaternion.AngleAxis(rotationFromBvh.z, Vector3.forward);
+            Quaternion qrotFinal = qY * qX * qZ; // Multiply them in the rotation order, in case of ZXY.
+            model.rotation = qrotFinal;
         }
 
 

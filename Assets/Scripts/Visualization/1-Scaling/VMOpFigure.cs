@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 /**
  * In this Visualisation, we try to show how successfully our algorithm
  * does the scaling on a figure. The figure is made out of 2d points.
@@ -18,19 +19,21 @@ public class VMOpFigure : MonoBehaviour
     public GameObject VideoplayerGO;
     private UnityEngine.Video.VideoPlayer videoPlayer;
 
+    public bool ShowUsedScaling;
+    public bool ShowLimbsScaling;
+    public bool ShowHeightScaling;
+    public bool ShowRawFigure;
 
     public float Offset = 8.0f;         // The distance between figures.
     public bool showGrid;               // True for showing a grid.
     public int CurrentFrame = 0;        // Current frame to show.
-    public bool showJSONPosition;       // True for showing the raw input.
+
     [Range(1f, 0.01f)]
-
-
     public float JSONscale = 0.025f;            // Scaling the raw input.
     private float scalingFactor_ACTUAL_USED;    // That was used in the algorithm.
     private float scalingFactor_LIMBS;         
     private float scalingFactor_HEIGHT;
-
+    private EnumBONES usedLIMB;
 
     public Material Material;           // The material of GL visuals.
     public Text textInfo;               // The text to show the current frame.
@@ -63,37 +66,47 @@ public class VMOpFigure : MonoBehaviour
 
         float newpos = 0;
 
+        if (ShowUsedScaling)
+        {
             // NORMALIZED DATA
             scalingFactor_ACTUAL_USED = figure.scaleFactor;
             gL.drawFigure(true, Color.green, figure.joints, figure.available, new Vector3(newpos, 0, 0));
             if (figure.available[(int)EnumJoint.Head] && (figure.available[(int)EnumJoint.RightFoot] || figure.available[(int)EnumJoint.LeftFoot]))
                 drawBoundings(Color.green, figure.joints[(int)EnumJoint.Head], figure.joints[(int)EnumJoint.RightFoot], figure.joints[(int)EnumJoint.LeftFoot], 1000);
             newpos += 10;
+        }
 
-           
+
+        if (ShowLimbsScaling)
+        {
             // SCALE_LIMBS
-            scalingFactor_LIMBS = Scaling.getGlobalScaleFactor_USING_LIMBS(figure.jointsRAW,figure.getPreviousScaleFactors(frames,CurrentFrame,OPPose.amountOfPreviousScalingFactors,figure.id));
-            gL.drawFigure(true,Color.white, figure.jointsRAW, figure.available, new Vector3(newpos, 0, 0),scalingFactor_LIMBS);
-            if(figure.available[(int)EnumJoint.Head] && (figure.available[(int)EnumJoint.RightFoot] || figure.available[(int)EnumJoint.LeftFoot]))
-                drawBoundings(Color.white, figure.jointsRAW[(int)EnumJoint.Head], figure.jointsRAW[(int)EnumJoint.RightFoot], figure.jointsRAW[(int)EnumJoint.LeftFoot], 1000, scalingFactor_LIMBS);
+            Scaling.getGlobalScaleFactor_USING_LIMBS(figure.jointsRAW, out usedLIMB, out scalingFactor_LIMBS);
+            gL.drawFigure(true, Color.black, figure.jointsRAW, figure.available, new Vector3(newpos, 0, 0), scalingFactor_LIMBS);
+            if (figure.available[(int)EnumJoint.Head] && (figure.available[(int)EnumJoint.RightFoot] || figure.available[(int)EnumJoint.LeftFoot]))
+                drawBoundings(Color.black, figure.jointsRAW[(int)EnumJoint.Head], figure.jointsRAW[(int)EnumJoint.RightFoot], figure.jointsRAW[(int)EnumJoint.LeftFoot], 1000, scalingFactor_LIMBS);
             newpos += 10;
+        }
 
+        // JSON POSITION
+        if (ShowRawFigure)
+        {
+            gL.drawFigure(true, Color.red, figure.jointsRAW, figure.available, new Vector3(newpos, 0, 0), JSONscale);
+            if (figure.available[(int)EnumJoint.Head] && (figure.available[(int)EnumJoint.RightFoot] || figure.available[(int)EnumJoint.LeftFoot]))
+                drawBoundings(Color.red, figure.jointsRAW[(int)EnumJoint.Head], figure.jointsRAW[(int)EnumJoint.RightFoot], figure.jointsRAW[(int)EnumJoint.LeftFoot], 1000, JSONscale);
+            newpos += 10;
+        }
 
+        if (ShowHeightScaling)
+        {
             // SCALE_HEIGHT
-            scalingFactor_HEIGHT = Scaling.getGlobalScaleFactor_USING_HEIGHT(figure.jointsRAW, figure.getPreviousScaleFactors(frames, CurrentFrame, OPPose.amountOfPreviousScalingFactors, figure.id));
+            scalingFactor_HEIGHT = Scaling.getGlobalScaleFactor_USING_HEIGHT(figure.jointsRAW);
             gL.drawFigure(true, Color.yellow, figure.jointsRAW, figure.available, new Vector3(newpos, 0, 0), scalingFactor_HEIGHT);
             if (figure.available[(int)EnumJoint.Head] && (figure.available[(int)EnumJoint.RightFoot] || figure.available[(int)EnumJoint.LeftFoot]))
                 drawBoundings(Color.yellow, figure.jointsRAW[(int)EnumJoint.Head], figure.jointsRAW[(int)EnumJoint.RightFoot], figure.jointsRAW[(int)EnumJoint.LeftFoot], 1000, scalingFactor_HEIGHT);
-            newpos += 10;
+            //newpos += 10;
+        }
 
 
-            // JSON POSITION
-            if (showJSONPosition)
-            {
-                gL.drawFigure(true,Color.red, figure.jointsRAW, figure.available, new Vector3(newpos, 0, 0), JSONscale);
-                if (figure.available[(int)EnumJoint.Head] && (figure.available[(int)EnumJoint.RightFoot] || figure.available[(int)EnumJoint.LeftFoot]))
-                    drawBoundings(Color.red, figure.jointsRAW[(int)EnumJoint.Head],figure.jointsRAW[(int)EnumJoint.RightFoot], figure.jointsRAW[(int)EnumJoint.LeftFoot], 1000, JSONscale);
-            }
             updateScalingFactors();
         
     }
@@ -136,9 +149,9 @@ public class VMOpFigure : MonoBehaviour
     private void updateScalingFactors()
     {
         Raw_text.text = "Raw Figure scaled by " + JSONscale +" just to fit in frame.";
-        Scaled_text.text = "Figure scaled by " + scalingFactor_ACTUAL_USED + " using "+Base.ScaleMethod.ToString();
-        Limbs_text.text = "Scaling method using LIMBS: " + scalingFactor_LIMBS;
-        Height_text.text = "SCaling method using HEIGHT: "+ scalingFactor_HEIGHT+ " with fixed height = "+Scaling.scalingHeightFixed;
+        Scaled_text.text = "with interpolation : Figure actually scaled by " + scalingFactor_ACTUAL_USED + " using "+Base.ScaleMethod.ToString();
+        Limbs_text.text = "w/out interpolation using LIMBS: " + scalingFactor_LIMBS + " using limb: "+usedLIMB.ToString();
+        Height_text.text = "w/out interpolation using HEIGHT: "+ scalingFactor_HEIGHT+ " with fixed height = "+Scaling.scalingHeightFixed;
     }
 
     /**

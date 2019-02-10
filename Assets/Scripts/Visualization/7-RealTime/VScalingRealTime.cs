@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using OpenPose.Example;
 
 public class VScalingRealTime : MonoBehaviour {
@@ -12,11 +13,15 @@ public class VScalingRealTime : MonoBehaviour {
     public float JSONscale = 0.025f;            // Scaling the raw input.
     [Range(-100f, 100f)]
     public float offset = 10f;
+    public Text[] scalingFactorText;
 
     OPPose figureToDebug = null;
+    OPPose prevFigure = null;
     public Material Material;           // The material of GL visuals.
     private GLDraw gL;                  // GL visuals.
     public Transform camera;
+    private int sfText_index = 0;
+
     private Vector3 center;
     private int newpos;
     private OPPose figure;
@@ -33,6 +38,18 @@ public class VScalingRealTime : MonoBehaviour {
     void Update()
     {
         figure = OpenPoseUserScript.figureToDebug;
+        displayScalingFactor();
+        prevFigure = figure;
+    }
+
+    private void displayScalingFactor()
+    {
+        sfText_index = sfText_index % scalingFactorText.Length;
+        scalingFactorText[sfText_index].text = figure != null ? (figure.limbFactor.ToString()) : "";
+        float diff = figure == null || prevFigure == null ? 0 : (figure.scaleFactor - prevFigure.scaleFactor);
+        if (diff < 0) scalingFactorText[sfText_index].color = Color.red;
+        else scalingFactorText[sfText_index].color = Color.green;
+        sfText_index++; // move to the next text
     }
 
     private void OnPostRender()

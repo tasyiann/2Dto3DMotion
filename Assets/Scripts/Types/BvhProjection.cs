@@ -38,7 +38,7 @@ public class BvhProjection {
         }
     }
 
-    /* Scale positions, by multiplying with a scaleFactor. */
+    /* Scale positions, by multiplying with a scaleFactor. NOT USED*/
     public void scalePositions(float scaleFactor)
     {
         for (int i = 0; i < joints.Length; i++)
