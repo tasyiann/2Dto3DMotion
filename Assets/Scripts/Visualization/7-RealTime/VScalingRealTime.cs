@@ -44,11 +44,11 @@ public class VScalingRealTime : MonoBehaviour {
 
     private void displayScalingFactor()
     {
-        sfText_index = sfText_index % scalingFactorText.Length;
+        sfText_index = sfText_index % scalingFactorText.Length; // Cyclic
+        scalingFactorText[sfText_index].color = Color.green;
         scalingFactorText[sfText_index].text = figure != null ? (figure.limbFactor.ToString()) : "";
-        float diff = figure == null || prevFigure == null ? 0 : (figure.scaleFactor - prevFigure.scaleFactor);
-        if (diff < 0) scalingFactorText[sfText_index].color = Color.red;
-        else scalingFactorText[sfText_index].color = Color.green;
+        //float diff = figure == null || prevFigure == null ? 0 : (figure.scaleFactor - prevFigure.scaleFactor);
+        if (figure!=null && figure.limbFactor!=EnumBONES.UP_TORSO) scalingFactorText[sfText_index].color = Color.red;
         sfText_index++; // move to the next text
     }
 

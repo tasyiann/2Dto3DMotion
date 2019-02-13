@@ -1,0 +1,8 @@
+The order of bones in the scaling.txt is:
+0. UP_TORSO
+1. RIGHT_TORSO
+2. LEFT_TORSO
+3. SPINE_TO_R_UPLEG
+4. SPINE_TO_L_UPLEG
+5. PELIVS
+6. TORSO_HEIGHT

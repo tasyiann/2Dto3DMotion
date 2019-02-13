@@ -267,7 +267,7 @@ public static class Base {
     }
 
 
-    private static Rotations StringToRotations(string tuple)
+    public static Rotations StringToRotations(string tuple)
     {
         List<Vector3> rotations = new List<Vector3>();
         string[] array = tuple.Split(' ');

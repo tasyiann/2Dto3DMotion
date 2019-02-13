@@ -118,6 +118,8 @@ public class Scaling {
                 minInfo = scale;
             }
         }
+        // Debug.Log(scalingFactorInfos[0].bones.ToString()+": "+scalingFactorInfos[0].error+"\n"+ scalingFactorInfos[6].bones.ToString() + ": " + scalingFactorInfos[6].error);
+        // return scalingFactorInfos[0];
         return minInfo;
     }
 
@@ -145,6 +147,9 @@ public class Scaling {
         float errorSum = 0f;
         foreach(EnumBONES bone in bones)
         {
+            //int b= (int)bone;
+            //if (b >= 1 && b <= 5) continue; // except from 0 and 6 (UP_TORSO && TORSO_HEIGHT)
+
             // Starting and ending joints of the bone.
             Vector3 jointA = joints[pairs[(int)bone, 0]];
             Vector3 jointB;

@@ -21,10 +21,10 @@ public class ProjectionManager : MonoBehaviour {
 
 
 	void Start () {
-        CountSecondsOfClips("Big-Database-smaller\\bvh");
-        //lastFileID = getFileCounterFromLogFile();
-        //AddInDatabase();
-        //logLastID();
+        //CountSecondsOfClips("Big-Database-smaller\\bvh");
+        lastFileID = getFileCounterFromLogFile();
+        AddInDatabase();
+        logLastID();
     }
 	
     private void AddInDatabase()
@@ -33,6 +33,7 @@ public class ProjectionManager : MonoBehaviour {
         string[] fileEntries = Directory.GetFiles(BvhFilesDirectory);
         foreach (string bvhFileName in fileEntries)
         {
+
             if (Path.GetExtension(bvhFileName).CompareTo(".bvh") == 0)
             {
                 CreateFiles(bvhFileName);
@@ -66,6 +67,8 @@ public class ProjectionManager : MonoBehaviour {
 
     private void CreateFiles(string bvhfilename)
     {
+        Directory.CreateDirectory(DatabaseDirectory + "\\Projections\\");
+        Directory.CreateDirectory(DatabaseDirectory + "\\Rotations\\");
         string positionsFilePath = DatabaseDirectory+ "\\Projections\\" + (lastFileID)+".p";
         string rotationsFilePath = DatabaseDirectory+ "\\Rotations\\" + (lastFileID);
         SaveProjectionsInFiles(bvhfilename, positionsFilePath, rotationsFilePath);
