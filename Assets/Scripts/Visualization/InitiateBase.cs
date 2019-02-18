@@ -8,7 +8,7 @@ public class InitiateBase : MonoBehaviour {
 	void Start () {
         // Scaling.setNewScalingStandard();
         Base.initialize();
-        new BvhExport("TemplateBVH\\template.bvh", "Databases\\Big-Database\\Rotations\\4", "try.bvh");
+        //new BvhExport("TemplateBVH\\template.bvh", "Databases\\Big-Database\\Rotations\\4", "try.bvh");
         // ConfigureLIMBS.runTests();
     }
 

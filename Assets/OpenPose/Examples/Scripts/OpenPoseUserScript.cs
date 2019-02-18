@@ -10,6 +10,17 @@ namespace OpenPose.Example {
      */
     public class OpenPoseUserScript : MonoBehaviour
     {
+        // 1 Euro filter
+        OneEuroFilter<Quaternion>[] rotationFiltersJoints = new OneEuroFilter<Quaternion>[14];
+        OneEuroFilter<Quaternion> rotationFilterHips;
+        public bool filterOn = true;
+        public float filterFrequency = 120.0f;
+        public float filterMinCutoff = 1.0f;
+        public float filterBeta = 0.0f;
+        public float filterDcutoff = 1.0f;
+        public float noiseAmount = 1.0f;
+        float timer = 0.0f;
+        public bool update1EuroValues;
 
         // 3D Estimation
         public Transform model;
@@ -109,8 +120,15 @@ namespace OpenPose.Example {
             /* OPWrapper.OPConfigureAllInDefault(); */
             UserConfigureOpenPose();
 
+            // Set 1euro filter
+            for (int i = 0; i < rotationFiltersJoints.Length; i++)
+                rotationFiltersJoints[i] = new OneEuroFilter<Quaternion>(filterFrequency);
+            rotationFilterHips = new OneEuroFilter<Quaternion>(filterFrequency);
+
             // Start OpenPose
             OPWrapper.OPRun();
+
+            
         }
 
         // User can change the settings here
@@ -237,6 +255,16 @@ namespace OpenPose.Example {
             return figure.selectedN.projection.joints;
         }
 
+
+        private void updateParametersRotationFilters()
+        {
+            rotationFilterHips.UpdateParams(filterFrequency, filterMinCutoff, filterBeta, filterDcutoff);
+            foreach (OneEuroFilter<Quaternion> rotfilter in rotationFiltersJoints)
+            {
+                rotfilter.UpdateParams(filterFrequency, filterMinCutoff, filterBeta, filterDcutoff);
+            }
+        }
+
         private void Update()
         {
 
@@ -248,6 +276,11 @@ namespace OpenPose.Example {
                 frames.Add(currframe);
                 currentframeIndex++;
 
+                // Update 1 euro filter values
+                if (update1EuroValues)
+                {
+                    updateParametersRotationFilters();
+                }
 
                 // Visualize 3D
                 int personID = 0;
@@ -255,7 +288,7 @@ namespace OpenPose.Example {
                 estimation_to_debug = estimation;
                 if (estimation != null)
                 {
-                    m3d.moveSkeletonLERP(estimation);
+                    m3d.moveSkeleton_OneEuroFilter(estimation,rotationFiltersJoints, rotationFilterHips);
                 }
 
 
