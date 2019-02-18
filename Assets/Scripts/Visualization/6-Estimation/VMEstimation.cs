@@ -8,20 +8,43 @@ using Winterdust;
 /* OPFigure */
 public class VMEstimation : MonoBehaviour
 {
+    // Data
     private static List<List<BvhProjection>> base_clusters = Base.base_clusters;
     private static List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;
     private static Scenario sc = Base.sc;
 
+
+    // 1 Euro filter
+    OneEuroFilter<Quaternion>[] rotationFiltersJoints = new OneEuroFilter<Quaternion>[14];
+    OneEuroFilter<Quaternion> rotationFilterHips;
+    public bool filterOn = true;
+    public float filterFrequency = 120.0f;
+    public float filterMinCutoff = 1.0f;
+    public float filterBeta = 0.0f;
+    public float filterDcutoff = 1.0f;
+    public float noiseAmount = 1.0f;
+    float timer = 0.0f;
+
+
+    // Set Visualistion
     public GameObject VideoplayerGO;
     private UnityEngine.Video.VideoPlayer videoPlayer;
     public Transform model;
     private Model3D m3d;
 
+    // New - Visual just positions with IK
+    OneEuroFilter<Vector3>[] positionFiltersJoints = new OneEuroFilter<Vector3>[14];
+    OneEuroFilter<Vector3> positionFilterHips;
+    public Transform modelPosition;
+    private Model3D m3dPosition;
+
+
+
     public float Speed=5;
     public bool automatic;
     public enum smoothMovement
     {
-        ROTATIONS, LERP, NONE
+        ROTATIONS, LERP, ONE_EURO, POSITIONS, NONE
     }
     public smoothMovement AnimationSmoothness;
     public bool showGrid;
@@ -52,6 +75,20 @@ public class VMEstimation : MonoBehaviour
         setTitles();                    // Set the titles of algorithms.
         setVideoPlayer();               // Set the videoplayer.
         framesLength = DataParsing.estimation.Length;
+
+
+        for(int i=0; i<rotationFiltersJoints.Length; i++)
+        {
+            rotationFiltersJoints[i] = new OneEuroFilter<Quaternion>(filterFrequency);
+        }
+        for (int i = 0; i < positionFiltersJoints.Length; i++)
+        {
+            positionFiltersJoints[i] = new OneEuroFilter<Vector3>(filterFrequency);
+        }
+        rotationFilterHips = new OneEuroFilter<Quaternion>(filterFrequency);
+        positionFilterHips = new OneEuroFilter<Vector3>(filterFrequency);
+
+        m3dPosition = new Model3D(modelPosition);       // Set the 3D Model_POSITIONS
 
     }
 
@@ -189,8 +226,17 @@ public class VMEstimation : MonoBehaviour
                 //case smoothMovement.ROTATIONS: { m3d.moveWithRot(estimation[ChooseProjection]); break; }
                 case smoothMovement.LERP: { m3d.moveSkeletonLERP(estimation[ChooseProjection].projection.joints); break; }
                 case smoothMovement.NONE: { m3d.moveSkeleton(estimation[ChooseProjection].projection.joints); break; }
+                case smoothMovement.ONE_EURO:
+                    {
+                        m3d.moveSkeleton_OneEuroFilter(estimation[ChooseProjection].projection.joints, rotationFiltersJoints, rotationFilterHips);
+                        break;
+                    }
                 default: { m3d.moveSkeleton(estimation[ChooseProjection].projection.joints); break; }
             }
+
+            // Anyways...
+            updateParametersRotationFilters();
+            m3dPosition.moveSkeleton_IK_POSITIONS(estimation[ChooseProjection].projection.joints, positionFiltersJoints, rotationFilterHips);
         }
 
 
@@ -198,13 +244,15 @@ public class VMEstimation : MonoBehaviour
         videoPlayer.frame = ChooseProjection;
 
 
-        /*
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-        pos.z -= scroll * 20 * 100f * Time.deltaTime;
-        transform.position = pos;
-        */
     }
 
-
+    private void updateParametersRotationFilters()
+    {
+        rotationFilterHips.UpdateParams(filterFrequency, filterMinCutoff, filterBeta, filterDcutoff);
+        foreach (OneEuroFilter<Quaternion> rotfilter in rotationFiltersJoints)
+        {
+            rotfilter.UpdateParams(filterFrequency, filterMinCutoff, filterBeta, filterDcutoff);
+        }
+    }
 
 }

@@ -99,17 +99,28 @@ public class BvhExport
     }
 
 
-    private Vector3 getFinalRootRotationFromModel(Vector3[] joints, float angle = 0)
+    private Matrix4x4 getRotationMatrix(float phi, float theta, float psi)
     {
-        // Calculate root Quaternion
-        Vector3 rootPosition = (joints[8] + joints[11]) / 2;
-        Quaternion x = Model3D.YLookRotation((joints[1] - rootPosition), Vector3.up);
-        Quaternion y = Model3D.XLookRotation(joints[8] - joints[11], Vector3.up);
-        Quaternion z = y;
-        // Quaternion qBefore = y * x * y; // Multiply them in the rotation order, in case of ZXY.
+        float R11 = cos(theta) * cos(psi);
+        float R12 = -cos(theta) * sin(psi);
+        float R13 = sin(theta);
+        float R21 = sin(psi) * cos(phi) + sin(theta) * cos(psi) * sin(phi);
+        float R22 = cos(psi) * cos(phi) - sin(theta) * sin(psi) * sin(phi);
+        float R23 = -cos(theta) * sin(phi);
+        float R31 = sin(psi) * sin(phi) - sin(theta) * cos(psi) * cos(phi);
+        float R32 = cos(psi) * sin(phi) + sin(theta) * sin(psi) * cos(phi);
+        float R33 = cos(theta) * cos(phi);
+        Matrix4x4 m = new Matrix4x4(new Vector4(R11, R12, R13), new Vector4(R21,R22,R23), new Vector4(31,32,33), Vector4.zero);
+        return m;
+    }
 
-
-        return Model3D.getRootRotation_Euler(joints);
+    private float cos(float theta)
+    {
+        return Mathf.Cos(theta);
+    }
+    private float sin(float theta)
+    {
+        return Mathf.Sin(theta);
     }
 
 
@@ -134,10 +145,8 @@ public class BvhExport
 
         // [APPLY ROTATION AROUND Y]
         Quaternion qAfter;
-        qAfter = qBefore;
-        qAfter = qY * YawRotationQuaternion * qX * qZ;
-        //qAfter = qBefore * YawRotationQuaternion;
-
+        qAfter = YawRotationQuaternion * qBefore ;
+        /*
         // [EXTRA CALCULATIONS]:
         float signedAngle = GetSignedAngle(qBefore, qAfter, Vector3.up);
         // Angle axis of signed angle:
@@ -150,7 +159,7 @@ public class BvhExport
         float y_RotationAngle = Quaternion.Angle(qBefore, qAfter);
         float y_AngleBefore = qBefore.eulerAngles.y;
         float y_AngleAfter = qAfter.eulerAngles.y;
-
+        */
         // [RETURN IN XYZ FORM]
         return qAfter.eulerAngles;
     }
@@ -294,7 +303,7 @@ public class BvhExport
             Vector3 defaultRootRotation = new Vector3(90, 90, 0); // Default. Please don't delete this. It is useful to debug.
             Vector3 rootRotation = defaultRootRotation;
             float angle = 180;
-            rootRotation = getFinalRootRotation(rotations[0], angle, counter);
+            rootRotation = defaultRootRotation; //getFinalRootRotation(rotations[0], angle, counter);
             MotionLines.Add(CreateMLine(Vector3.zero, rootRotation, rotations));
             counter++;
         }
