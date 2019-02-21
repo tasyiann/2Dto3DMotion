@@ -124,7 +124,7 @@ public class BvhExport
     }
 
 
-    private Vector3 getFinalRootRotation(Vector3 rotationFromBvh, float angle=0, int counter=0)
+    private Vector3 getFinalRootRotation(Vector3 rotationFromBvh, float angle=0, int frameCounter=0)
     {
 
 
@@ -144,8 +144,10 @@ public class BvhExport
         //Debug.Log(angle + " >> ANGLE AXIS: "+ debugangleaxis + "debug angle: "+debugangle);
 
         // [APPLY ROTATION AROUND Y]
-        Quaternion qAfter;
-        qAfter = YawRotationQuaternion * qBefore ;
+        Quaternion qAfter = qBefore;
+        //qAfter = qBefore * YawRotationQuaternion;
+
+        //Debug.Log("At frame: "+frameCounter+ " the angle is "+angle);
         /*
         // [EXTRA CALCULATIONS]:
         float signedAngle = GetSignedAngle(qBefore, qAfter, Vector3.up);

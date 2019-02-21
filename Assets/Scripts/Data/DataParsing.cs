@@ -24,6 +24,18 @@ public class DataParsing
     private static float EstimationAlgorithmTime;     // Execution time of Best 3D Algorithm.
 
 
+    // 1 Euro filter
+    static OneEuroFilter<Quaternion>[] rotationFiltersJoints = new OneEuroFilter<Quaternion>[14];
+    static OneEuroFilter<Quaternion> rotationFilterHips;
+     static public bool filterOn = true;
+     static public float filterFrequency = 120.0f;
+     static public float filterMinCutoff = 1.0f;
+     static public float filterBeta = 0.0f;
+     static public float filterDcutoff = 1.0f;
+     static public float noiseAmount = 1.0f;
+     static float timer = 0.0f;
+
+
     /// <summary> The pipeline of estimating the 3D of OpenPose Output.</summary>
     public static void OFFLINE_Pipeline()
     {
@@ -75,14 +87,61 @@ public class DataParsing
         }
         // Iterate frames, and create a list of the 3D estimation frames, for each figure appeared in video.
         estimation = getEstimationArray(0);
+
+
+
+        // >> Apply one Euro filter <<
+        //initialise1EuroFilter();
+        //applyOneEuroFilter(estimation);
+
+
+
         Debug.Log("Estimation Done.");
         // Set log
         setLog();
         // Save the scenario.
         sc.Save();
-        Debug.Log("Saving Done.");
+        // Debug.Log("Saving Done.");
     }
 
+
+    private static void initialise1EuroFilter()
+    {
+        for (int i = 0; i < rotationFiltersJoints.Length; i++)
+        {
+            rotationFiltersJoints[i] = new OneEuroFilter<Quaternion>(filterFrequency);
+        }
+        rotationFilterHips = new OneEuroFilter<Quaternion>(filterFrequency);
+        updateParametersRotationFilters(); // + update parameteres
+    }
+
+
+    private static void updateParametersRotationFilters()
+    {
+        rotationFilterHips.UpdateParams(filterFrequency, filterMinCutoff, filterBeta, filterDcutoff);
+        foreach (OneEuroFilter<Quaternion> rotfilter in rotationFiltersJoints)
+        {
+            rotfilter.UpdateParams(filterFrequency, filterMinCutoff, filterBeta, filterDcutoff);
+        }
+    }
+
+
+
+    private static void applyOneEuroFilter(Neighbour[] rawEstimation)
+    {
+        foreach (Neighbour frame in rawEstimation)
+        {
+            Vector3[] jointsPositions = frame.projection.joints;
+            Quaternion[] rotations = Model3D.calculateRawRotations(jointsPositions);
+            Quaternion hipRotation = Model3D.getHips(jointsPositions);
+            for (int i=0; i<rotations.Length; i++)
+            {
+                rotations[i] = rotationFiltersJoints[i].Filter(rotations[i]);
+            }
+            Quaternion filteredHips = rotationFilterHips.Filter(hipRotation);
+            frame.setRotations(rotations,filteredHips);
+        }
+    }
 
 
     public static void setLog()

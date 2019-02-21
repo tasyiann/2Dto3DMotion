@@ -288,7 +288,8 @@ namespace OpenPose.Example {
                 estimation_to_debug = estimation;
                 if (estimation != null)
                 {
-                    m3d.moveSkeleton_OneEuroFilter(estimation,rotationFiltersJoints, rotationFilterHips);
+                    // m3d.moveSkeleton_OneEuroFilter(estimation,rotationFiltersJoints, rotationFilterHips);
+                    m3d.moveSkeleton(estimation);
                 }
 
 

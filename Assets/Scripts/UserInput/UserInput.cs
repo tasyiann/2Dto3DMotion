@@ -19,7 +19,7 @@ public class UserInput : MonoBehaviour {
     public enum EnumAlgorithms                  // Select Neighbours Algorithm.
     { JBJEuclidean }
     public enum EnumNN                          // Select Estimation Algorithm.
-    { PrevFrame2D, PrevFrameWindow3D, Nearest }
+    { PrevFrameWindow3D, PrevFrame2D, Nearest }
 
     /* Initialize the dropdowns */
     private void Awake()
@@ -41,7 +41,8 @@ public class UserInput : MonoBehaviour {
         }
         EstAlg_dropdown.AddOptions(list);
 
-        // 3rd dropdown.
+        k_input.text = "15";
+        m_input.text = "4";
     }
 
 

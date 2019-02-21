@@ -14,33 +14,34 @@ public class VMEstimation : MonoBehaviour
     private static Scenario sc = Base.sc;
 
 
-    // 1 Euro filter
+    // 1 Euro filter - JOINTS
     OneEuroFilter<Quaternion>[] rotationFiltersJoints = new OneEuroFilter<Quaternion>[14];
-    OneEuroFilter<Quaternion> rotationFilterHips;
-    public bool filterOn = true;
+    public bool updateParams = false;
     public float filterFrequency = 120.0f;
     public float filterMinCutoff = 1.0f;
     public float filterBeta = 0.0f;
     public float filterDcutoff = 1.0f;
     public float noiseAmount = 1.0f;
-    float timer = 0.0f;
 
+    // 1 Euro filter - HIPS
+    OneEuroFilter<Quaternion> rotationFilterHips;
+    public float filterFrequency_hips = 120.0f;
+    public float filterMinCutoff_hips = 1.0f;
+    public float filterBeta_hips = 0.0f;
+    public float filterDcutoff_hips = 1.0f;
+    public float noiseAmount_hips = 1.0f;
 
-    // Set Visualistion
+    // Set Video
     public GameObject VideoplayerGO;
     private UnityEngine.Video.VideoPlayer videoPlayer;
-    public Transform model;
-    private Model3D m3d;
-
-    // New - Visual just positions with IK
-    OneEuroFilter<Vector3>[] positionFiltersJoints = new OneEuroFilter<Vector3>[14];
-    OneEuroFilter<Vector3> positionFilterHips;
-    public Transform modelPosition;
-    private Model3D m3dPosition;
+    // Set 3d model w/ filters
+    public Transform modelFiltered;
+    private Model3D m3dFiltered;
+    // Set 3d model w/out filters
+    public Transform modelRaw;
+    private Model3D m3dRaw;
 
 
-
-    public float Speed=5;
     public bool automatic;
     public enum smoothMovement
     {
@@ -53,8 +54,6 @@ public class VMEstimation : MonoBehaviour
     public Material whiteMaterial;
     public Material yellowMaterial;
     public Material redMaterial;
-    public Text Best3DAlgText;
-    public Text AlgText;
     public Button buttonAutomatic;
 
     Neighbour[] estimation = DataParsing.estimation;
@@ -71,8 +70,8 @@ public class VMEstimation : MonoBehaviour
         buttonAutomatic.onClick.AddListener(setAutomaticVisualisation);
         frames = sc.frames;
         gL = new GLDraw(whiteMaterial); // Set the Material
-        m3d = new Model3D(model);       // Set the 3D Model
-        setTitles();                    // Set the titles of algorithms.
+        m3dFiltered = new Model3D(modelFiltered);       // Set the 3D Model
+        m3dRaw = new Model3D(modelRaw);
         setVideoPlayer();               // Set the videoplayer.
         framesLength = DataParsing.estimation.Length;
 
@@ -81,14 +80,7 @@ public class VMEstimation : MonoBehaviour
         {
             rotationFiltersJoints[i] = new OneEuroFilter<Quaternion>(filterFrequency);
         }
-        for (int i = 0; i < positionFiltersJoints.Length; i++)
-        {
-            positionFiltersJoints[i] = new OneEuroFilter<Vector3>(filterFrequency);
-        }
         rotationFilterHips = new OneEuroFilter<Quaternion>(filterFrequency);
-        positionFilterHips = new OneEuroFilter<Vector3>(filterFrequency);
-
-        m3dPosition = new Model3D(modelPosition);       // Set the 3D Model_POSITIONS
 
     }
 
@@ -112,15 +104,12 @@ public class VMEstimation : MonoBehaviour
 
         if (url == null || url == "") Debug.Log("url is null");
         videoPlayer.url = url + "\\video.mp4";
-        videoPlayer.Pause();
+
+        ChooseProjection = (int)videoPlayer.frame; // <<
+        //videoPlayer.Pause();
     }
 
-    private void setTitles()
-    {
-        /* Set the title of algorithms */
-        Best3DAlgText.text = sc.algEstimation.ToString();
-        AlgText.text = sc.algNeighbours.ToString();
-    }
+
 
     private void updateText()
     {
@@ -140,9 +129,10 @@ public class VMEstimation : MonoBehaviour
                 return;
 
             s += ChooseProjection + "/" + estimation.Length + "\n";
-            s += "ClusterFile: " + chosen.projection.clusterID + "\n";
-            s += "Angle: " + chosen.projection.angle + "\n";
+            s += "Cluster: " + chosen.projection.clusterID + "\n";
+            // s += "Angle: " + chosen.projection.angle + "\n";
             s += "2D-Distance: " + chosen.distance2D + "\n";
+            s += "3D-Rot-Distance: " + chosen.distance3D + "\n";
 
             textInfo.text = s;
         }
@@ -186,31 +176,40 @@ public class VMEstimation : MonoBehaviour
 
         if (automatic)
         {
-            ChooseProjection = (int)(Timer * Speed);
-            if (ChooseProjection > framesLength - 1)
+            if (videoPlayer.isPaused)
+                videoPlayer.Play();
+            ChooseProjection = (int)videoPlayer.frame;
+            if (ChooseProjection > framesLength - 1 || ChooseProjection < 0)
             {
                 ChooseProjection = 0;
                 Timer = 0;
             }
-                
-        }
 
-
-
-
-        Vector3 pos = transform.position;
-        if (Input.GetKeyDown("w"))
+        }else
         {
-            ChooseProjection ++;
-            if (ChooseProjection >= framesLength)
-                ChooseProjection = 0;
+            Vector3 pos = transform.position;
+            if (Input.GetKeyDown("w"))
+            {
+                ChooseProjection++;
+                if (ChooseProjection >= framesLength)
+                    ChooseProjection = 0;
+            }
+            if (Input.GetKeyDown("s"))
+            {
+                ChooseProjection--;
+                if (ChooseProjection < 0)
+                    ChooseProjection = framesLength - 1;
+            }
+            /* Show video on Current frame. */
+            if (!videoPlayer.isPaused)
+                videoPlayer.Pause();
+            videoPlayer.frame = ChooseProjection;
         }
-        if (Input.GetKeyDown("s"))
-        {
-            ChooseProjection --;
-            if (ChooseProjection < 0)
-                ChooseProjection = framesLength - 1;
-        }
+
+
+
+
+
 
 
 
@@ -221,34 +220,37 @@ public class VMEstimation : MonoBehaviour
         /* Do the 3d Animation. */
         if (estimation != null && estimation[ChooseProjection] != null)
         {
+            // Set filtered 3d model
             switch (AnimationSmoothness)
             {
-                //case smoothMovement.ROTATIONS: { m3d.moveWithRot(estimation[ChooseProjection]); break; }
-                case smoothMovement.LERP: { m3d.moveSkeletonLERP(estimation[ChooseProjection].projection.joints); break; }
-                case smoothMovement.NONE: { m3d.moveSkeleton(estimation[ChooseProjection].projection.joints); break; }
+                case smoothMovement.LERP: { m3dFiltered.moveSkeletonLERP(estimation[ChooseProjection].projection.joints); break; }
+                case smoothMovement.NONE: { m3dFiltered.moveSkeleton(estimation[ChooseProjection].projection.joints); break; }
                 case smoothMovement.ONE_EURO:
                     {
-                        m3d.moveSkeleton_OneEuroFilter(estimation[ChooseProjection].projection.joints, rotationFiltersJoints, rotationFilterHips);
+                        if (updateParams)
+                        {
+                            updateParametersRotationFilters();
+                        }
+                        m3dFiltered.moveSkeleton_OneEuroFilter(estimation[ChooseProjection].projection.joints, rotationFiltersJoints, rotationFilterHips);
                         break;
                     }
-                default: { m3d.moveSkeleton(estimation[ChooseProjection].projection.joints); break; }
+                default: { m3dFiltered.moveSkeleton(estimation[ChooseProjection].projection.joints); break; }
             }
 
-            // Anyways...
-            updateParametersRotationFilters();
-            m3dPosition.moveSkeleton_IK_POSITIONS(estimation[ChooseProjection].projection.joints, positionFiltersJoints, rotationFilterHips);
+
+            // Set Raw 3d model
+            m3dRaw.moveSkeleton(estimation[ChooseProjection].projection.joints);
         }
 
 
-        /* Show video on Current frame. */
-        videoPlayer.frame = ChooseProjection;
+
 
 
     }
 
     private void updateParametersRotationFilters()
     {
-        rotationFilterHips.UpdateParams(filterFrequency, filterMinCutoff, filterBeta, filterDcutoff);
+        rotationFilterHips.UpdateParams(filterFrequency_hips, filterMinCutoff_hips, filterBeta_hips, filterDcutoff_hips);
         foreach (OneEuroFilter<Quaternion> rotfilter in rotationFiltersJoints)
         {
             rotfilter.UpdateParams(filterFrequency, filterMinCutoff, filterBeta, filterDcutoff);

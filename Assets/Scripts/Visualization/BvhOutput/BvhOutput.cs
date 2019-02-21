@@ -42,7 +42,7 @@ public class BvhOutput : MonoBehaviour {
             Quaternion qZ = Quaternion.AngleAxis(rotationFromBvh.z, Vector3.forward);
             Quaternion qrotFinal = qY * qX * qZ; // Multiply them in the rotation order, in case of ZXY.
             */
-            model.rotation = qrot;
+            //model.rotation = qrot;
         } 
     }
 

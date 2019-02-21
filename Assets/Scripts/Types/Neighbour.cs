@@ -8,6 +8,8 @@ public class Neighbour {
     public BvhProjection projection;
     public float distance2D;
     public float distance3D;
+    public Quaternion[] rotations;
+    public Quaternion hipRotation;
 
     public Neighbour(BvhProjection projection, float distance2D)
     {
@@ -21,5 +23,9 @@ public class Neighbour {
         this.distance3D = distance3D;
     }
         
-
+    public void setRotations(Quaternion[] rots, Quaternion hipRot)
+    {
+        rotations = rots;
+        hipRotation = hipRot;
+    }
 }

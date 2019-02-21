@@ -109,7 +109,7 @@ public class Model3D
 
 
 
-    private Quaternion getRotation(Quaternion qX, Quaternion qY, Quaternion qZ)
+    private static Quaternion getRotation(Quaternion qX, Quaternion qY, Quaternion qZ)
     {
         return Quaternion.Euler(new Vector3(qX.eulerAngles.x, qY.eulerAngles.y, qZ.eulerAngles.z));
     }
@@ -208,7 +208,7 @@ public class Model3D
     }
 
 
-    public Quaternion[] calculateRawRotations(Vector3[] newJoints)
+    public static Quaternion[] calculateRawRotations(Vector3[] newJoints)
     {
         Quaternion[] rotations = new Quaternion[14];
         /* HEAD           */ rotations[0] = Quaternion.identity;
@@ -219,18 +219,18 @@ public class Model3D
         /* LEFT_ARM       */ rotations[5] = XLookRotation(-(newJoints[6] - newJoints[5]), Vector3.up);
         /* LEFT_FORE_ARM  */ rotations[6] = XLookRotation(-(newJoints[7] - newJoints[6]), Vector3.up);
         /* LEFT_HAND      */ rotations[7] = Quaternion.identity;
-        /* RIGHT_UP_LEG   */ rotations[8] = Quaternion.FromToRotation(Vector3.down, (newJoints[9] - newJoints[8]).normalized);
+        /* RIGHT_UP_LEG   */ rotations[8] = Quaternion.FromToRotation(Vector3.down, (newJoints[9] - newJoints[8]).normalized) * Quaternion.AngleAxis(180,Vector3.down);
         /* RIGHT_LEG      */ rotations[9] = Quaternion.FromToRotation(Vector3.down, (newJoints[10] - newJoints[9]).normalized);
         /* RIGHT_FOOT     */ rotations[10] = XLookRotation((newJoints[2] - newJoints[1]), Vector3.up);
-        /* LEFT_UPLEG     */ rotations[11] = Quaternion.FromToRotation(Vector3.down, (newJoints[12] - newJoints[11]).normalized);
+        /* LEFT_UPLEG     */ rotations[11] = Quaternion.FromToRotation(Vector3.down, (newJoints[12] - newJoints[11]).normalized) * Quaternion.AngleAxis(180, Vector3.down);
         /* LEFT_LEG       */ rotations[12] = Quaternion.FromToRotation(Vector3.down, (newJoints[13] - newJoints[12]).normalized);
-        /* LEFT_FOOT      */ rotations[13] = joints[10].rotation;
+        /* LEFT_FOOT      */ rotations[13] = rotations[10];
         return rotations;
     }
 
 
 
-    private Quaternion getHips(Vector3[] joints)
+    public static Quaternion getHips(Vector3[] joints)
     {
         // Get Root:
         Vector3 root = (joints[8] + joints[11]) / 2;
