@@ -10,21 +10,9 @@ namespace OpenPose.Example {
      */
     public class OpenPoseUserScript : MonoBehaviour
     {
-        // 1 Euro filter
-        OneEuroFilter<Quaternion>[] rotationFiltersJoints = new OneEuroFilter<Quaternion>[14];
-        OneEuroFilter<Quaternion> rotationFilterHips;
-        public bool filterOn = true;
-        public float filterFrequency = 120.0f;
-        public float filterMinCutoff = 1.0f;
-        public float filterBeta = 0.0f;
-        public float filterDcutoff = 1.0f;
-        public float noiseAmount = 1.0f;
-        float timer = 0.0f;
-        public bool update1EuroValues;
+
 
         // 3D Estimation
-        public Transform model;
-        private Model3D m3d;
         private static Scenario sc = Base.sc;
         private static List<List<BvhProjection>> base_clusters = Base.base_clusters;            // Clustered projections.
         public static List<BvhProjection> base_main_representatives = Base.base_main_representatives;        // All main representatives.
@@ -33,7 +21,7 @@ namespace OpenPose.Example {
         private static List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;      // Rotations.
         public static Vector3[] estimation_to_debug = null;                                     // To debug 2D figure
         public static Vector3[] rawInputToDebug = null;
-        public static OPPose figureToDebug = null;
+        public OPPose selectedPoseToDebug = null;
 
 
         // The 2D human to control
@@ -102,8 +90,6 @@ namespace OpenPose.Example {
 
         private void Start()
         {
-            // Initialise 3D model
-            m3d = new Model3D(model);
 
             // Register callbacks
             OPWrapper.OPRegisterCallbacks();
@@ -120,10 +106,6 @@ namespace OpenPose.Example {
             /* OPWrapper.OPConfigureAllInDefault(); */
             UserConfigureOpenPose();
 
-            // Set 1euro filter
-            for (int i = 0; i < rotationFiltersJoints.Length; i++)
-                rotationFiltersJoints[i] = new OneEuroFilter<Quaternion>(filterFrequency);
-            rotationFilterHips = new OneEuroFilter<Quaternion>(filterFrequency);
 
             // Start OpenPose
             OPWrapper.OPRun();
@@ -199,11 +181,11 @@ namespace OpenPose.Example {
         private static int currentframeIndex = 0;
         // HERE
         // This fuction is made by me
-        private Vector3[] setFigure(ref OPDatum datum, int personID, float scoreThres, OPFrame frame)
+        private void setFigure(ref OPDatum datum, int personID, float scoreThres, OPFrame frame)
         {
             if (datum.poseKeypoints == null || personID >= datum.poseKeypoints.GetSize(0))
             {
-                return null;
+                return;
             }
 
             // Identification TODO::::
@@ -234,16 +216,16 @@ namespace OpenPose.Example {
             Array.Copy(joints, rawInputToDebug, joints.Length);
             OPPose poseNEW = new OPPose(joints, available, frames, currentframeIndex);
             frame.figures.Add(poseNEW);
-            figureToDebug = poseNEW;
+            selectedPoseToDebug = poseNEW;
             //Debug.Log("RAW POSITIONS translated to 000 \n"+poseNEW.jointsToString(true));
-            return getEstimation(poseNEW);
+            estimateAndSave3D(poseNEW);
 
         }
 
 
 
         OPPose prevFigure=null;
-        private Vector3[] getEstimation(OPPose figure)
+        private Vector3[] estimateAndSave3D(OPPose figure)
         {
             // STEP_A: Find k-BM.
             sc.algNeighbours.SetNeighbours(figure, sc.k, base_clusters, base_representatives, base_main_representatives, base_main_clusters);
@@ -256,14 +238,7 @@ namespace OpenPose.Example {
         }
 
 
-        private void updateParametersRotationFilters()
-        {
-            rotationFilterHips.UpdateParams(filterFrequency, filterMinCutoff, filterBeta, filterDcutoff);
-            foreach (OneEuroFilter<Quaternion> rotfilter in rotationFiltersJoints)
-            {
-                rotfilter.UpdateParams(filterFrequency, filterMinCutoff, filterBeta, filterDcutoff);
-            }
-        }
+
 
         private void Update()
         {
@@ -276,22 +251,12 @@ namespace OpenPose.Example {
                 frames.Add(currframe);
                 currentframeIndex++;
 
-                // Update 1 euro filter values
-                if (update1EuroValues)
-                {
-                    updateParametersRotationFilters();
-                }
+
 
                 // Visualize 3D
                 int personID = 0;
-                Vector3[] estimation = setFigure(ref datum, personID, renderThreshold, currframe);
-                estimation_to_debug = estimation;
-                if (estimation != null)
-                {
-                    // m3d.moveSkeleton_OneEuroFilter(estimation,rotationFiltersJoints, rotationFilterHips);
-                    m3d.moveSkeleton(estimation);
-                }
 
+                setFigure(ref datum, personID, renderThreshold, currframe); // SETS THE selectedPoseToDebug
 
                 // Draw human in data
                 int i = 0;

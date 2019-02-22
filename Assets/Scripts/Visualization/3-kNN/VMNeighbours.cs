@@ -17,7 +17,7 @@ public class VMNeighbours : MonoBehaviour
     public int CurrentFrame;            // The frame to be shown.
     public Vector2 startingPos;         // The position to place the first neighbour.
     public Material Material;           // The material used in gl lines.
-    public Text textInfo;               // Text (not in use yet.)
+    //public Text textInfo;             // Text (not in use yet.)
     private GLDraw gL;                  // GL lines.
     List<OPFrame> frames = Base.sc.frames;
 
@@ -30,23 +30,7 @@ public class VMNeighbours : MonoBehaviour
         gL = new GLDraw(Material);
     }
 
-    /**
-     * (Not in use). We could put some info on the screen.
-     */
-    private void updateText()
-    {
-        string s = "";
-        if(frames != null)
-        {
-            s += CurrentFrame + "/" + frames.Count + "\n";
-            foreach (var val in Enum.GetValues(typeof(EnumJoint)))
-            {
-                if (frames[CurrentFrame].figures.Count > 0)
-                    s += val.ToString() + ": " + frames[CurrentFrame].figures[0].joints[(int)val] + "\n";
-            }
-            textInfo.text = s;
-        }
-    }
+
 
     /**
      * Render the figures on the camera.

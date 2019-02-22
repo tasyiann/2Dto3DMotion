@@ -12,7 +12,7 @@ namespace RootMotion.FinalIK
         public GameObject model;
         public Material SlightTransparentMat;
         public Material InvisibleMat;
-        public bool showPrediction = false;
+        public bool showFutureMove= false;
         public bool DebugMode = false;
         //public Renderer[] skins;
         [Range(0.0f,1f)]
@@ -21,12 +21,11 @@ namespace RootMotion.FinalIK
         /// Minimum distance from the feet joint to the ground.
         /// </summary>
         [Range(0.0f, 1f)]
-        public float floorOffset = 0.1f;
+        public float floorMaxDistance = 0.1f;
         /// <summary>
         /// Maximum distance between future and current joint.
         /// </summary>
-        [Range(0.0f, 1f)]
-        public float maxDistanceBetweenJoints = 0.1f;
+       
         [Range(0.0f, 1f)]
         public float feetHeight = 0.3f;
         [Range(0.0f, 1f)]
@@ -54,12 +53,12 @@ namespace RootMotion.FinalIK
         private Animator modelFutureAnimator;
         private AnimationClip modelFutureAnimationClip;
 
+        private List<Color> initialColors;
         private Renderer[] currModelRenderers;
         private Renderer[] futureModelRenderers;
-
+        private bool areSkinsInitial = true;
 
         private bool visible = true;
-
         private GameObject leftFootTarget;
         private GameObject rightFootTarget;
 
@@ -74,11 +73,12 @@ namespace RootMotion.FinalIK
             currentModel.transform.SetParent(model.transform.parent);    // Place in hierarchy.
             currentModel.transform.position = model.transform.position;
             currModelRenderers = getSkinsRenderers(currentModel);
+            saveInitialColors(currModelRenderers);
 
             fullBodyBipedIK_Current = currentModel.GetComponent<FullBodyBipedIK>();
             leftFoot_Effector = fullBodyBipedIK_Current.solver.leftFootEffector;
             rightFoot_Effector = fullBodyBipedIK_Current.solver.rightFootEffector;
-
+            
 
             /* Future prediction model (model) */
             futureModel = model;
@@ -124,10 +124,9 @@ namespace RootMotion.FinalIK
                 skin.material = InvisibleMat;
             }
         }
-        private void setSkinsColor(Color color, GameObject model)
+        private void setSkinsColor(Color color, Renderer[] skins)
         {
-            Renderer[] tempRenderers = model.GetComponentsInChildren<Renderer>();
-            foreach (Renderer skin in tempRenderers)
+            foreach (Renderer skin in skins)
             {
                 skin.material.color = color;
             }
@@ -138,21 +137,59 @@ namespace RootMotion.FinalIK
         }
 
 
+
+        private void saveInitialColors(Renderer[] skins)
+        {
+            initialColors = new List<Color>();
+            foreach (Renderer skin in skins)
+            {
+                Debug.Log("Saving " + skin.material.color.ToString());
+                initialColors.Add(skin.material.color);
+            }
+        }
+
+
+        private void resetSkinsColors(Renderer[] skins)
+        {
+            for (int i = 0; i < skins.Length; i++)
+            {
+                Debug.Log("Loading " + skins[i].material.color.ToString());
+                skins[i].material.color = initialColors[i];
+            }
+        }
+
         private void Update()
         {
             examineAndFixFoot(ref isLeftFootFrozen, leftFoot_Future, leftFoot_Current, leftFoot_Effector, ref leftFootTarget, "LeftFootTarget");
             examineAndFixFoot(ref isRightFootFrozen, rightFoot_Future, rightFoot_Current, rightFoot_Effector, ref rightFootTarget, "RightFootTarget");
+
+            // Debug Mode color skins
+            if (DebugMode)
+                areSkinsInitial = false;
+            if (DebugMode && (isLeftFootFrozen || isRightFootFrozen))
+                setSkinsColor(Color.red, currModelRenderers);
+            else if (DebugMode)
+                setSkinsColor(Color.blue, currModelRenderers);
+
+
+            // Reset skins
+            if(!DebugMode && !areSkinsInitial)
+            {
+                resetSkinsColors(currModelRenderers);
+                areSkinsInitial = true;
+            }
+
             predictionModelAppear();
         }
 
         private void predictionModelAppear()
         {
-            if (showPrediction && !visible)
+            if (showFutureMove && !visible)
             {
                 setSkinsSlightTransparent(futureModelRenderers);
                 visible = true;
             }
-            if(visible && !showPrediction)
+            if(visible && !showFutureMove)
             {
                 setSkinsInvisible(futureModelRenderers);
                 visible = false;
@@ -166,30 +203,18 @@ namespace RootMotion.FinalIK
             bool intersectionFound;
             RaycastHit intersection = groundIntersection(foot_future.transform, out intersectionFound);
             float distanceFromGround = intersection.distance;
-            if (intersectionFound && !isFootFrozen  && distanceFromGround < (floorOffset-feetHeight))
+            if (intersectionFound && !isFootFrozen  && distanceFromGround < (floorMaxDistance-feetHeight))
             {
                 // Place feet above the ground plane, not in the ground plane.
                 Vector3 targetPosition = new Vector3(intersection.point.x, intersection.point.y + feetHeight, intersection.point.z);
                 updateTargetPosition(footTarget, targetPosition);
                 stickOnGround(footEffector);
                 isFootFrozen = true;
-                if (DebugMode)
-                {
-                    setSkinsColor(Color.red, currentModel);
-                    Debug.Log(foot_future.name + " - preventing Foot Sliding");
-                }
-
             }
-            if (intersectionFound && isFootFrozen && distanceFromGround >= (floorOffset-feetHeight))
+            if (intersectionFound && isFootFrozen && distanceFromGround >= (floorMaxDistance-feetHeight))
             {
                 releaseFromGround(footEffector);
                 isFootFrozen = false;
-                if (DebugMode)
-                {
-                    setSkinsColor(Color.blue, currentModel);
-                    //Debug.Log(foot.name + " is RELEASED.");
-                }
-
             }
         }
 

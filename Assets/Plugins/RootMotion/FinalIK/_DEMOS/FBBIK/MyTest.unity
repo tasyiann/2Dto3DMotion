@@ -152,10 +152,13 @@ MonoBehaviour:
     type: 2}
   InvisibleMat: {fileID: 2100000, guid: d314d93edc21ffd45b6aefa2260e8d5d, type: 2}
   showPrediction: 0
-  secondsPrediction: 0.05
+  DebugMode: 0
+  secondsPrediction: 0.01
   floorOffset: 0.1
+  maxDistanceBetweenJoints: 0.1
+  feetHeight: 0.08
   positionWeight: 1
-  rotationWeight: 0.5
+  rotationWeight: 0.15
 --- !u!4 &31963626
 Transform:
   m_ObjectHideFlags: 0

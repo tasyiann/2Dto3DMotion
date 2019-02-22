@@ -36,9 +36,9 @@ public class PrevFrameWindow3D : AlgorithmEstimation
             {
                 min = distance;
                 minNeighbour = n;
+                minNeighbour.distance3D = distance; // assign the dist.
             }
         }
-
         return minNeighbour;
     }
 

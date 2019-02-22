@@ -26,7 +26,7 @@ public class BvhOutput : MonoBehaviour {
 
     private void Update()
     {
-        currentFrame = estimationScript.ChooseProjection + 1; // Plus one, because T-Pose is at position 0.
+        currentFrame = estimationScript.currentFrame + 1; // Plus one, because T-Pose is at position 0.
 
         // Set frame to skeleton
         if (skeleton != null && currentFrame<numOfFrames)

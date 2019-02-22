@@ -5,7 +5,7 @@ using UnityEngine;
 public class InitiateBase : MonoBehaviour {
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
         // Scaling.setNewScalingStandard();
         Base.initialize();
         //new BvhExport("TemplateBVH\\template.bvh", "Databases\\Big-Database\\Rotations\\4", "try.bvh");

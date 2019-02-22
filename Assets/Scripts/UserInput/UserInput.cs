@@ -41,7 +41,7 @@ public class UserInput : MonoBehaviour {
         }
         EstAlg_dropdown.AddOptions(list);
 
-        k_input.text = "15";
+        k_input.text = "20";
         m_input.text = "4";
     }
 
@@ -55,30 +55,33 @@ public class UserInput : MonoBehaviour {
 
     public void GO_OFFLINE()
     {
-        try
-        {
-            SavePreferences();
-            DataParsing.OFFLINE_Pipeline();
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e.Message+"\n"+e.StackTrace);
-            return;
-        }
+        SavePreferences();
+        DataParsing.OFFLINE_Pipeline();
+        //try
+        //{
+        //    SavePreferences();
+        //    DataParsing.OFFLINE_Pipeline();
+        //}
+        //catch (Exception e)
+        //{
+        //    Debug.LogError(e.Message+"\n"+e.StackTrace);
+        //    return;
+        //}
         UnityEngine.SceneManagement.SceneManager.LoadScene(7); // Estimation Scene
     }
 
     public void GO_REALTIME()
     {
-        try
-        {
-            SavePreferences();
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e.Message + "\n" + e.StackTrace);
-            return;
-        }
+        SavePreferences();
+        //try
+        //{
+        //    SavePreferences();
+        //}
+        //catch (Exception e)
+        //{
+        //    Debug.Log(e.Message + "\n" + e.StackTrace);
+        //    return;
+        //}
         UnityEngine.SceneManagement.SceneManager.LoadScene(12); // Estimation Scene
     }
 
