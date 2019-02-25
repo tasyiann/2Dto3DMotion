@@ -14,7 +14,9 @@ public class Visual_Window : MonoBehaviour
     public int maxLines = 5;
     public Vector3 CollumnOffset;
 
-    private OPPose figureToDebug;         // The chosen figure to debug, from showEstimationScript.
+    public OPPose figureToDebug;         // The chosen figure to debug, from showEstimationScript.
+    public List<BvhProjection> selectedWin;
+
     private OPPose previousFigure = null; // Previous figure. Used to show the previous selectedN.
     private GLDraw gL;                    // GL lines.
     private Vector3 center;
@@ -95,8 +97,12 @@ public class Visual_Window : MonoBehaviour
             else
                 color = colorBasic;
             // Color the selected one differently.
-            if (counter == size / 2 && showSelectedOne && figureToDebug.selectedN.projection.rotationFileID == figure.rotationFileID && figureToDebug.selectedN.projection.frameNum == figure.frameNum)
-                color = Color.white;
+            if (showSelectedOne && figureToDebug.selectedN.windowIn3Dpoints == window)
+            {
+                color = Color.cyan;
+                selectedWin = window;
+            }
+                
 
             gL.drawFigure(true, color, figure.joints, null, pos);
             pos = new Vector3(pos.x + offset.x, pos.y, pos.z);             // Move some offset on the same line.

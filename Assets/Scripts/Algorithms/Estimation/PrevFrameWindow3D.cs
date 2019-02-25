@@ -44,6 +44,9 @@ public class PrevFrameWindow3D : AlgorithmEstimation
                 minNeighbour.distance3D = distance; // assign the dist.
             }
         }
+
+
+
         return minNeighbour;
     }
 
@@ -143,11 +146,11 @@ public class PrevFrameWindow3D : AlgorithmEstimation
         for (int i=m; i>=-m; i--)
         {
             // Check if that frame exists in the rotationFile.
-            if (mainFrameNum - m < 0 || mainFrameNum - m >= rotationFiles[projection.rotationFileID].Count)
+            if (mainFrameNum - i < 0 || mainFrameNum - i >= rotationFiles[projection.rotationFileID].Count)
                 window.Add(null);
             else
             {
-                int frameIndex = mainFrameNum - m;
+                int frameIndex = mainFrameNum - i;
                 window.Add(rotationFiles[projection.rotationFileID][frameIndex].getComparableRotations());
                 // Save the window : each figure as 3D points (so we can debug it later).
                 if(!windowAlreadySaved)

@@ -21,6 +21,7 @@ public class OPPose
     public EnumBONES limbFactor;                    // Which limb is used to scale.
     public List<Neighbour> neighbours;              // k-neighbours
     public Neighbour selectedN;                     // The leading neighbour.
+
     public Vector3 translation;                     // The translation of that pose. (not in use)
     public int appearanceOrder;                     // The order that it appears in JSON.
     public int id;                                  // Identification of the figure.

@@ -15,11 +15,15 @@ public static class Base {
     private static string big_DB = @"Databases\5min-updatedScale";
     public static string Path = big_DB; 
     public static string Clustering = "5000-clusters";
-    public static string ClusteringMain = "500-clusters";  // not curr used
+  
     public static int numClustersToSearch = 20;
-    public static int numMainClustersToSearch = 2;         // not curr used
-    public static bool multiLevelClustering = false;
     public static int projectionsPerFrame = 30;
+
+    // Multi level clustering not used.
+    //public static int numMainClustersToSearch = 2;         // not curr used
+    //public static string ClusteringMain = "500-clusters";  // not curr used
+    //public static bool multiLevelClustering = false;       // not curr used
+
 
     // Data
     public static List<BvhProjection> base_representatives;          // All representatives.
@@ -48,17 +52,6 @@ public static class Base {
         base_rotationFiles = InitializeRotations();              // All rotation files.
         base_clusters = InitializeClusters();                    // All clusters.
         base_not_clustered = InitializeNotClustered();           // All projections not clustered.
-
-        if(multiLevelClustering == true)
-        {
-            base_main_representatives = InitializeRepresentatives(Path + "\\MainClusters\\" + ClusteringMain + "\\Representatives\\Representatives"); // All main representatives
-            base_main_clusters = InitializeMainClusters();           // All main clusters
-        }else
-        {
-            base_main_representatives = null;   // All main representatives
-            base_main_clusters = null;          // All main clusters
-        }
-
 
         alreadyInitialized = true;
         Debug.Log("Initialization is done!");
@@ -166,41 +159,41 @@ public static class Base {
 
 
 
-    private static List<List<BvhProjection>> InitializeMainClusters()
-    {
-        string dirName = Path + "\\MainClusters\\" + ClusteringMain + "\\";
+    //private static List<List<BvhProjection>> InitializeMainClusters()
+    //{
+    //    string dirName = Path + "\\MainClusters\\" + ClusteringMain + "\\";
 
-        List<List<BvhProjection>> listClusters = new List<List<BvhProjection>>();
+    //    List<List<BvhProjection>> listClusters = new List<List<BvhProjection>>();
 
-        // -- Sort file entries by their numerical name. --
-        string[] fileEntries = sortFilesNumerically(Directory.GetFiles(dirName), dirName);
+    //    // -- Sort file entries by their numerical name. --
+    //    string[] fileEntries = sortFilesNumerically(Directory.GetFiles(dirName), dirName);
 
 
-        foreach (string fileName in fileEntries)
-        {
-            List<BvhProjection> cluster = new List<BvhProjection>();
-            StreamReader sr = File.OpenText(fileName);
-            string tuple = String.Empty;
-            while ((tuple = sr.ReadLine()) != null)
-            {
-                try
-                {
-                    cluster.Add(ParseIntoProjection(tuple, Int32.Parse(fileName.Replace(dirName, ""))));
-                }
-                catch (Exception e)
-                {
-                    Debug.Log("dirName is: " + dirName + "and filename is: " + fileName);
-                    throw e;
-                }
+    //    foreach (string fileName in fileEntries)
+    //    {
+    //        List<BvhProjection> cluster = new List<BvhProjection>();
+    //        StreamReader sr = File.OpenText(fileName);
+    //        string tuple = String.Empty;
+    //        while ((tuple = sr.ReadLine()) != null)
+    //        {
+    //            try
+    //            {
+    //                cluster.Add(ParseIntoProjection(tuple, Int32.Parse(fileName.Replace(dirName, ""))));
+    //            }
+    //            catch (Exception e)
+    //            {
+    //                Debug.Log("dirName is: " + dirName + "and filename is: " + fileName);
+    //                throw e;
+    //            }
 
-            }
-            listClusters.Add(cluster);
-            sr.Close();
-        }
+    //        }
+    //        listClusters.Add(cluster);
+    //        sr.Close();
+    //    }
 
-        Debug.Log(">Clustered Projections have been read.");
-        return listClusters;
-    }
+    //    Debug.Log(">Clustered Projections have been read.");
+    //    return listClusters;
+    //}
 
 
 
