@@ -6,11 +6,10 @@ using UnityEngine.UI;
 using Winterdust;
 
 /* OPFigure */
-public class VMEstimation : MonoBehaviour
+public class VMEstimation : DataInFrame
 {
     // Data
     private static Scenario sc = Base.sc;
-
 
 
 
@@ -26,7 +25,6 @@ public class VMEstimation : MonoBehaviour
     public Button buttonAutomatic;
 
     Neighbour[] estimation = DataParsing.estimation;
-    public OPPose selectedPoseToDebug = null;
     List<OPFrame> frames;
   
     public Text textInfo;
@@ -107,13 +105,15 @@ public class VMEstimation : MonoBehaviour
 
     private void selectFigureToDebug()
     {
+
         if (currentFrame < 0 || currentFrame >= frames.Count)
             selectedPoseToDebug = null;
         else
         {
-            if (frames[currentFrame].figures != null && frames[currentFrame].figures.Count > 0 && frames[currentFrame].figures[0].joints.Length != 0)
+            // Check that currentFrame, personIndex are valid.
+            if (frames[currentFrame].figures != null && frames[currentFrame].figures.Count > 0 && personIndex >= 0 && personIndex < frames[currentFrame].figures.Count && frames[currentFrame].figures[personIndex].joints.Length != 0)
             {
-                selectedPoseToDebug = frames[currentFrame].figures[0];
+                selectedPoseToDebug = frames[currentFrame].figures[personIndex];
             }
             else
                 selectedPoseToDebug = null;

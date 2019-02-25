@@ -85,17 +85,21 @@ public class GLDraw {
 
 
 
-    public void drawAxes(Color color, float xStart=-1000, float xEnd=1000, float yStart=-1000, float yEnd=1000)
+    public void drawAxes(Color color, Vector3 center, float xStart=-1000, float xEnd=1000, float yStart=-1000, float yEnd=1000)
     {
         // X-axis
         GL.Begin(GL.LINES);
         material.SetPass(0);
         GL.Color(color);
-        GL.Vertex(new Vector3(xStart, 0, 0));
-        GL.Vertex(new Vector3(xEnd, 0, 0));
+        GL.Vertex(new Vector3(xStart, center.y, center.z));
+        GL.Vertex(center);
+        GL.Vertex(center);
+        GL.Vertex(new Vector3(xEnd, center.y, center.z));
         // Y-axes
-        GL.Vertex(new Vector3(0, yStart, 0));
-        GL.Vertex(new Vector3(0, yEnd, 0));
+        GL.Vertex(new Vector3(center.x, yStart, center.z));
+        GL.Vertex(center);
+        GL.Vertex(center);
+        GL.Vertex(new Vector3(center.x, yEnd, center.z));
         GL.End();
     }
 
@@ -104,7 +108,7 @@ public class GLDraw {
     public void drawMotionGraphAllJoints(Neighbour[] path, int jointIndex, int currentFrame)
     {
         // Prepare axes (grid)
-        drawAxes(Color.white,0);
+        drawAxes(Color.white,Vector3.zero);
         float offset=0;
         for (int i = 0; i < path.Length; i++)
         {

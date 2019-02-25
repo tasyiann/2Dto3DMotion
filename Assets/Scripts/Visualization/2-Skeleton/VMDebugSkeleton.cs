@@ -48,7 +48,7 @@ public class VMDebugSkeleton : MonoBehaviour
         // No need to show text.
         // updateText();
         if (showGrid)
-            gL.drawAxes(Color.gray);
+            gL.drawAxes(Color.gray, Vector3.zero);
 
         // Draw figure[0] at current frame.
         if (frames[CurrentFrame].figures.Count > 0)

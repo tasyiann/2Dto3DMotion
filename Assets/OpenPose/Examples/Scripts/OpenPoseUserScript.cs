@@ -8,7 +8,7 @@ namespace OpenPose.Example {
     /*
      * User of OPWrapper
      */
-    public class OpenPoseUserScript : MonoBehaviour
+    public class OpenPoseUserScript : DataInFrame
     {
 
 
@@ -21,7 +21,6 @@ namespace OpenPose.Example {
         private static List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;      // Rotations.
         public static Vector3[] estimation_to_debug = null;                                     // To debug 2D figure
         public static Vector3[] rawInputToDebug = null;
-        public OPPose selectedPoseToDebug = null;
 
 
         // The 2D human to control
@@ -181,17 +180,16 @@ namespace OpenPose.Example {
         private static int currentframeIndex = 0;
         // HERE
         // This fuction is made by me
-        private void setFigure(ref OPDatum datum, int personID, float scoreThres, OPFrame frame)
+        private OPPose getFigureFromData(ref OPDatum datum, int personID, float scoreThres, OPFrame frame)
         {
             if (datum.poseKeypoints == null || personID >= datum.poseKeypoints.GetSize(0))
             {
-                return;
+                return null;
             }
 
-            // Identification TODO::::
+            // Identification :TODO:
             long id = datum.poseIds.Get(personID);
-            //Debug.Log("The id is:"+id);
-
+            Debug.Log("The id is:"+id);
 
             // Pose
             Vector3[] joints = new Vector3[OPPose.KEYPOINTS_NUMBER];
@@ -215,26 +213,20 @@ namespace OpenPose.Example {
             rawInputToDebug = new Vector3[14];
             Array.Copy(joints, rawInputToDebug, joints.Length);
             OPPose poseNEW = new OPPose(joints, available, frames, currentframeIndex);
-            frame.figures.Add(poseNEW);
-            selectedPoseToDebug = poseNEW;
-            //Debug.Log("RAW POSITIONS translated to 000 \n"+poseNEW.jointsToString(true));
-            estimateAndSave3D(poseNEW);
-
+            return poseNEW;
         }
 
 
 
         OPPose prevFigure=null;
-        private Vector3[] estimateAndSave3D(OPPose figure)
+        private void estimateAndSave3D(OPPose figure)
         {
             // STEP_A: Find k-BM.
             sc.algNeighbours.SetNeighbours(figure, sc.k, base_clusters, base_representatives, base_main_representatives, base_main_clusters);
             // STEP_B: Find Best 3D.
             figure.selectedN = sc.algEstimation.GetEstimation(prevFigure, figure, sc.m, base_rotationFiles);
-            //Debug.Log("Estimation of frame "+currentframeIndex+ ":\n"+figure.selectedN.projection.jointsToString());
             // Set the figure as the previous one, and go to the next frame.
             prevFigure = figure;
-            return figure.selectedN.projection.joints;
         }
 
 
@@ -246,34 +238,27 @@ namespace OpenPose.Example {
             // New data received
             if (OPWrapper.OPGetOutput(out datum))
             {
-                // Add new frame to the List
-                OPFrame currframe = new OPFrame();
-                frames.Add(currframe);
-                currentframeIndex++;
+                
+                OPFrame currframe = new OPFrame();  // Create a new Frame. Figures list is initiated.
+                frames.Add(currframe);              // Add Frame to the list of frames.
+                currentframeIndex++;                // Keep track of the frame id.
 
-
-
-                // Visualize 3D
-                int personID = 0;
-
-                setFigure(ref datum, personID, renderThreshold, currframe); // SETS THE selectedPoseToDebug
-
-                // Draw human in data
+                // | | | |  Draw human in screen  | | | | //
                 int i = 0;
                 foreach (var human in humanContainer.GetComponentsInChildren<HumanController2D>())
                 {
                     human.DrawHuman(ref datum, i++, renderThreshold);
                 }
 
-                // Draw image
+                // | | | | Render image in screen | | | | //
                 imageRenderer.UpdateImage(datum.cvInputData);
 
-                // Number of people
+                // | | | | Calculate Number of people | | | | //
                 if (datum.poseKeypoints == null || datum.poseKeypoints.Empty()) numberPeople = 0;
                 else numberPeople = datum.poseKeypoints.GetSize(0);
                 peopleText.text = "People: " + numberPeople;
 
-                // Calculate framerate
+                // | | | | Calculate framerate | | | | //
                 if (lastFrameTime > 0f)
                 {
                     if (avgFrameTime < 0f) avgFrameTime = Time.time - lastFrameTime;
@@ -285,6 +270,21 @@ namespace OpenPose.Example {
                 }
                 lastFrameTime = Time.time;
                 fpsText.text = avgFrameRate.ToString("F1") + " FPS";
+
+                // | | |  Get figures from data and estimate 3D.  | | | //
+                for(int k=0; k<numberPeople; k++)
+                {
+                    OPPose pose = getFigureFromData(ref datum, k, renderThreshold, currframe);  // Get Figure k.
+                    currframe.figures.Add(pose);                                                // Add Figure to the Frame. It's ok if it is null.
+                    if (pose == null) continue;                                                 // Don't do an estimation if it is null.
+                    estimateAndSave3D(pose);                                                    // Estimate and Save Figure's 3D.
+                }
+
+                // Set Selected-Pose-To-Debug
+                if (personIndex < currframe.figures.Count)
+                    selectedPoseToDebug = currframe.figures[personIndex];
+                else
+                    selectedPoseToDebug = null;
             }
         }
 

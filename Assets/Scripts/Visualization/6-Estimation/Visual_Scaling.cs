@@ -35,7 +35,7 @@ public class Visual_Scaling : MonoBehaviour
 
     private void OnPostRender()
     {
-        if (figureToDebug == null || figureToDebug.joints.Length==0)
+        if (figureToDebug == null || figureToDebug.joints==null || figureToDebug.joints.Length==0) 
         {
             return;
         }

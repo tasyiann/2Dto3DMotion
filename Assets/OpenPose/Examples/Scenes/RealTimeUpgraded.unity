@@ -2787,7 +2787,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AnimationSmoothness: 2
-  script: {fileID: 1163285305}
+  script: {fileID: 1795921008}
   filterFrequency: 120
   filterMinCutoff: 1
   filterBeta: 0
@@ -4023,7 +4023,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   showGrid: 1
   material: {fileID: 2100000, guid: a5dc7a167ba62794daeec7dd7d900e94, type: 2}
-  showEstimationScript: {fileID: 1163285305}
+  showEstimationScript: {fileID: 1795921008}
 --- !u!20 &945150073
 Camera:
   m_ObjectHideFlags: 0
@@ -5360,7 +5360,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AnimationSmoothness: 1
-  script: {fileID: 1163285305}
+  script: {fileID: 1795921008}
   filterFrequency: 120
   filterMinCutoff: 1
   filterBeta: 0
@@ -5602,71 +5602,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2028425345}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1163285304
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1163285306}
-  - component: {fileID: 1163285305}
-  m_Layer: 0
-  m_Name: DataInFrame
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1163285305
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1163285304}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cf8e73df84fddc48b474e5fd7950f6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  realtime_script: {fileID: 1795921008}
-  offline_script: {fileID: 0}
-  selectedPoseToDebug:
-    joints: []
-    jointsRAW: []
-    available: 
-    scaleFactor: 0
-    limbFactor: 0
-    neighbours: []
-    selectedN:
-      projection:
-        rotationFileID: 0
-        frameNum: 0
-        angle: 0
-        joints: []
-      distance2D: 0
-      distance3D: 0
-      rotations: []
-      hipRotation: {x: 0, y: 0, z: 0, w: 0}
-    translation: {x: 0, y: 0, z: 0}
-    appearanceOrder: 0
-    id: 0
---- !u!4 &1163285306
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1163285304}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1169621286
 PrefabInstance:
@@ -9444,7 +9379,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   JSONscale: 0.04
   offset: 10
-  showEstimationScript: {fileID: 1163285305}
+  showEstimationScript: {fileID: 1795921008}
   Material: {fileID: 2100000, guid: a5dc7a167ba62794daeec7dd7d900e94, type: 2}
 --- !u!81 &1891685040
 AudioListener:
@@ -10066,7 +10001,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: a5dc7a167ba62794daeec7dd7d900e94, type: 2}
-  showEstimationScript: {fileID: 1163285305}
+  showEstimationScript: {fileID: 1795921008}
 --- !u!81 &1979008478
 AudioListener:
   m_ObjectHideFlags: 0

@@ -6,8 +6,9 @@ using UnityEngine;
 public class Visual_KBest2DFigures : MonoBehaviour
 {
 
-    public Material material;                        // The material used in gl lines.
+    public Material material;                       // The material used in gl lines.
     public DataInFrame showEstimationScript;        // Reference to the script which determines the selected pose to debug.
+    public bool showBestOne;                        // Different color on the best one.
 
     private OPPose figureToDebug;                    // The chosen figure to debug, from showEstimationScript.
     private GLDraw gL;                               // GL lines.
@@ -29,7 +30,7 @@ public class Visual_KBest2DFigures : MonoBehaviour
 
     private void OnPostRender()
     {
-        if(figureToDebug!=null)
+        if(figureToDebug!=null && figureToDebug.neighbours!=null)
         {
             // Render 1st figure's best k 2D match
             int neighCounter = 0;
@@ -42,11 +43,13 @@ public class Visual_KBest2DFigures : MonoBehaviour
                     neighCounter = 0;
                     posX = transform.position.x - offsetToCorner;
                 }
-                    
+
                 // Here, we could put another color to the projections that had been selected as the leading one.
-                // We could check if neighbour.projection is the same as neighbour.selectedN.projection
+                // We could check if neighbour.projection is the same as figureToDebug.selectedN.projection
                 Vector3 pos = new Vector2(posX, posY);
                 Color color = Color.green;
+                if (showBestOne && neighbour.projection == figureToDebug.selectedN.projection)
+                    color = Color.white;
                 gL.drawFigure(true, color, neighbour.projection.joints, null, pos);
               
                 posX += offset;

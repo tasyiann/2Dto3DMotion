@@ -10,6 +10,10 @@ using System.Globalization;
 [System.Serializable()]
 public class PrevFrameWindow3D : AlgorithmEstimation
 {
+    private static int projectionsPerFrame = Base.projectionsPerFrame;                            // Used in save3DpointsInWindow().
+    private static List<List<BvhProjection>> base_not_clustered = Base.base_not_clustered;        // All projections not clustered. Used also just in save3DpointsInWindow().
+    private static int rotationDegrees = 360 / projectionsPerFrame;
+
     public override Neighbour GetEstimation(OPPose previous, OPPose current, int m=0, List<List<Rotations>> rotationFiles=null)
     {
         // Case 1: Zero neighbours found for this op pose.
@@ -22,14 +26,15 @@ public class PrevFrameWindow3D : AlgorithmEstimation
 
         // Case 3: Previous selectedN is not null.
         // Create the window of previous.
-        List<List<Vector3>> prevWindow = createWindow(rotationFiles, previous.selectedN.projection, m);
+        List<List<Vector3>> prevWindow = createWindow(previous.selectedN, rotationFiles, previous.selectedN.projection, m);
 
         float min = float.MaxValue;
         Neighbour minNeighbour = null;
         foreach(Neighbour n in current.neighbours)
         {
             // Create the window of n
-            List<List<Vector3>> window = createWindow(rotationFiles,n.projection, m);
+            List<List<Vector3>> window = createWindow(n, rotationFiles,n.projection, m);
+
             float distance = distanceOfWindows(prevWindow,window);
             // Save the minimum distance.
             if (distance < min)
@@ -41,6 +46,8 @@ public class PrevFrameWindow3D : AlgorithmEstimation
         }
         return minNeighbour;
     }
+
+
 
 
     private float distanceOfWindows(List<List<Vector3>> w1, List<List<Vector3>> w2)
@@ -124,21 +131,36 @@ public class PrevFrameWindow3D : AlgorithmEstimation
     }
 
 
-    private List<List<Vector3>> createWindow(List<List<Rotations>> rotationFiles,BvhProjection projection, int m)
+    private List<List<Vector3>> createWindow(Neighbour n, List<List<Rotations>> rotationFiles,BvhProjection projection, int m)
     {
         List<List<Vector3>> window = new List<List<Vector3>>();
         int mainFrameNum = projection.frameNum;
+        bool windowAlreadySaved = false;
+        // So.. the problem here is that if Neighbour n, already has a window saved, we shouldn't save it again.
+        if (n.windowIn3Dpoints.Count != 0)
+            windowAlreadySaved = true;
+
         for (int i=m; i>=-m; i--)
         {
             // Check if that frame exists in the rotationFile.
             if (mainFrameNum - m < 0 || mainFrameNum - m >= rotationFiles[projection.rotationFileID].Count)
                 window.Add(null);
             else
-                window.Add(rotationFiles[projection.rotationFileID][mainFrameNum-m].getComparableRotations());
+            {
+                int frameIndex = mainFrameNum - m;
+                window.Add(rotationFiles[projection.rotationFileID][frameIndex].getComparableRotations());
+                // Save the window : each figure as 3D points (so we can debug it later).
+                if(!windowAlreadySaved)
+                    save3DpointsInWindow(n, projection.rotationFileID, frameIndex, projectionsPerFrame);
+            }
+            
         }
         return window;
     }
 
-
+    private void save3DpointsInWindow(Neighbour n, int fileIndex, int frameIndex, int projectionsPerFrame)
+    {
+        n.windowIn3Dpoints.Add(base_not_clustered[fileIndex][frameIndex*projectionsPerFrame + n.projection.angle/rotationDegrees]);
+    }
 
 }

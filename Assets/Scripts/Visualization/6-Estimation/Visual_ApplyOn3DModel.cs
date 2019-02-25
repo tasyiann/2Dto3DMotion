@@ -48,6 +48,9 @@ public class Visual_ApplyOn3DModel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (script.selectedPoseToDebug == null)
+            return;
+
         jointsPositions = script.selectedPoseToDebug.selectedN.projection.joints;
 
         if (keepUpdatingParameters)

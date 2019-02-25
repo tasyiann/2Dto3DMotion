@@ -30,7 +30,7 @@ public class Visual_BestMatch : MonoBehaviour
     private void OnPostRender()
     {
         /* Make the axes. */
-        if (showGrid) { gL.drawAxes(Color.white); } // TODO: Make axers relative to the camera.
+        if (showGrid) { gL.drawAxes(Color.white, center); } // TODO: Make axers relative to the camera.
 
         /* Draw results. */
         if (figureToDebug!=null)

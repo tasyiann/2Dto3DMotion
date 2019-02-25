@@ -13,12 +13,13 @@ public static class Base {
     public static EnumScaleMethod ScaleMethod = EnumScaleMethod.SCALE_LIMBS;
     private static string small_DB = @"Databases\v1-18720";
     private static string big_DB = @"Databases\5min-updatedScale";
-    public static string Path = small_DB; 
-    public static string Clustering = "500-clusters";
+    public static string Path = big_DB; 
+    public static string Clustering = "5000-clusters";
     public static string ClusteringMain = "500-clusters";  // not curr used
     public static int numClustersToSearch = 20;
     public static int numMainClustersToSearch = 2;         // not curr used
     public static bool multiLevelClustering = false;
+    public static int projectionsPerFrame = 30;
 
     // Data
     public static List<BvhProjection> base_representatives;          // All representatives.
