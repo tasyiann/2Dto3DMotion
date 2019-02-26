@@ -14,10 +14,7 @@ namespace OpenPose.Example {
 
         // 3D Estimation
         private static Scenario sc = Base.sc;
-        private static List<List<BvhProjection>> base_clusters = Base.base_clusters;            // Clustered projections.
-        public static List<BvhProjection> base_main_representatives = Base.base_main_representatives;        // All main representatives.
-        public static List<List<BvhProjection>> base_main_clusters = Base.base_main_clusters;                // All main clusters.
-        private static List<BvhProjection> base_representatives = Base.base_representatives;    // Representatives.
+        private static List<Cluster> base_clusters = Base.base_clusters;                        // Clustered projections.
         private static List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;      // Rotations.
         public static Vector3[] estimation_to_debug = null;                                     // To debug 2D figure
         public static Vector3[] rawInputToDebug = null;
@@ -189,7 +186,7 @@ namespace OpenPose.Example {
 
             // Identification :TODO:
             long id = datum.poseIds.Get(personID);
-            Debug.Log("The id is:"+id);
+            // Debug.Log("The id is:"+id);
 
             // Pose
             Vector3[] joints = new Vector3[OPPose.KEYPOINTS_NUMBER];
@@ -222,7 +219,7 @@ namespace OpenPose.Example {
         private void estimateAndSave3D(OPPose figure)
         {
             // STEP_A: Find k-BM.
-            sc.algNeighbours.SetNeighbours(figure, sc.k, base_clusters, base_representatives, base_main_representatives, base_main_clusters);
+            sc.algNeighbours.SetNeighbours(figure, sc.k, base_clusters);
             // STEP_B: Find Best 3D.
             figure.selectedN = sc.algEstimation.GetEstimation(prevFigure, figure, sc.m, base_rotationFiles);
             // Set the figure as the previous one, and go to the next frame.
@@ -280,12 +277,17 @@ namespace OpenPose.Example {
                     estimateAndSave3D(pose);                                                    // Estimate and Save Figure's 3D.
                 }
 
-                // Set Selected-Pose-To-Debug
+                // FINALLY, EXPORT DATA TO OTHER SCRIPTS:
                 if (personIndex < currframe.figures.Count)
                     selectedPoseToDebug = currframe.figures[personIndex];
                 else
                     selectedPoseToDebug = null;
+                // AND
+                if (currframe != null)
+                    allPoses = currframe.figures;
             }
+
+            
         }
 
 

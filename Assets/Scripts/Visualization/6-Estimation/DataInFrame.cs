@@ -5,5 +5,6 @@ using OpenPose.Example;
 public class DataInFrame : MonoBehaviour
 {
     public OPPose selectedPoseToDebug;
+    public List<OPPose> allPoses;
     public int personIndex;
 }

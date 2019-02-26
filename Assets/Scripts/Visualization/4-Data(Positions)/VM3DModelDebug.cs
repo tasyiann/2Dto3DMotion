@@ -32,8 +32,7 @@ public class VM3DModelDebug : MonoBehaviour
     private int offset;
     public int clusterIndex;
     private int totalProjections = 0;
-    private List<List<BvhProjection>> data = Base.base_clusters;
-    private List<BvhProjection> representatives = Base.base_representatives;
+    private List<Cluster> clusters = Base.base_clusters;
 
     private string p_data;
     private string r_data;
@@ -41,13 +40,13 @@ public class VM3DModelDebug : MonoBehaviour
     private void updateText()
     {
         string s = "";
-        s += "Cluster: " + clusterIndex + "/" + (data.Count-1) +"\n";
+        s += "Cluster: " + clusterIndex + "/" + (clusters.Count-1) +"\n";
         s += "Distance from Representative: " + distanceFromCluster+"\n";
-        s += "Projection:"+ projectionIndex + "/" + (data[clusterIndex].Count-1) + "\n";
+        s += "Projection:"+ projectionIndex + "/" + (clusters[clusterIndex].projections.Count-1) + "\n";
         s+= "Total projections: "+totalProjections+"\n";
         textInfo.text = s;
-        cluster_title.text = "Cluster: "+clusterIndex+" / "+ (data.Count - 1);
-        projection_id_text.text = "Projection:" + projectionIndex + "/" + (data[clusterIndex].Count - 1);
+        cluster_title.text = "Cluster: "+clusterIndex+" / "+ (clusters.Count - 1);
+        projection_id_text.text = "Projection:" + projectionIndex + "/" + (clusters[clusterIndex].projections.Count - 1);
     }
 
 
@@ -93,11 +92,11 @@ public class VM3DModelDebug : MonoBehaviour
 
     private void updateFigureToShow()
     {
-        if (projectionIndex >= data[clusterIndex].Count)
+        if (projectionIndex >= clusters[clusterIndex].projections.Count)
         {
-            if (data.Count-1 > clusterIndex)
+            if (clusters.Count-1 > clusterIndex)
             {
-                projectionIndex -= data[clusterIndex].Count;
+                projectionIndex -= clusters[clusterIndex].projections.Count;
                 clusterIndex++;
             }
             else
@@ -111,14 +110,14 @@ public class VM3DModelDebug : MonoBehaviour
             if (clusterIndex != 0)
             {
                 clusterIndex--;
-                projectionIndex = data[clusterIndex].Count - 1;
+                projectionIndex = clusters[clusterIndex].projections.Count - 1;
             }
             else
                 projectionIndex = 0;
         }
-        FigureToShow_cluster = data[clusterIndex][projectionIndex].joints;
-        FigureToShow_representative = representatives[clusterIndex].joints;
-        float distance = data[clusterIndex][projectionIndex].Distance2D(representatives[clusterIndex]);
+        FigureToShow_cluster = clusters[clusterIndex].projections[projectionIndex].joints;
+        FigureToShow_representative = clusters[clusterIndex].representative.joints;
+        float distance = clusters[clusterIndex].projections[projectionIndex].Distance2D(clusters[clusterIndex].representative);
         if ( distance < 0.1f )
             Debug.Log("<<<<<<< found!>>>>>>>");
         distanceFromCluster = distance;

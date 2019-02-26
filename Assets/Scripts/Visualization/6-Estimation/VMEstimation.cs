@@ -8,31 +8,22 @@ using Winterdust;
 /* OPFigure */
 public class VMEstimation : DataInFrame
 {
-    // Data
-    private static Scenario sc = Base.sc;
+    
+    private static Scenario sc = Base.sc;   // Data. Please revise this.
+    public GameObject VideoplayerGO;        // Set video player.
+    public bool automatic;                  // Automatic play of video.
+    public bool showInfo;                   // Show text info.
+    public Button buttonAutomatic;          // Click this button to play or pause video.
+    public Text textInfo;                   // Text info component.
+    public int currentFrame;                // Current frame of video.
 
 
+    private UnityEngine.Video.VideoPlayer videoPlayer;          // Set Video player.
+    private List<OPFrame> frames;                               // Frames of the video.
+    private int framesLength;                                   // Amount of frames in video.               
+    private GLDraw gL;                                          // GL to draw lines.
+   
 
-    // Set Video
-    public GameObject VideoplayerGO;
-    private UnityEngine.Video.VideoPlayer videoPlayer;
-
-
-
-
-    public bool automatic;
-    public bool showInfo;
-    public Button buttonAutomatic;
-
-    Neighbour[] estimation = DataParsing.estimation;
-    List<OPFrame> frames;
-  
-    public Text textInfo;
-
-    private int framesLength;
-    private GLDraw gL;
-
-    public int currentFrame;
 
     private void Start()
     {
@@ -77,18 +68,18 @@ public class VMEstimation : DataInFrame
 
         {
             
-            if (estimation==null)
+            if (selectedPoseToDebug==null)
             {
                 s += "* * Pose estimation not found in this frame. * *";
                 textInfo.text = s;
                 return;
             }
            
-            Neighbour chosen = estimation[currentFrame];
+            Neighbour chosen = selectedPoseToDebug.selectedN;
             if (chosen == null)
                 return;
 
-            s += currentFrame + "/" + estimation.Length + "\n";
+            s += currentFrame + @"\" + framesLength + "\n";
             s += "Cluster: " + chosen.projection.clusterID + "\n";
             // s += "Angle: " + chosen.projection.angle + "\n";
             s += "2D-Distance: " + chosen.distance2D + "\n";
@@ -160,7 +151,12 @@ public class VMEstimation : DataInFrame
             videoPlayer.frame = currentFrame;
         }
 
+        // Export Data.
         selectFigureToDebug(); // <<
+        if (frames[currentFrame] != null)
+        {
+            allPoses = frames[currentFrame].figures;
+        }
 
         if (showInfo)
         {

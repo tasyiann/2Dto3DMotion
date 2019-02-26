@@ -10,9 +10,11 @@ using System.IO;
 /* OPFigure */
 public class VMProjections : MonoBehaviour 
 {
+    public BvhProjection mainFigure;        // Main figure.
+    public List<BvhProjection> projections; // Projections of the main figure.
+    public Transform model;                 // 
 
-    public Transform model_projections;
-    private Model3D m3d_projections;
+    private Model3D m3d;
 
     public bool showGL;
     public int ProjectionAngle = 12;
@@ -40,17 +42,18 @@ public class VMProjections : MonoBehaviour
     private void Awake()
     {
         gL = new GLDraw(material);
-        m3d_projections = new Model3D(model_projections);
-        m3d_projections = new Model3D(model_projections);
+        m3d = new Model3D(model);
+        m3d = new Model3D(model);
         totalProjections = Base.base_getNumberOfProjections();
     }
 
     private void Start()
     {
         FigureToShow_projections = new Vector3[14];
+        projections = new List<BvhProjection>();
     }
 
-    
+
 
     void Update()
     {
@@ -63,14 +66,14 @@ public class VMProjections : MonoBehaviour
             projectionIndex += offset;
             updateFigureToShow();
             updateText();
-            m3d_projections.moveSkeleton(FigureToShow_projections);
+            m3d.moveSkeleton(FigureToShow_projections);
         }
         if (Input.GetKey("s"))
         {
             projectionIndex -= offset;
             updateFigureToShow();
             updateText();
-            m3d_projections.moveSkeleton(FigureToShow_projections);
+            m3d.moveSkeleton(FigureToShow_projections);
         }
     }
 
@@ -99,7 +102,16 @@ public class VMProjections : MonoBehaviour
             else
                 projectionIndex = 0;
         }
-        FigureToShow_projections = data[clusterIndex][projectionIndex].joints;
+
+        // << Export Data >>
+        mainFigure = data[clusterIndex][projectionIndex];
+        projections = new List<BvhProjection>();
+        for (int i=0; i<offset; i++)
+        {
+            projections.Add(data[clusterIndex][projectionIndex+i]);
+        }
+
+        FigureToShow_projections = mainFigure.joints;
 
     }
 
@@ -109,7 +121,7 @@ public class VMProjections : MonoBehaviour
     private void OnPostRender()
     {
         if(showGL)
-            gL.drawFigure(true, Color.white, FigureToShow_projections, null, new Vector3(model_projections.transform.position.x, 0, 0));
+            gL.drawFigure(true, Color.white, FigureToShow_projections, null, new Vector3(model.transform.position.x, 0, 0));
     }
 
 

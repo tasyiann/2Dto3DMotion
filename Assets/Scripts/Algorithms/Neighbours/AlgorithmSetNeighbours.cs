@@ -8,7 +8,7 @@ using System.Globalization;
 public abstract class AlgorithmSetNeighbours {
 
 
-    public abstract void SetNeighbours(OPPose opPose, int k, List<List<BvhProjection>> clusters, List<BvhProjection> representatives, List<BvhProjection> mainRepresentatives = null, List<List<BvhProjection>> mainClusters=null);
+    public abstract void SetNeighbours(OPPose opPose, int k, List<Cluster> clusters);
 
 
     public static void sortNeighbours(List<Neighbour> neighbours)
@@ -19,26 +19,22 @@ public abstract class AlgorithmSetNeighbours {
         });
     }
 
-    // TODO:: RETURNS AN ARRAY OF N NEAREST CLUSTERS - SHOULD I USE THE OTHER ONE?
-    public static IList<int> nearestClustersToSearch(OPPose opPose, List<BvhProjection> representatives, int amount)
-    {
-        SortedList<float, int> sortedList = new SortedList<float, int>();
-        int nearestClustersCounter = 0;
-        for (int clusterID=0; clusterID<representatives.Count; clusterID++)
-        {
-            // 1. * * Find Distance * *
-            // * * * * * * * * * * * * *
-            float distance = representatives[clusterID].Distance2D(opPose);
 
-            // 2. * * Update list that represents the nearest clusters * *
-            // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-            // If there is space for some more clusters, add the cluster no matter what.
+    public static IList<Cluster> nearestClustersToSearch(OPPose opPose, List<Cluster> clusters, int amount)
+    {
+        SortedList<float, Cluster> sortedList = new SortedList<float, Cluster>();   // Sorted list of nearest clusters.
+        int nearestClustersCounter = 0;                                           
+
+        foreach (Cluster cluster in clusters)
+        {
+            // Get Distance Representative - Figure.
+            float distance = cluster.representative.Distance2D(opPose);             
             if (nearestClustersCounter < amount)
             {
                 // SortedList throws an exception if there is a duplicated key.
                 if (sortedList.ContainsKey(distance) == true)
                     continue;
-                sortedList.Add(distance, clusterID);
+                sortedList.Add(distance, cluster);
                 nearestClustersCounter++;
             }
             else
@@ -49,32 +45,13 @@ public abstract class AlgorithmSetNeighbours {
                     // SortedList throws an exception if there is a duplicated key.
                     if (sortedList.ContainsKey(distance) == true)
                         continue;
-                    sortedList.RemoveAt(amount - 1);     // Remove the last (in the list) cluster (max value).
-                    sortedList.Add(distance, clusterID); // Add (sorted) the cluster.
+                    sortedList.RemoveAt(amount - 1);        // Remove the last (in the list) cluster (max value).
+                    sortedList.Add(distance, cluster);      // Add (sorted) the cluster.
                 }
             }
-        }
+        } // end of loop
         return sortedList.Values;
     }
 
-    private static void debugNearestClusters(SortedList<float, int> sortedList, SortedList<float, int> debugList)
-    {
-        string s = "";
-        s += "Out of:\n";
-        IList<float> keys = debugList.Keys;
-        IList<int> values = debugList.Values;
-        for(int i=0; i<keys.Count; i++)
-        {
-            s += values[i]+" : " +keys[i]+"\n";
-        }
-        s += "The nearest clusters are:\n";
-        IList<float>  keys2 = sortedList.Keys;
-        IList<int> values2 = sortedList.Values;
-        for (int i = 0; i < keys2.Count; i++)
-        {
-            s += values2[i] + " : " + keys2[i] + "\n";
-        }
-        Debug.Log(s);
-    }
 
 }

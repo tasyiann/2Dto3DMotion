@@ -7,11 +7,11 @@ using UnityEngine;
 [System.Serializable()]
 public class OPPose
 {
-    private EnumScaleMethod scalingMethod = Base.ScaleMethod;              // Which scaling method is used.
-    public static readonly int amountOfPreviousScalingFactors = 4;        // How many frames the interpolation of scaling should be based on.
-    private static readonly int amountOfPreviousFigureForIdentifying = 10;  // How many frames the identification of a figure should be based on.
-    private static readonly float threshold_Figures_Differ = 10;           // Threshold : maximum distance between 2 figures of same ID.
-    private static int id_counter = -1;                                    // Increase counter when new figure appears in video.
+    private EnumScaleMethod scalingMethod = Base.ScaleMethod;               // Which scaling method is used.
+    public static readonly int amountOfPreviousScalingFactors = 4;          // How many frames the interpolation of scaling should be based on.
+    // private static readonly int amountOfPreviousFigureForIdentifying = 10;  // How many frames the identification of a figure should be based on.
+    private static readonly float threshold_Figures_Differ = 10;            // Threshold : maximum distance between 2 figures of same ID.
+    private static int id_counter = -1;                                     // Increase counter when new figure appears in video.
 
     public static int KEYPOINTS_NUMBER = Base.jointsAmount;
     public Vector3[] joints;                        // All joints after being processed.
@@ -20,6 +20,7 @@ public class OPPose
     public float scaleFactor;                       // What is the scale factor of this pose.
     public EnumBONES limbFactor;                    // Which limb is used to scale.
     public List<Neighbour> neighbours;              // k-neighbours
+    public IList<Cluster> selectedClusters;         // Selected Clusters to search in.
     public Neighbour selectedN;                     // The leading neighbour.
 
     public Vector3 translation;                     // The translation of that pose. (not in use)
@@ -34,6 +35,7 @@ public class OPPose
         available = new bool[KEYPOINTS_NUMBER];
         scaleFactor = 0;
         neighbours = new List<Neighbour>();
+        selectedClusters = null;
         selectedN = null;
         id = 0; //identifyFigure(frames, currFrameIndex);
         // Normalize data
@@ -53,6 +55,7 @@ public class OPPose
         Array.Copy(available_input, available, available_input.Length);
         scaleFactor = 0;
         neighbours = new List<Neighbour>();
+        selectedClusters = null;
         selectedN = null;
         id = 0; // << SET FIGURE ID TO ZERO FOR ALL
                 // There is a problem because Openpose is asychronous

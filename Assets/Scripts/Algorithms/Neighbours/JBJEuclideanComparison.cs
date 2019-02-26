@@ -6,117 +6,52 @@ using System;
 using System.Text;
 
 [System.Serializable()]
-public class JBJEuclideanComparison : AlgorithmSetNeighbours{
+public class JBJEuclideanComparison : AlgorithmSetNeighbours
+{
 
     private static int amountOfClustersToSearch = Base.numClustersToSearch;
-  
 
 
 
-    public override void SetNeighbours(OPPose opPose, int k, List<List<BvhProjection>> clusters, List<BvhProjection> representatives, List<BvhProjection> mainRepresentatives = null, List<List<BvhProjection>> mainClusters=null)
+
+    public override void SetNeighbours(OPPose opPose, int k, List<Cluster> clusters)
     {
-        SortedList<float,Neighbour> sortedList = new SortedList<float,Neighbour>();
+        SortedList<float, Neighbour> neighbours = new SortedList<float, Neighbour>();
+        // Find the nearest clusters to search.
+        IList<Cluster> nearestClusters = nearestClustersToSearch(opPose, clusters, amountOfClustersToSearch);
+        opPose.selectedClusters = nearestClusters; // So we can debug this later.
+        int nearestNeighboursCounter = 0;
 
-        /* THE CODE IS COMMMENTED OUT, AS MULTI LEVEL CLUSTERING NOT USED ANYMORE */
-        //if (multiLevelClustering && mainRepresentatives!=null && mainClusters!=null)
-        //{
-        //    //Debug.Log("Multi Level Clustering ENABLED!");
-        //    int nearestNeighboursCounter = 0;
-        //    // Find the nearest (#amount) MAIN clusters.
-        //    IList<int> nearestMainClusters = nearestClustersToSearch(opPose, mainRepresentatives, amountOfMainClustersToSearch);
-        //    foreach(int mainClusterID in nearestMainClusters)
-        //    {
-        //        // Find the nearest clusters to search in the specific MAIN Cluster.
-        //        List<BvhProjection> currentMainCluster = mainClusters[mainClusterID];
-
-        //        IList<int> nearestClusters = nearestClustersToSearch(opPose, currentMainCluster, amountOfClustersToSearch);
-
-        //        // For each near cluster, search the projections!
-        //        foreach (int clusterId in nearestClusters)
-        //        {
-
-        //            // Update nearest projections LIST while searching the clusters
-        //            List<BvhProjection> cluster = clusters[clusterId];
-
-        //            // Print out some info
-        //            Debug.Log("Main Clusters: " + nearestMainClusters.Count +
-        //                "\nCurrent main cluster: " + mainClusterID +
-        //                "\nNumber of Clusters in current main cluster:" + currentMainCluster.Count +
-        //                "\nCurrent cluster:" + clusterId+
-        //                "\nNumber of Projections in current cluster: " + cluster.Count);
-
-        //            foreach (BvhProjection projection in cluster)
-        //            {
-        //                // Get the distance between the projection and the openpose pose, and create Neighbour.
-        //                Neighbour neighbour = new Neighbour(projection, projection.Distance2D(opPose));
-        //                // If there is space for some more neighbours, add neighbour no matter what.
-        //                if (nearestNeighboursCounter < k)
-        //                {
-        //                    // SortedList throws an exception if there is a duplicated key.
-        //                    if (sortedList.ContainsKey(neighbour.distance2D) == true)
-        //                        continue;
-        //                    sortedList.Add(neighbour.distance2D, neighbour);
-        //                    nearestNeighboursCounter++;
-        //                }
-        //                else
-        //                {
-        //                    // Otherwise, add neighbour to the list, only if its distance is lower than the max neighbour.
-        //                    if (neighbour.distance2D < sortedList.Values[k - 1].distance2D)
-        //                    {
-        //                        // SortedList throws an exception if there is a duplicated key.
-        //                        if (sortedList.ContainsKey(neighbour.distance2D) == true)
-        //                            continue;
-        //                        sortedList.RemoveAt(k - 1);                         // Remove the k-th neighbour (max value).
-        //                        sortedList.Add(neighbour.distance2D, neighbour);    // Add (sorted) the neighbour.
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //} // end if
-        //else
+        foreach (Cluster cluster in nearestClusters)
         {
-            //Debug.Log("One Level Clustering is enabled.");
-            // Find the nearest clusters to search.
-            IList<int> nearestClusters = nearestClustersToSearch(opPose, representatives, amountOfClustersToSearch);
-            int nearestNeighboursCounter = 0;
-            // For each near cluster, search the projections!
-            foreach (int clusterId in nearestClusters)
+            foreach (BvhProjection projection in cluster.projections)
             {
-                // Update nearest projections LIST while searching the clusters
-                List<BvhProjection> cluster = clusters[clusterId];
-                foreach (BvhProjection projection in cluster)
+                float distance = projection.Distance2D(opPose);             // Calculate distance.
+                Neighbour neighbour = new Neighbour(projection, distance);   // Create new Neighbour with the projection.
+                if (nearestNeighboursCounter < k)
                 {
-                    // Get the distance between the projection and the openpose pose, and create Neighbour.
-                    Neighbour neighbour = new Neighbour(projection, projection.Distance2D(opPose));
-                    // If there is space for some more neighbours, add neighbour no matter what.
-                    if (nearestNeighboursCounter < k)
+                    // SortedList throws an exception if there is a duplicated key.
+                    if (neighbours.ContainsKey(neighbour.distance2D) == true)
+                        continue;
+                    neighbours.Add(neighbour.distance2D, neighbour);
+                    nearestNeighboursCounter++;
+                }
+                else
+                {
+                    // Otherwise, add neighbour to the list, only if its distance is lower than the max neighbour.
+                    if (neighbour.distance2D < neighbours.Values[k - 1].distance2D)
                     {
                         // SortedList throws an exception if there is a duplicated key.
-                        if (sortedList.ContainsKey(neighbour.distance2D) == true)
+                        if (neighbours.ContainsKey(neighbour.distance2D) == true)
                             continue;
-                        sortedList.Add(neighbour.distance2D, neighbour);
-                        nearestNeighboursCounter++;
-                    }
-                    else
-                    {
-                        // Otherwise, add neighbour to the list, only if its distance is lower than the max neighbour.
-                        if (neighbour.distance2D < sortedList.Values[k - 1].distance2D)
-                        {
-                            // SortedList throws an exception if there is a duplicated key.
-                            if (sortedList.ContainsKey(neighbour.distance2D) == true)
-                                continue;
-                            sortedList.RemoveAt(k - 1);                         // Remove the k-th neighbour (max value).
-                            sortedList.Add(neighbour.distance2D, neighbour);    // Add (sorted) the neighbour.
-                        }
+                        neighbours.RemoveAt(k - 1);                         // Remove the k-th neighbour (max value).
+                        neighbours.Add(neighbour.distance2D, neighbour);    // Add (sorted) the neighbour.
                     }
                 }
             }
-
         }
-        
         // Set the neighbours into openpose pose.
-        opPose.neighbours = SortedList_To_List(sortedList.Values);
+        opPose.neighbours = SortedList_To_List(neighbours.Values);
     }
 
     private static void debugNearestProjections(SortedList<float, Neighbour> sortedList)
@@ -135,7 +70,7 @@ public class JBJEuclideanComparison : AlgorithmSetNeighbours{
     private List<Neighbour> SortedList_To_List(IList<Neighbour> il)
     {
         List<Neighbour> list = new List<Neighbour>();
-        foreach(Neighbour n in il)
+        foreach (Neighbour n in il)
         {
             list.Add(n);
         }

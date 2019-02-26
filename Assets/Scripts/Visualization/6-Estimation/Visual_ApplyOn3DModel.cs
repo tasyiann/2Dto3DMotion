@@ -10,9 +10,10 @@ public class Visual_ApplyOn3DModel : MonoBehaviour
         LERP, ONE_EURO, NONE
     }
 
+    public bool multiFigures; // Please tick this if you're going to use Multi figures script.
     public smoothMovement AnimationSmoothness;
     public DataInFrame script;
-
+    public OPPose selectedPoseToDebug;
     #region OneEuroFilterParams
     // 1 Euro filter - JOINTS
     OneEuroFilter<Quaternion>[] rotationFiltersJoints = new OneEuroFilter<Quaternion>[14];
@@ -34,7 +35,8 @@ public class Visual_ApplyOn3DModel : MonoBehaviour
     public bool keepUpdatingParameters = false;
     public Transform model;
     private Model3D m3d;
-    private Vector3[] jointsPositions;
+
+    public Vector3[] jointsPositions;
 
 
     
@@ -43,15 +45,20 @@ public class Visual_ApplyOn3DModel : MonoBehaviour
     {
         m3d = new Model3D(model);
         initializeOneEuroFilter();
+        if(!multiFigures)
+            selectedPoseToDebug = script.selectedPoseToDebug;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (script.selectedPoseToDebug == null)
+        if (selectedPoseToDebug == null)
             return;
 
-        jointsPositions = script.selectedPoseToDebug.selectedN.projection.joints;
+        if (!multiFigures)
+            selectedPoseToDebug = script.selectedPoseToDebug;
+
+        jointsPositions = selectedPoseToDebug.selectedN.projection.joints;
 
         if (keepUpdatingParameters)
             updateParametersRotationFilters();

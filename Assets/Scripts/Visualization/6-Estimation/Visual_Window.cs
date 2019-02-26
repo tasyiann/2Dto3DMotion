@@ -13,6 +13,7 @@ public class Visual_Window : MonoBehaviour
     public Vector3 previousSelectedWindowPosition; // <<
     public int maxLines = 5;
     public Vector3 CollumnOffset;
+    public Color colorOfWindow;
 
     public OPPose figureToDebug;         // The chosen figure to debug, from showEstimationScript.
     public List<BvhProjection> selectedWin;
@@ -29,6 +30,12 @@ public class Visual_Window : MonoBehaviour
 
     void Start()
     {
+        // These values should be saved, because I dont want to lost them form the inspector.
+        offset = new Vector3(8.6f, 10.4f, 0f);
+        offsetToUpLeftCorner = new Vector3(-75f, 34f, 0f);
+        previousSelectedWindowPosition = new Vector3(-34f, 49.5f, 0f);
+        maxLines = 10;
+        CollumnOffset = new Vector3(82.87f, 0f, 0f);
         gL = new GLDraw(material);
         center = transform.position;
         columnStartingPoint = center + offsetToUpLeftCorner;                                                                                        // The top left point of the current collumn.
@@ -57,8 +64,7 @@ public class Visual_Window : MonoBehaviour
             
 
         // 1. Debug previous selected one window.
-        Color color = Color.white;
-        drawWindowOfPrevFrame(previousFigure.selectedN.windowIn3Dpoints, color);
+        drawWindowOfPrevFrame(previousFigure.selectedN.windowIn3Dpoints, Color.white);
 
         if (figureToDebug == null || figureToDebug.neighbours == null)
         {
@@ -69,8 +75,7 @@ public class Visual_Window : MonoBehaviour
         // 2. Debug the window of each of its neighbours.
         foreach (Neighbour n in figureToDebug.neighbours)
         {
-            color = Color.blue;
-            drawWindow(n.windowIn3Dpoints, color);
+            drawWindow(n.windowIn3Dpoints);
         }
         // Set current figure as previous.
 
@@ -80,7 +85,7 @@ public class Visual_Window : MonoBehaviour
 
     }
 
-    private void drawWindow(List<BvhProjection> window, Color colorBasic)
+    private void drawWindow(List<BvhProjection> window)
     {
 
         int size = window.Count;
@@ -95,11 +100,11 @@ public class Visual_Window : MonoBehaviour
             if (counter == size / 2)
                 color = Color.green;       
             else
-                color = colorBasic;
+                color = colorOfWindow;
             // Color the selected one differently.
             if (showSelectedOne && figureToDebug.selectedN.windowIn3Dpoints == window)
             {
-                color = Color.cyan;
+                color = Color.white;
                 selectedWin = window;
             }
                 

@@ -76,7 +76,7 @@ public class ConfigureLIMBS
     private static int iterations = 3000; 
     public static void runTests() {
 
-        data = Base.base_representatives;
+        data = Base.getRepresentativesOnly(); // Never tested. Just changed on 26/02.
 
         if (data == null)
         {

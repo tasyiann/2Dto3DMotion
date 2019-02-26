@@ -13,10 +13,7 @@ public class DataParsing
 
     private static Scenario sc = Base.sc;                                                   // Scenario to be saved.
     private static List<OPFrame> frames = Base.getFrames();                                 // The same instance as scenario (Please review this).
-    private static List<List<BvhProjection>> base_clusters = Base.base_clusters;            // Clustered projections.
-    private static List<BvhProjection> base_representatives = Base.base_representatives;    // Representatives.
-    public static List<List<BvhProjection>> base_main_clusters = Base.base_main_clusters;   // All main clusters.
-    public static List<BvhProjection> base_main_representatives = Base.base_main_representatives;// All main representatives.
+    private static List<Cluster> base_clusters = Base.base_clusters;                        // Clustered projections.
     private static List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;      // Rotations.
 
     public static Neighbour[] estimation;             // Estimation to Debug. We will not debug all figures at the same time.
@@ -55,7 +52,7 @@ public class DataParsing
                 foreach (OPPose currFigure in currFrame.figures)
                 {
                     // STEP_A: Find k-BM.
-                    sc.algNeighbours.SetNeighbours(currFigure, sc.k, base_clusters, base_representatives, base_main_representatives, base_main_clusters);
+                    sc.algNeighbours.SetNeighbours(currFigure, sc.k, base_clusters);
                     // STEP_B: Find Best 3D.
                     OPPose prevFigure = null;
                     if (frameCounter != 0)
