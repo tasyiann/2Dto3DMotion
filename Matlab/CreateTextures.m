@@ -8,6 +8,7 @@ function [T,L] = CreateTextures(directory)
 % For each file in that directory, save the joints positions in T.
 % and merge files in L.
 % -------------------------------------------------------------------------
+
 disp('Files read:'); % Debugging.
 files = dir(strcat(directory,'\*.p')); % Get all files from that directory.
 % Iterate all files in that directory

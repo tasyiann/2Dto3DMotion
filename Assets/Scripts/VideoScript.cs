@@ -19,10 +19,10 @@ public class VideoScript : MonoBehaviour {
 	void Start()
 	{
         System.IO.Directory.CreateDirectory(savePath);
-        Debug.Log("Saving Images in: " + savePath);
+        Debug.Log("Path to save Images is: " + savePath);
 		i = 0;
 
-        Time.captureFramerate = frameRate;
+        // Time.captureFramerate = frameRate;
     }
 
 	// to encode the resulting video use something like:
@@ -42,9 +42,4 @@ public class VideoScript : MonoBehaviour {
 		}
 	}
 
-    /*
-	void OnApplicationQuit()
-	{
-	}
-    */
 }

@@ -2786,8 +2786,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7538dd9e1fb419d47abd2fc0f7025a5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  multiFigures: 0
   AnimationSmoothness: 2
   script: {fileID: 1795921008}
+  selectedPoseToDebug:
+    joints: []
+    jointsRAW: []
+    available: 
+    scaleFactor: 0
+    limbFactor: 0
+    neighbours: []
+    selectedN:
+      projection:
+        rotationFileID: 0
+        frameNum: 0
+        angle: 0
+        joints: []
+      distance2D: 0
+      distance3D: 0
+      rotations: []
+      hipRotation: {x: 0, y: 0, z: 0, w: 0}
+      windowIn3Dpoints: []
+    translation: {x: 0, y: 0, z: 0}
+    appearanceOrder: 0
+    id: 0
   filterFrequency: 120
   filterMinCutoff: 1
   filterBeta: 0
@@ -2800,6 +2822,7 @@ MonoBehaviour:
   noiseAmount_hips: 1
   keepUpdatingParameters: 0
   model: {fileID: 1169621287}
+  jointsPositions: []
 --- !u!81 &722270835
 AudioListener:
   m_ObjectHideFlags: 0
@@ -5359,8 +5382,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7538dd9e1fb419d47abd2fc0f7025a5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  multiFigures: 0
   AnimationSmoothness: 1
   script: {fileID: 1795921008}
+  selectedPoseToDebug:
+    joints: []
+    jointsRAW: []
+    available: 
+    scaleFactor: 0
+    limbFactor: 0
+    neighbours: []
+    selectedN:
+      projection:
+        rotationFileID: 0
+        frameNum: 0
+        angle: 0
+        joints: []
+      distance2D: 0
+      distance3D: 0
+      rotations: []
+      hipRotation: {x: 0, y: 0, z: 0, w: 0}
+      windowIn3Dpoints: []
+    translation: {x: 0, y: 0, z: 0}
+    appearanceOrder: 0
+    id: 0
   filterFrequency: 120
   filterMinCutoff: 1
   filterBeta: 0
@@ -5373,6 +5418,7 @@ MonoBehaviour:
   noiseAmount_hips: 1
   keepUpdatingParameters: 0
   model: {fileID: 60765408}
+  jointsPositions: []
 --- !u!81 &1109094771
 AudioListener:
   m_ObjectHideFlags: 0
@@ -7368,7 +7414,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 827ebf5ebce6bcd4caf20ad297c94a80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menu: {fileID: 1781577905}
+  objectsToHide:
+  - {fileID: 1781577905}
 --- !u!4 &1448747109
 Transform:
   m_ObjectHideFlags: 0
@@ -8899,9 +8946,12 @@ MonoBehaviour:
       distance3D: 0
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
+      windowIn3Dpoints: []
     translation: {x: 0, y: 0, z: 0}
     appearanceOrder: 0
     id: 0
+  allPoses: []
+  personIndex: 0
   humanContainer: {fileID: 1775626147}
   imageRenderer: {fileID: 1675082012}
   fpsText: {fileID: 360185006}
@@ -10002,6 +10052,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: a5dc7a167ba62794daeec7dd7d900e94, type: 2}
   showEstimationScript: {fileID: 1795921008}
+  showBestOne: 0
+  color: {r: 0, g: 0, b: 0, a: 0}
+  offsetToCorner: {x: 20, y: 15, z: 0}
+  offsetBetweenFigures: {x: 10, y: 10, z: 0}
 --- !u!81 &1979008478
 AudioListener:
   m_ObjectHideFlags: 0

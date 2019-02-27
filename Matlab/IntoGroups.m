@@ -15,6 +15,10 @@ function IntoGroups(amount, T_FULL, L_FULL, dirName)
        L = L_FULL(:,m_start:m_finish);
        
        % save
+       if(exist(dirName,'dir')==0)
+         mkdir(dirName);
+       end
+
        filenameT = [dirName,'\T',num2str(i),'.mat'];
        filenameL = [dirName,'\L_T',num2str(i),'.mat'];
        save(filenameT,'T');

@@ -4,24 +4,21 @@ using UnityEngine;
 
 public class ApplyOneEuroFilter : MonoBehaviour
 {
-    public Transform noisyTransform;
-    public Transform filteredTransform;
-    Quaternion quat;
-
-
     OneEuroFilter<Quaternion> rotationFilter;
+    OneEuroFilter<Vector3> positionFilter;
     public bool filterOn = true;
+    public bool keepUpdatingParams = false;
     public float filterFrequency = 120.0f;
     public float filterMinCutoff = 1.0f;
     public float filterBeta = 0.0f;
     public float filterDcutoff = 1.0f;
-
     public float noiseAmount = 1.0f;
     float timer = 0.0f;
 
     void Start()
     {
         rotationFilter = new OneEuroFilter<Quaternion>(filterFrequency);
+        positionFilter = new OneEuroFilter<Vector3>(filterFrequency);
     }
 
     // Update is called once per frame
@@ -29,10 +26,11 @@ public class ApplyOneEuroFilter : MonoBehaviour
     {
         if (filterOn)
         {
-            rotationFilter.UpdateParams(filterFrequency, filterMinCutoff, filterBeta, filterDcutoff);
-            filteredTransform.rotation = rotationFilter.Filter(noisyTransform.rotation);
+            if(keepUpdatingParams)
+                rotationFilter.UpdateParams(filterFrequency, filterMinCutoff, filterBeta, filterDcutoff);
+
+            transform.rotation = rotationFilter.Filter(transform.rotation);
+            transform.position = positionFilter.Filter(transform.position);
         }
-        else
-            filteredTransform.rotation = noisyTransform.rotation;
     }
 }

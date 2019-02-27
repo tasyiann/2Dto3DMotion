@@ -1,4 +1,4 @@
-function clusterProjections(kMW, dirOfInput, file, subMatrixIndex, extension)
+function clusterProjections(kMW, dirOfInput, dirToSave, file, subMatrixIndex, extension)
 
     % Welcoming message
     disp(['Cluster Projections >> SUB-MATRIX:',num2str(subMatrixIndex)]);
@@ -9,21 +9,13 @@ function clusterProjections(kMW, dirOfInput, file, subMatrixIndex, extension)
     load([dirOfInput,'\L_',file.name],'L'); % Matrix L.mat
     
     % Calculate Distance Matrix
-    
-    if(subMatrixIndex~=7)
     D = DistanceBetweenPoses(T,'No');  
     % Save Distance Matrix
-    ADirName = 'Results\Distances\';
+    ADirName = [dirToSave,'\Distances\'];
     if(exist(ADirName,'dir')==0)
         mkdir(ADirName);
     end
     save([ADirName,'Distances',num2str(subMatrixIndex),'.mat'],'D');
-    end
-    
-    if(subMatrixIndex==7)
-       load(['Results\Distances\','Distances7.mat'],'D'); 
-    end
-    
     clear T;
     whos
     
@@ -35,22 +27,21 @@ function clusterProjections(kMW, dirOfInput, file, subMatrixIndex, extension)
     clear D;
     
     % Backup Y_full matrices for further examination of kMW variable
-    YfullDirName = ['Results\',num2str(kMW),'-clusters\','Y_full'];
-    ADirName = ['Results\',num2str(kMW),'-clusters\'];
-    if(exist(ADirName,'dir')==0)
-        mkdir(ADirName);
+    clustersDirName = [dirToSave,'\Results\',num2str(kMW),'-clusters\']
+    YfullDirName = [clustersDirName,'Y_full\'];
+    if(exist(clustersDirName,'dir')==0)
+        mkdir(clustersDirName);
     end
-    BDirName = ['Results\',num2str(kMW),'-clusters\','Y_full'];
-    if(exist(BDirName,'dir')==0)
-        mkdir(BDirName);
+    if(exist(YfullDirName,'dir')==0)
+        mkdir(YfullDirName);
     end
-    save([YfullDirName,'\Y_full',num2str(subMatrixIndex),'.mat'],'Y_full');
+    save([YfullDirName,num2str(subMatrixIndex),'.mat'],'Y_full');
     
     % K-means
     [idx,C] = kmeans(Y_full,kMW);
     
     % Write Clusters
-    dirname = ['Results\',num2str(kMW),'-clusters\',num2str(index)];
+    dirname = [clustersDirName,num2str(subMatrixIndex)];
     mkdir(dirname);
     dirOfClusters = writeClusters(L,idx, kMW, subMatrixIndex, dirname, extension);
     

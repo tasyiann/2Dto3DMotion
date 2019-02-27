@@ -1197,7 +1197,7 @@ MonoBehaviour:
   previousSelectedWindowPosition: {x: -34, y: 49.5, z: 0}
   maxLines: 10
   CollumnOffset: {x: 82.87, y: 0, z: 0}
-  colorOfWindow: {r: 0, g: 0, b: 0, a: 0}
+  colorOfWindow: {r: 0, g: 0.9578204, b: 1, a: 1}
   figureToDebug:
     joints: []
     jointsRAW: []
@@ -1416,7 +1416,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &474819852
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2165,7 +2165,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 827ebf5ebce6bcd4caf20ad297c94a80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menu: {fileID: 2029888873}
+  objectsToHide:
+  - {fileID: 2029888873}
+  - {fileID: 474819851}
 --- !u!4 &652494078
 Transform:
   m_ObjectHideFlags: 0
@@ -4909,6 +4911,7 @@ GameObject:
   - component: {fileID: 1842599751}
   - component: {fileID: 1842599750}
   - component: {fileID: 1842599749}
+  - component: {fileID: 1842599753}
   m_Layer: 0
   m_Name: 3DModelView_RAW
   m_TagString: Untagged
@@ -4988,6 +4991,25 @@ Transform:
   m_Father: {fileID: 890444710}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1842599753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1842599748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a414aac815ddc8b4bb6fe4cd7ec5ac37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  filterOn: 1
+  keepUpdatingParams: 0
+  filterFrequency: 120
+  filterMinCutoff: 1
+  filterBeta: 0
+  filterDcutoff: 1
+  noiseAmount: 1
 --- !u!1001 &1904618987
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5512,6 +5534,7 @@ GameObject:
   - component: {fileID: 2066325761}
   - component: {fileID: 2066325760}
   - component: {fileID: 2066325759}
+  - component: {fileID: 2066325763}
   m_Layer: 0
   m_Name: 3DModelView_FILTERED
   m_TagString: Untagged
@@ -5591,6 +5614,25 @@ Transform:
   m_Father: {fileID: 890444710}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2066325763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2066325758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a414aac815ddc8b4bb6fe4cd7ec5ac37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  filterOn: 1
+  keepUpdatingParams: 0
+  filterFrequency: 120
+  filterMinCutoff: 1
+  filterBeta: 0
+  filterDcutoff: 1
+  noiseAmount: 1
 --- !u!1 &2139637511
 GameObject:
   m_ObjectHideFlags: 0
@@ -5622,7 +5664,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   play: 0
   frameRate: 30
-  savePath: ./capture
+  savePath: ./capture/Robot
 --- !u!4 &2139637513
 Transform:
   m_ObjectHideFlags: 0

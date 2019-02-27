@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 using Winterdust;
 
 /* OPFigure */
@@ -55,8 +56,16 @@ public class VMEstimation : DataInFrame
         }
 
         if (url == null || url == "") Debug.Log("url is null");
-        videoPlayer.url = url + "\\video.mp4";
 
+        string[] videoFiles = Directory.GetFiles(url,"*.mp4");
+        if (videoFiles == null || videoFiles.Length==0)
+        {
+            videoFiles = Directory.GetFiles(url, "*.avi");
+            if (videoFiles == null || videoFiles.Length == 0)
+                return;
+        }
+        Debug.Log("Video file name: "+videoFiles[0]);
+        videoPlayer.url = videoFiles[0];
         currentFrame = (int)videoPlayer.frame; // <<
     }
 

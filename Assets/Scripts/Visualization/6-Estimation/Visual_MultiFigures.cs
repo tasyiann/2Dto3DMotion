@@ -72,13 +72,28 @@ public class Visual_MultiFigures : MonoBehaviour
         return list;
     }
 
+    
     private void repositionCameraOnX(Camera camera, List<GameObject> models)
     {
-        if (models == null || figures.Count < 2)
+        Vector3 endingPosition = camera.transform.position;
+
+        if (models == null)
             return;
-        Vector3 middleOfModels = (models[0].transform.position + models[models.Count-1].transform.position)/2;
-        camera.transform.position =  new Vector3(middleOfModels.x, camera.transform.position.y, camera.transform.position.z);
+
+        if (figures.Count == 1)
+        {
+            endingPosition = camera.transform.position = new Vector3(models[0].transform.position.x, camera.transform.position.y, camera.transform.position.z);
+        }
+        else if(figures.Count > 1)
+        {
+            Vector3 middleOfModels = (models[0].transform.position + models[models.Count - 1].transform.position) / 2;
+            endingPosition = new Vector3(middleOfModels.x, camera.transform.position.y, camera.transform.position.z);
+        }
+
+        camera.transform.position = endingPosition;
     }
+
+
  
     void Update()
     {

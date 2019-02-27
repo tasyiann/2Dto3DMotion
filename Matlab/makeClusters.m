@@ -8,6 +8,8 @@ load([dirSource,'\Y_full',num2str(index),'.mat'],'Y_full'); % Load Y_Full
 
 % K - means
 [idx,C] = kmeans(Y_full, num_clusters);
+% Calculate dist from centroid
+
 
 % Write Clusters
 dirname = [dirTarget,'\',num2str(num_clusters),'\',num2str(num_clusters),'-clusters\',num2str(index)];

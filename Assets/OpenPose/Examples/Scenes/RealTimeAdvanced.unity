@@ -1193,7 +1193,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 827ebf5ebce6bcd4caf20ad297c94a80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menu: {fileID: 1069104242}
+  objectsToHide:
+  - {fileID: 1069104242}
 --- !u!4 &112213722
 Transform:
   m_ObjectHideFlags: 0
