@@ -6,30 +6,97 @@ using OpenPose.Example;
 
 public class Visual_Scaling : MonoBehaviour
 {
+
     [Range(1f, 0.01f)]
     public float JSONscale = 0.025f;            // Scaling for the raw input.
-    [Range(-100f, 100f)]
-    public float offset = 10f;                  // Distance between the 2 figures.
     public DataInFrame showEstimationScript;    // Reference to the script which determines the selected pose to debug.
     public Material Material;                   // The material of GL visuals.
- 
+    public int maxPrevFigures = 7;              // Max figs to show.
+    public int PrevFiguresRate=0;               // Skipping frames.
+
+    // Offsets : Please set in Inspector.
+    public Vector3 offsetNormlizedFromCenter;
+    public Vector3 offsetStartingPointOfPrevFiguresFromNormalized;
+    public Vector3 offsetBetweenPrevFigures;
+    public Vector3 offsetBetweenRawNormalized;
+
+    // Colors
+    public Color prevColor = Color.gray;
+    public Color rawColor = Color.red;
+    public Color normColor = Color.yellow;
+    
+
+    public bool debugRAW = false;
+    public bool ShowRaw = true;
+    public bool ShowNorm = true;
+    public bool ShowDirectionOfPrev = false;
+    public bool ShowBoundings = true;
+
+    // Positions of figures
+    private Vector3 startingPointOfPrevFigures;
+    private Vector3 posNormalizedCurrentFigure;
+    private Vector3 posRawCurrentFigure;
+    private Vector3 posOfPrevFigure;
+
+    // Data.
+    private int currentFrame;
+    private int prevFrame;
+    private Queue<OPPose> prevFigures;
     private GLDraw gL;                          // GL visuals.
     private Vector3 center;                     // The center of this visual.              
-    private float posX;                         // The horizontal position.
     private OPPose figureToDebug;               // The figure to debug. From showEstimationScript.
-    private Vector3 pos;                        // Where to place the figure.
+         
 
 
     void Start()
     {
         gL = new GLDraw(Material);
         center = transform.position;
-        posX = center.x;
+        prevFigures = new Queue<OPPose>();
+        startingPointOfPrevFigures = center;
+        posNormalizedCurrentFigure = center;
+        posRawCurrentFigure = posNormalizedCurrentFigure + offsetBetweenRawNormalized;
     }
 
     void Update()
     {
         figureToDebug = showEstimationScript.selectedPoseToDebug;
+        currentFrame = showEstimationScript.currentFrame;
+
+        if(prevFrame != currentFrame)
+        {
+            if(PrevFiguresRate<=1)
+                enQueueFigure(figureToDebug);
+           else if( currentFrame%PrevFiguresRate==0 )
+                enQueueFigure(figureToDebug);
+        }
+            
+
+
+        startingPointOfPrevFigures = center + offsetStartingPointOfPrevFiguresFromNormalized;
+        posNormalizedCurrentFigure = center + offsetNormlizedFromCenter;
+        posRawCurrentFigure = posNormalizedCurrentFigure + offsetBetweenRawNormalized;
+
+
+        prevFrame = currentFrame;
+    }
+
+
+    private void rawStyle()
+    {
+
+    }
+
+
+    private void enQueueFigure(OPPose figure)
+    {
+        if (figure == null || figure.joints == null || figure.joints.Length==0)
+            return;
+
+        if (prevFigures.Count >= maxPrevFigures)
+            prevFigures.Dequeue();
+
+        prevFigures.Enqueue(figure);
     }
 
 
@@ -39,22 +106,63 @@ public class Visual_Scaling : MonoBehaviour
         {
             return;
         }
-        pos = center;
-        // NORMALIZED DATA
-        gL.drawFigure(true, Color.yellow, figureToDebug.joints, figureToDebug.available, pos);
-        if (figureToDebug.available[(int)EnumJoint.Head] && (figureToDebug.available[(int)EnumJoint.RightFoot] || figureToDebug.available[(int)EnumJoint.LeftFoot]))
-        {
-            drawBoundings(Color.yellow, figureToDebug.joints[(int)EnumJoint.Head], figureToDebug.joints[(int)EnumJoint.RightFoot], figureToDebug.joints[(int)EnumJoint.LeftFoot], 1000, pos);
-        }
 
-        // RAW DATA
-        pos = new Vector3(center.x + offset, center.y, center.z);
-        gL.drawFigure(true, Color.red, figureToDebug.jointsRAW, figureToDebug.available, pos, JSONscale);
-        if (figureToDebug.available[(int)EnumJoint.Head] && (figureToDebug.available[(int)EnumJoint.RightFoot] || figureToDebug.available[(int)EnumJoint.LeftFoot]))
+        posOfPrevFigure = startingPointOfPrevFigures;
+
+        renderPrevFigures(debugRAW);
+        if(ShowNorm)
+            renderCurrentNormalizedFigure();
+        if(ShowRaw)
+            renderCurrentRawFigure();
+
+    }
+
+    private void renderCurrentNormalizedFigure()
+    {
+        // NORMALIZED DATA
+        gL.drawFigure(true, normColor, figureToDebug.joints, figureToDebug.available, posNormalizedCurrentFigure);
+        if (ShowBoundings && figureToDebug.available[(int)EnumJoint.Head] && (figureToDebug.available[(int)EnumJoint.RightFoot] || figureToDebug.available[(int)EnumJoint.LeftFoot]))
         {
-            drawBoundings(Color.red, figureToDebug.jointsRAW[(int)EnumJoint.Head], figureToDebug.jointsRAW[(int)EnumJoint.RightFoot], figureToDebug.jointsRAW[(int)EnumJoint.LeftFoot], 1000, pos, JSONscale);
+            drawBoundings(normColor, figureToDebug.joints[(int)EnumJoint.Head], figureToDebug.joints[(int)EnumJoint.RightFoot], figureToDebug.joints[(int)EnumJoint.LeftFoot], 1000, posNormalizedCurrentFigure);
         }
     }
+
+
+    private void renderCurrentRawFigure()
+    {
+        gL.drawFigure(true, rawColor, figureToDebug.jointsRAW, figureToDebug.available, posRawCurrentFigure, JSONscale);
+        if (ShowBoundings && figureToDebug.available[(int)EnumJoint.Head] && (figureToDebug.available[(int)EnumJoint.RightFoot] || figureToDebug.available[(int)EnumJoint.LeftFoot]))
+        {
+            drawBoundings(rawColor, figureToDebug.jointsRAW[(int)EnumJoint.Head], figureToDebug.jointsRAW[(int)EnumJoint.RightFoot], figureToDebug.jointsRAW[(int)EnumJoint.LeftFoot], 1000, posRawCurrentFigure, JSONscale);
+        }
+    }
+
+
+    private void renderPrevFigures(bool raw)
+    {
+        foreach (OPPose figure in prevFigures)
+        {
+            Vector3[] joints;
+            float scale;
+            if (raw)
+            {
+                joints = figure.jointsRAW;
+                scale = JSONscale;
+            }
+                
+            else
+            {
+                joints = figure.joints;
+                scale = 1f;
+            }
+                
+
+            gL.drawFigure(ShowDirectionOfPrev, prevColor, joints, figure.available, posOfPrevFigure,scale);
+            posOfPrevFigure = new Vector3(posOfPrevFigure.x + offsetBetweenPrevFigures.x, posOfPrevFigure.y, posOfPrevFigure.z);
+        }
+    }
+
+
 
     private void drawBoundings(Color color, Vector3 head, Vector3 rightFoot, Vector3 leftFoot, float length, Vector3 translation, float scaling = 1f)
     {

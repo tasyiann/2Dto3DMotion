@@ -15,6 +15,10 @@ public class V_Projections : MonoBehaviour
     public Vector3 offsetBetweenFigures;    // Distance between figures.
     public int maxFiguresPerLine;           // In order to change line.
     public Color color;
+    public Camera cam;
+
+    public enum Alignment { CYCLIC, LINEAR }
+    public Alignment Style;
 
     private Vector3 upLeftCorner;           // Position in up left corner.
     private GLDraw gL;                      // GL Lines.
@@ -24,13 +28,13 @@ public class V_Projections : MonoBehaviour
 
     void Start()
     {
+        cam = GetComponent<Camera>();
         gL = new GLDraw(material);
-        center = transform.position;
+        center = Vector3.zero;//transform.position;
         upLeftCorner = center + offsetToUpLeftCorner;
         pos = upLeftCorner;
         mainFigure = script.mainFigure;
         projections = script.projections;
-        color = Color.white;
         maxFiguresPerLine = 12;
     }
 
@@ -41,12 +45,15 @@ public class V_Projections : MonoBehaviour
         if (projections == null)
             return;
 
-        drawSnippet();
+        if (Style == Alignment.LINEAR)
+            drawSnippetLinear();
+        else
+            drawSnippetCyclic();
 
     }
 
 
-    private void drawSnippet()
+    private void drawSnippetLinear()
     {
         int counter = 0;
         foreach(BvhProjection p in projections)
@@ -60,10 +67,24 @@ public class V_Projections : MonoBehaviour
 
     }
 
+    public float radius = 20f;
+    private void drawSnippetCyclic()
+    {
+
+        int i = 0;
+        foreach (BvhProjection p in projections)
+        {
+            float angle = i * Mathf.PI * 2f / projections.Count;
+            pos = new Vector3(center.x + Mathf.Cos(angle) * radius, center.y, center.z + Mathf.Sin(angle) * radius);  // Update the pos for the next projection.
+            gL.drawFigure(true, color, p.joints, null, pos);                                                          // Draw the projection.
+            i++;
+        }
+    }
 
 
     void Update()
     {
+        
         upLeftCorner = center + offsetToUpLeftCorner;
         pos = upLeftCorner;
         mainFigure = script.mainFigure;

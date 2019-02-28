@@ -53,22 +53,22 @@ public class PrevFrameWindow3D : AlgorithmEstimation
 
 
 
-    private float distanceOfWindows(List<List<Vector3>> w1, List<List<Vector3>> w2)
+    private float distanceOfWindows(List<List<Vector3>> w1_prevFrame, List<List<Vector3>> w2)
     {
         float dist = 0;
-        for (int i = 0; i < w1.Count && i < w2.Count; i++)
+        for (int i = 0; i < w1_prevFrame.Count && i < w2.Count; i++)
         {
             // If any of the window spot is null, then we can not compare that spot.
-            if (w1[i] == null || w2[i] == null)
+            if (w1_prevFrame[i] == null || w2[i] == null)
                 continue;
 
             // For each joint, get the distance
-            for (int j = 0; j < w1[i].Count; j++)
+            for (int j = 0; j < w1_prevFrame[i].Count; j++)
             {
-                dist += DistanceRotations(w1[i][j], w2[i][j]);
+                dist += DistanceRotations(w1_prevFrame[i][j], w2[i][j]);
             }
         }
-        return dist;
+        return dist/w1_prevFrame.Count; // return average distance.
     }
 
     private static string disp(Quaternion q)

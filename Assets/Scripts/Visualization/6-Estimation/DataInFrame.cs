@@ -7,4 +7,5 @@ public class DataInFrame : MonoBehaviour
     public OPPose selectedPoseToDebug;
     public List<OPPose> allPoses;
     public int personIndex;
+    public int currentFrame;
 }

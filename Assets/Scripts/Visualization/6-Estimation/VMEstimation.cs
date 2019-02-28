@@ -16,7 +16,7 @@ public class VMEstimation : DataInFrame
     public bool showInfo;                   // Show text info.
     public Button buttonAutomatic;          // Click this button to play or pause video.
     public Text textInfo;                   // Text info component.
-    public int currentFrame;                // Current frame of video.
+                                            // Current frame of video.
 
 
     private UnityEngine.Video.VideoPlayer videoPlayer;          // Set Video player.
