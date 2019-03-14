@@ -6,135 +6,117 @@ using UnityEngine;
 
 [System.Serializable()]
 public class OPPose
-{
+{                                                                           // TODO: Gather all parameters, in one (Base, Algorithms etc).
+
     private EnumScaleMethod scalingMethod = Base.ScaleMethod;               // Which scaling method is used.
     public static readonly int amountOfPreviousScalingFactors = 4;          // How many frames the interpolation of scaling should be based on.
-    // private static readonly int amountOfPreviousFigureForIdentifying = 10;  // How many frames the identification of a figure should be based on.
     private static readonly float threshold_Figures_Differ = 10;            // Threshold : maximum distance between 2 figures of same ID.
     private static int id_counter = -1;                                     // Increase counter when new figure appears in video.
 
     public static int KEYPOINTS_NUMBER = Base.jointsAmount;
+    public static FigureIdentifier figureIdentifier = Base.figureIdentifier;
+
+
     public Vector3[] joints;                        // All joints after being processed.
     public Vector3[] jointsRAW;                     // All joints raw from json. 
+    public Vector3[] jointsIMAGE;                   // As in image.
     public bool[] available;                        // Is the joint[] available.
     public float scaleFactor;                       // What is the scale factor of this pose.
     public EnumBONES limbFactor;                    // Which limb is used to scale.
     public List<Neighbour> neighbours;              // k-neighbours
-    public IList<Cluster> selectedClusters;         // Selected Clusters to search in.
-    public Neighbour selectedN;                     // The leading neighbour.
-
+    private List<Cluster> selectedClusters;         // Selected Clusters to search in.
+    public OPPose prevFigure;                       // Save reference to the previous Pose.
+    public Neighbour Estimation3D;                  // The leading neighbour (3D Estimation of that figure).
     public Vector3 translation;                     // The translation of that pose. (not in use)
     public int appearanceOrder;                     // The order that it appears in JSON.
     public int id;                                  // Identification of the figure.
 
-    public OPPose(Keypoints k, List<OPFrame> frames = null, int currFrameIndex = 0)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="flipImage"></param>
+    /// <param name="frames"></param>
+    /// <param name="currFrameIndex"></param>
+    /// <returns> Returns false if pose is not valid. </returns>
+    private void processData(bool flipImage = false, List < OPFrame> frames = null, int currFrameIndex = 0 )
     {
-        // Initialisation
-        joints = new Vector3[KEYPOINTS_NUMBER];
-        jointsRAW = new Vector3[KEYPOINTS_NUMBER];
-        available = new bool[KEYPOINTS_NUMBER];
-        scaleFactor = 0;
-        neighbours = new List<Neighbour>();
-        selectedClusters = null;
-        selectedN = null;
-        id = 0; //identifyFigure(frames, currFrameIndex);
-        // Normalize data
-        fillBodyPositions(k);
+        // id = figureIdentifier.identifyFigure(this);
         convertPositionsToRoot();
         scaleFigure(getPreviousScaleFactors(frames, currFrameIndex, amountOfPreviousScalingFactors, id));
     }
 
-    public OPPose(Vector3[] joints_input, bool[] available_input,  List<OPFrame> frames = null, int currFrameIndex = 0)
+    public OPPose(Keypoints k, List<OPFrame> frames = null, int currFrameIndex = 0, int currentFigureIndex=0)
     {
-        // Initialisation
-        joints = new Vector3[KEYPOINTS_NUMBER];
-        jointsRAW = new Vector3[KEYPOINTS_NUMBER];
-        available = new bool[KEYPOINTS_NUMBER];
+        initialiseFields();
+        fillBodyPositions(k);
+        processData(false);
+
+    }
+
+    public OPPose(Vector3[] joints_input, bool[] available_input,  List<OPFrame> frames = null, int currFrameIndex = 0, int currentFigureIndex=0)
+    {
+        initialiseFields();
+        // Get Realtime data: Copy Values into the arrays.
         Array.Copy(joints_input, joints,joints_input.Length);
         Array.Copy(joints_input, jointsRAW, joints_input.Length);
         Array.Copy(available_input, available, available_input.Length);
+        processData(true);
+    }
+
+    private void initialiseFields()
+    {
+        // Initialisation
+        joints = new Vector3[KEYPOINTS_NUMBER];
+        jointsIMAGE = new Vector3[KEYPOINTS_NUMBER];
+        jointsRAW = new Vector3[KEYPOINTS_NUMBER];
+        available = new bool[KEYPOINTS_NUMBER];
         scaleFactor = 0;
         neighbours = new List<Neighbour>();
         selectedClusters = null;
-        selectedN = null;
-        id = 0; // << SET FIGURE ID TO ZERO FOR ALL
-                // There is a problem because Openpose is asychronous
-        // Normalize data
-        convertPositionsToRoot(true);
-        scaleFigure(getPreviousScaleFactors(frames, currFrameIndex, amountOfPreviousScalingFactors, id));
+        Estimation3D = null;
     }
 
 
-    // To identification na ginetai joint to joint 2D eucledian? 
-    private int identifyFigure(List<OPFrame> frames, int currFrameIndex)
+    public float getHipDistance_IMG_RAW(OPPose pose)
     {
-        if (frames == null)
-        {
-            Debug.Log("Error. Figure couldn't be identified due to missing frames.");
-            return 0;
-        }
 
-        // Go to previous frames and get the distance from those figures. Is the figure similar to a previous one?
-        // Use jointsRAW, because Identification should be done before Scaling due to the interpolation of scaling.
-        int prevframeCounter = 0;
-        int minimum_ID = -1;
-        float minimum_distance = float.MaxValue;
-        float distance = 0f;
+        int LeftUpLeg = (int)EnumJoint.LeftUpLeg;
+        int RightUpLeg = (int)EnumJoint.RightUpLeg;
 
-        // If it is the first frame -> assign a unique id!
-        if (currFrameIndex==0)
-        {
-            return ++id_counter;
-        }
+        if (!available[LeftUpLeg] || !available[RightUpLeg] || !pose.available[LeftUpLeg] || !pose.available[RightUpLeg])
+            throw new Exception("Hip couldn't be identified in this figure! ");
 
-        // Calculate distance jointsRAW, based only on last frame
-        foreach (OPPose figure in frames[currFrameIndex-1].figures)
-        {
-            distance = Distance2D_JOINTS_RAW(figure);
-            if (distance < minimum_distance)
-            {
-                minimum_distance = distance;
-                minimum_ID = figure.id;
-            }
-        }
-
-
-        // Calculate Velocity
-        /*
-        for (int i = currFrameIndex - 1; i >= 0 && prevframeCounter < amountOfPreviousFigureForIdentifying; i--)
-        {
-            foreach(OPPose figure in frames[i].figures)
-            {
-                // calculate velocity here
-            }
-            prevframeCounter++;
-        }
-        */
-        //  > Now it's time to decide the ID <
-        // The ID that will finally be assigned to the figure is an old one:
-        if (distance < threshold_Figures_Differ && minimum_ID>=0)
-        {
-            return minimum_ID;
-        }
-        // The ID that wil finally be assigned to the figure is a new one
-        return ++id_counter;
+        Vector2 rootA = (pose.jointsIMAGE[LeftUpLeg] + pose.jointsIMAGE[RightUpLeg]) / 2;
+        Vector2 rootB = (jointsIMAGE[LeftUpLeg] + jointsIMAGE[RightUpLeg]) / 2;
+        return Vector2.Distance(rootA,rootB);
     }
 
 
-    public float Distance2D_JOINTS_RAW(OPPose op)
-    {
-        float sum = 0;
-        for (int i = 0; i < op.jointsRAW.Length; i++)
-        {
-            Vector2 j1 = jointsRAW[i];
-            Vector2 j2 = op.jointsRAW[i];
-            // The joint of openpose pose might not be available,
-            // due to distorted/uncompleted openpose output.
-            if (!op.available[i] || !available[i]) continue;
-            sum += Vector2.Distance(j1, j2);
-        }
-        return sum;
-    }
+   // public float AverageDistance2Djoints_IMG_RAW(OPPose op)
+   // {
+        //float sum = 0;
+        //int countIterations = 0;
+       
+
+        //for (int i = 0; i < op.jointsRAW.Length; i++)
+        //{
+        //    Vector2 j1 = jointsIMAGE[i];
+        //    Vector2 j2 = op.jointsIMAGE[i];
+        //    // The joint of openpose pose might not be available,
+        //    // due to distorted/incompleted openpose output.
+        //    if (!op.available[i] || !available[i])
+        //    {
+        //        continue;
+        //    }
+        //    // Exclude hands: (Left/Right) Arm, ForeArm, Hand
+        //    if (i >= (int)EnumJoint.RightArm && i <= (int)EnumJoint.LeftHand)
+        //        continue;
+
+        //    sum += Vector2.Distance(j1, j2);
+        //    countIterations++;
+        //}
+        //return sum/countIterations;
+   // }
 
 
 
@@ -148,6 +130,7 @@ public class OPPose
             float y = k.pose_keypoints_2d[i + 1] * -1.0f; // y axis is reversed
             Vector2 xy = new Vector2(x, y);
             jointsRAW[i / 3] = xy;
+            jointsIMAGE[i / 3] = jointsRAW[i / 3]; // << 8/3 assinged
             /* Check if joint is available in json */
             if (x == 0 && y == 0)
                 available[i / 3] = false;
@@ -267,4 +250,15 @@ public class OPPose
         }
         return s;
     }
+
+
+    public IList<Cluster> getSelectedClusters()
+    {
+        return selectedClusters;
+    }
+    public void setSelectedClusters(IList<Cluster> clusters)
+    {
+        selectedClusters = new List<Cluster>(clusters);
+    }
+
 }

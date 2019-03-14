@@ -9,32 +9,35 @@ using Winterdust;
 /* OPFigure */
 public class VMEstimation : DataInFrame
 {
-    
+
+
     private static Scenario sc = Base.sc;   // Data. Please revise this.
     public GameObject VideoplayerGO;        // Set video player.
+    
     public bool automatic;                  // Automatic play of video.
     public bool showInfo;                   // Show text info.
     public Button buttonAutomatic;          // Click this button to play or pause video.
     public Text textInfo;                   // Text info component.
                                             // Current frame of video.
+    [HideInInspector]
+    public List<OPFrame> frames;            // Frames of the video.
 
 
     private UnityEngine.Video.VideoPlayer videoPlayer;          // Set Video player.
-    private List<OPFrame> frames;                               // Frames of the video.
+
     private int framesLength;                                   // Amount of frames in video.               
     private GLDraw gL;                                          // GL to draw lines.
    
 
 
+
+
     private void Start()
     {
         buttonAutomatic.onClick.AddListener(setAutomaticVisualisation);
-        frames = sc.frames;
-        
+        frames = sc.frames;             
         setVideoPlayer();               // Set the videoplayer.
         framesLength = DataParsing.estimation.Length;
-
-        
     }
 
 
@@ -84,7 +87,7 @@ public class VMEstimation : DataInFrame
                 return;
             }
            
-            Neighbour chosen = selectedPoseToDebug.selectedN;
+            Neighbour chosen = selectedPoseToDebug.Estimation3D;
             if (chosen == null)
                 return;
 
@@ -114,6 +117,8 @@ public class VMEstimation : DataInFrame
             if (frames[currentFrame].figures != null && frames[currentFrame].figures.Count > 0 && personIndex >= 0 && personIndex < frames[currentFrame].figures.Count && frames[currentFrame].figures[personIndex].joints.Length != 0)
             {
                 selectedPoseToDebug = frames[currentFrame].figures[personIndex];
+                if (currentFrame - 1 >= 0 && frames[currentFrame - 1].figures.Count > 0 && personIndex >= 0 && personIndex < frames[currentFrame - 1].figures.Count && frames[currentFrame - 1].figures[personIndex].joints.Length != 0)
+                    previousPose = frames[currentFrame - 1].figures[personIndex];
             }
             else
                 selectedPoseToDebug = null;
@@ -121,9 +126,41 @@ public class VMEstimation : DataInFrame
         
     }
 
-    // Update is called once per frame
+
+
+
     void Update()
     {
+        //// <>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        //// -- Initialise recorder --
+        //if (!RecordingDistance && startRecordingDistance)
+        //{
+        //    // Initialize [Set video frame]
+        //    videoPlayer.Pause();
+        //    videoPlayer.frame = 0;
+        //    videoPlayer.Play();
+        //    recordingDistScript.initializeJoints();
+        //    Debug.Log("Wake up animation.");
+        //    recordingDistScript.wakeUpAnimation();
+        //    RecordingDistance = true;
+        //}
+
+        //// -- Record distance --
+        //if (RecordingDistance && startRecordingDistance)
+        //{
+        //    currentFrame = (int)videoPlayer.frame;
+        //    until_now_distance3D = recordingDistScript.calculateDist();
+        //}
+
+        //if (startRecordingDistance == false)
+        //{
+        //    RecordingDistance = false;
+        //}
+        // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
 
 
         if (automatic)
@@ -166,6 +203,12 @@ public class VMEstimation : DataInFrame
         {
             allPoses = frames[currentFrame].figures;
         }
+
+
+
+
+
+
 
         if (showInfo)
         {

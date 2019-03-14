@@ -48,7 +48,7 @@ public class Visual_KBest2DFigures : MonoBehaviour
                 // We could check if neighbour.projection is the same as figureToDebug.selectedN.projection
                 Vector3 pos = new Vector2(posX, posY);
                 color = Color.green;
-                if (showBestOne && neighbour.projection == figureToDebug.selectedN.projection)
+                if (showBestOne && neighbour.projection == figureToDebug.Estimation3D.projection)
                     color = Color.white;
                 gL.drawFigure(true, color, neighbour.projection.joints, null, pos);
               

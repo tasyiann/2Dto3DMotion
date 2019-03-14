@@ -74,7 +74,7 @@ public class V_Projections : MonoBehaviour
         int i = 0;
         foreach (BvhProjection p in projections)
         {
-            float angle = i * Mathf.PI * 2f / projections.Count;
+            float angle = (Mathf.PI * 2f) - i * Mathf.PI * 2f / projections.Count;
             pos = new Vector3(center.x + Mathf.Cos(angle) * radius, center.y, center.z + Mathf.Sin(angle) * radius);  // Update the pos for the next projection.
             gL.drawFigure(true, color, p.joints, null, pos);                                                          // Draw the projection.
             i++;

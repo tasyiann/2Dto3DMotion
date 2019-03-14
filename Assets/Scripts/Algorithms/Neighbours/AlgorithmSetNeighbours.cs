@@ -28,7 +28,7 @@ public abstract class AlgorithmSetNeighbours {
         foreach (Cluster cluster in clusters)
         {
             // Get Distance Representative - Figure.
-            float distance = cluster.representative.Distance2D(opPose);             
+            float distance = cluster.Representative.Distance2D(opPose);             
             if (nearestClustersCounter < amount)
             {
                 // SortedList throws an exception if there is a duplicated key.

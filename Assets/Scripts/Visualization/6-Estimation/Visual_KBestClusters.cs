@@ -32,11 +32,11 @@ public class Visual_KBestClusters : MonoBehaviour
 
     private void OnPostRender()
     {
-        if(figureToDebug!=null && figureToDebug.neighbours!=null && figureToDebug.selectedClusters!=null)
+        if(figureToDebug!=null && figureToDebug.neighbours!=null && figureToDebug.getSelectedClusters()!=null)
         {
             // Render 1st figure's best k 2D match
             int neighCounter = 0;
-            foreach (Cluster cluster in figureToDebug.selectedClusters)
+            foreach (Cluster cluster in figureToDebug.getSelectedClusters())
             {
             
                 if (neighCounter >= MaxFiguresPerLine)
@@ -51,7 +51,7 @@ public class Visual_KBestClusters : MonoBehaviour
                 Vector3 pos = new Vector2(posX, posY);
                 
                 
-                gL.drawFigure(true, color, cluster.representative.joints, null, pos);
+                gL.drawFigure(true, color, cluster.Representative.joints, null, pos);
               
                 posX += offsetBetweenFigures.x;
                 neighCounter++;

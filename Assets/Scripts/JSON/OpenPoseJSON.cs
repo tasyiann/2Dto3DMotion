@@ -8,7 +8,9 @@ using Newtonsoft.Json;
 
 public class OpenPoseJSON {
 
+    
     private readonly List<OPFrame> frames;          // The reference of Video Frames.
+    private static FigureIdentifier figureIdentifier = Base.figureIdentifier;
 
     public OpenPoseJSON(List<OPFrame> Frames)
     {
@@ -45,17 +47,83 @@ public class OpenPoseJSON {
         JsonFileStruct jsonObj = JsonConvert.DeserializeObject<JsonFileStruct>(File.ReadAllText(@path));
         OPFrame frame = new OPFrame();
         // Iterate poses in json Object : For each figure in the frame.
+        int currentFigureIndex = 0;
+
         foreach (Keypoints k in jsonObj.people)
         {
             // Initialise a pose, fill bodypositions, normalize data, identification : all done in contructor.
             // Use last frames, to interpolate scaling.
-            OPPose pose = new OPPose(k, frames, currentFrameIndex);
+            OPPose pose = new OPPose(k, frames, currentFrameIndex, currentFigureIndex);
             frame.figures.Add(pose);
+            currentFigureIndex++; // Go to the next figure in the same frame.
         }
+        frame.figures = figureIdentifier.sortFiguresInFrame(frame);
         return frame;
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void sortFiguresByTheirID(OPFrame frame)
+    {
+        if (frame == null || frame.figures == null || frame.figures.Count == 0)
+            return;
+
+        SortedList<int, OPPose> list = new SortedList<int, OPPose>();
+        foreach (OPPose pose in frame.figures)
+            list.Add(pose.id,pose);
+
+        frame.figures = new List<OPPose>(list.Values);
+    }
+
+
+    // Temporally used.
+    private void sortFiguresByX(OPFrame frame)
+    {
+        if (frames == null || frame.figures == null|| frame.figures.Count<=1)
+            return;
+
+        SortedList<float, OPPose> list = new SortedList<float, OPPose>();
+        string str = "";
+        foreach (OPPose pose in frame.figures)
+        {
+            float keyX=0;
+            
+            for(int i=0; i<pose.jointsIMAGE.Length; i++)
+            {
+                if (pose.available[i])
+                {
+                    keyX = pose.jointsIMAGE[i].x;
+                    str += keyX + " ";
+                    break;
+                }     
+            }
+            
+            list.Add(keyX,pose);
+        }
+        Debug.Log(str);
+        // Assign the id.
+        List<OPPose> listNew = new List<OPPose>(list.Values);
+        int id = 0;
+        foreach (OPPose pose in listNew)
+        {
+            pose.id = id;
+            id++;
+        }
+        frame.figures = listNew;
+    }
 
 
 

@@ -36,6 +36,7 @@ public class DataParsing
     /// <summary> The pipeline of estimating the 3D of OpenPose Output.</summary>
     public static void OFFLINE_Pipeline()
     {
+
         // First thing to do: INITIALISE 
         Debug.Log("Entering OFFLINE mode.");
         // Read next frame OpenPose output (JSON files)
@@ -49,12 +50,14 @@ public class DataParsing
                 OPFrame currFrame = parser.Parsefile(fileName, frameCounter);
                 frames.Add(currFrame);
                 // For each figure in the frame, calculate its 3D:
+                
                 foreach (OPPose currFigure in currFrame.figures)
                 {
+                    OPPose prevFigure = null;
                     // STEP_A: Find k-BM.
                     sc.algNeighbours.SetNeighbours(currFigure, sc.k, base_clusters);
                     // STEP_B: Find Best 3D.
-                    OPPose prevFigure = null;
+                    
                     if (frameCounter != 0)
                     {
                         // Get access to the previous frame figure with the same ID. How? Figure it out!
@@ -67,15 +70,21 @@ public class DataParsing
                                 prevFigure = null;
                             else
                                 prevFigure = frames[frameCounter - 1].figures[currFigure.id];
+
+                            // Set prevFigure of currentFigure << Set this also in the Real-Time
+                            // The chain breaks if prevFigure is null. Find a way to fix this. (TODO).
+                            currFigure.prevFigure = prevFigure;
+                            
+
                         }
                         catch(ArgumentOutOfRangeException e)
                         {
-                            Debug.Log(e.Message + "\n" + e.StackTrace);
+                            Debug.LogError(e.Message + "\n" + e.StackTrace);
                             prevFigure = null;
                         }
                         
                     }
-                    currFigure.selectedN = sc.algEstimation.GetEstimation(prevFigure, currFigure, sc.m, base_rotationFiles);
+                    currFigure.Estimation3D = sc.algEstimation.GetEstimation(currFigure, sc.m, base_rotationFiles);
                     // Offline implementation is done. But with real-time, we need to display each frame.
                     // So, we need somehow to render the current 3D on screen. (On every input from pipes).
                 }
@@ -97,9 +106,10 @@ public class DataParsing
         // Set log
         setLog();
         // Save the scenario.
-        sc.Save();
+        // sc.Save();
         // Debug.Log("Saving Done.");
     }
+
 
 
     private static void initialise1EuroFilter()
@@ -166,7 +176,7 @@ public class DataParsing
             if (frame.figures.Count <= person_index || frame.figures[person_index] == null)
                 result.Add(null);
             else
-                result.Add(frame.figures[person_index].selectedN);
+                result.Add(frame.figures[person_index].Estimation3D);
         }
         return result.ToArray();
     }

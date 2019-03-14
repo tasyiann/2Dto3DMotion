@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.16479912, g: 0.09718271, b: 0.17919725, a: 1}
+  m_IndirectSpecularColor: {r: 0.14921463, g: 0.08781917, b: 0.16226, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -577,7 +577,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &83377499
 Transform:
   m_ObjectHideFlags: 0
@@ -599,20 +599,29 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 83377498}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 180d62ebe9a2b0049a2e4074818582d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  show3D: 0
+  figurePrefab: {fileID: 0}
+  figurePrevPrefab: {fileID: 0}
   material: {fileID: 2100000, guid: a5dc7a167ba62794daeec7dd7d900e94, type: 2}
-  dataScript: {fileID: 1795921008}
+  dataScript: {fileID: 0}
   showSelectedOne: 0
+  showWindowGl: 0
   offset: {x: 8.6, y: 10.4, z: 0}
   offsetToUpLeftCorner: {x: -73.7, y: 34.4, z: 0}
   previousSelectedWindowPosition: {x: -34, y: 49.5, z: 0}
   maxLines: 10
   CollumnOffset: {x: 82.87, y: 0, z: 0}
   colorOfWindow: {r: 0, g: 0, b: 0, a: 0}
+  colorOfPrevWindow: {r: 0, g: 0, b: 0, a: 0}
+  colorOfCorresponding3D: {r: 0, g: 0, b: 0, a: 0}
+  colorOfkNearProjection: {r: 0, g: 0, b: 0, a: 0}
+  colorOfSelected: {r: 0, g: 0, b: 0, a: 0}
+  showkNearProjection: 0
   figureToDebug:
     joints: []
     jointsRAW: []
@@ -626,6 +635,7 @@ MonoBehaviour:
         frameNum: 0
         angle: 0
         joints: []
+        distanceFromRepresentative: 0
       distance2D: 0
       distance3D: 0
       rotations: []
@@ -6339,6 +6349,7 @@ MonoBehaviour:
         frameNum: 0
         angle: 0
         joints: []
+        distanceFromRepresentative: 0
       distance2D: 0
       distance3D: 0
       rotations: []
@@ -6359,7 +6370,6 @@ MonoBehaviour:
   noiseAmount_hips: 1
   keepUpdatingParameters: 0
   model: {fileID: 1253926806}
-  jointsPositions: []
 --- !u!1 &1260277916
 GameObject:
   m_ObjectHideFlags: 0
@@ -7813,7 +7823,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1449867302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7821,7 +7831,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1449867301}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5cc6e4bf017401842afc04f04bf5b11c, type: 3}
   m_Name: 
@@ -8982,9 +8992,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   JSONscale: 0.04
-  offset: 10
   showEstimationScript: {fileID: 1795921008}
   Material: {fileID: 2100000, guid: a5dc7a167ba62794daeec7dd7d900e94, type: 2}
+  maxPrevFigures: 7
+  PrevFiguresRate: 0
+  offsetNormlizedFromCenter: {x: 0, y: 0, z: 0}
+  offsetStartingPointOfPrevFiguresFromNormalized: {x: 0, y: 0, z: 0}
+  offsetBetweenPrevFigures: {x: 0, y: 0, z: 0}
+  offsetBetweenRawNormalized: {x: 0, y: 0, z: 0}
+  prevColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  rawColor: {r: 1, g: 0, b: 0, a: 1}
+  normColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  debugRAW: 0
+  ShowRaw: 1
+  ShowNorm: 1
+  ShowDirectionOfPrev: 0
+  ShowBoundings: 1
 --- !u!81 &1699326305
 AudioListener:
   m_ObjectHideFlags: 0
@@ -9462,6 +9485,7 @@ MonoBehaviour:
         frameNum: 0
         angle: 0
         joints: []
+        distanceFromRepresentative: 0
       distance2D: 0
       distance3D: 0
       rotations: []
@@ -9482,7 +9506,6 @@ MonoBehaviour:
   noiseAmount_hips: 1
   keepUpdatingParameters: 0
   model: {fileID: 1740207856}
-  jointsPositions: []
 --- !u!1 &1768473632
 GameObject:
   m_ObjectHideFlags: 0
@@ -9975,7 +9998,6 @@ MonoBehaviour:
   modelsFiltered:
   - {fileID: 1253926808}
   - {fileID: 1976189408}
-  figures: []
   components_toSetData_Raw: []
   components_toSetData_Filtered: []
   cameraRaw: {fileID: 742551546}
@@ -10063,6 +10085,29 @@ MonoBehaviour:
         frameNum: 0
         angle: 0
         joints: []
+        distanceFromRepresentative: 0
+      distance2D: 0
+      distance3D: 0
+      rotations: []
+      hipRotation: {x: 0, y: 0, z: 0, w: 0}
+      windowIn3Dpoints: []
+    translation: {x: 0, y: 0, z: 0}
+    appearanceOrder: 0
+    id: 0
+  previousPose:
+    joints: []
+    jointsRAW: []
+    available: 
+    scaleFactor: 0
+    limbFactor: 0
+    neighbours: []
+    selectedN:
+      projection:
+        rotationFileID: 0
+        frameNum: 0
+        angle: 0
+        joints: []
+        distanceFromRepresentative: 0
       distance2D: 0
       distance3D: 0
       rotations: []
@@ -10073,6 +10118,7 @@ MonoBehaviour:
     id: 0
   allPoses: []
   personIndex: 0
+  currentFrame: 0
   humanContainer: {fileID: 1775626147}
   imageRenderer: {fileID: 1675082012}
   fpsText: {fileID: 360185006}
@@ -10699,6 +10745,7 @@ MonoBehaviour:
         frameNum: 0
         angle: 0
         joints: []
+        distanceFromRepresentative: 0
       distance2D: 0
       distance3D: 0
       rotations: []
@@ -10719,7 +10766,6 @@ MonoBehaviour:
   noiseAmount_hips: 1
   keepUpdatingParameters: 0
   model: {fileID: 1909792717}
-  jointsPositions: []
 --- !u!1 &1913811082
 GameObject:
   m_ObjectHideFlags: 0
@@ -11190,6 +11236,7 @@ MonoBehaviour:
         frameNum: 0
         angle: 0
         joints: []
+        distanceFromRepresentative: 0
       distance2D: 0
       distance3D: 0
       rotations: []
@@ -11210,7 +11257,6 @@ MonoBehaviour:
   noiseAmount_hips: 1
   keepUpdatingParameters: 0
   model: {fileID: 1976189409}
-  jointsPositions: []
 --- !u!114 &1976189412
 MonoBehaviour:
   m_ObjectHideFlags: 0

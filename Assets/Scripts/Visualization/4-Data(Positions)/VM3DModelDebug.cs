@@ -116,8 +116,8 @@ public class VM3DModelDebug : MonoBehaviour
                 projectionIndex = 0;
         }
         FigureToShow_cluster = clusters[clusterIndex].projections[projectionIndex].joints;
-        FigureToShow_representative = clusters[clusterIndex].representative.joints;
-        float distance = clusters[clusterIndex].projections[projectionIndex].Distance2D(clusters[clusterIndex].representative);
+        FigureToShow_representative = clusters[clusterIndex].Representative.joints;
+        float distance = clusters[clusterIndex].projections[projectionIndex].Distance2D(clusters[clusterIndex].Representative);
         if ( distance < 0.1f )
             Debug.Log("<<<<<<< found!>>>>>>>");
         distanceFromCluster = distance;

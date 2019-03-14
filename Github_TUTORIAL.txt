@@ -1,0 +1,14 @@
+--soft: uncommit changes, changes are left staged (index).
+--mixed (default): uncommit + unstage changes, changes are left in working tree.
+--hard: uncommit + unstage + delete changes, nothing left.
+
+git reset --soft HEAD~1
+
+
+or
+
+A simple solution I used:
+
+Do git reset HEAD^ for as many commits you want to undo, it will keep your changes and your actual state of your files, just flushing the commits of them.
+
+Once the commits are undone, you can think about how to commit your files in a better way, e.g.: removing/ignoring the huge files and then adding what you want and then committing again. Or use Git LFS to track those huge files.

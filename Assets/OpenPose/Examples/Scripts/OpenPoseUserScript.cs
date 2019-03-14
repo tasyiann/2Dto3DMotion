@@ -177,7 +177,7 @@ namespace OpenPose.Example {
         private static int currentframeIndex = 0;
         // HERE
         // This fuction is made by me
-        private OPPose getFigureFromData(ref OPDatum datum, int personID, float scoreThres, OPFrame frame)
+        private OPPose getFigureFromData(ref OPDatum datum, int personID, float scoreThres, OPFrame frame, int currentFigureIndex)
         {
             if (datum.poseKeypoints == null || personID >= datum.poseKeypoints.GetSize(0))
             {
@@ -209,21 +209,20 @@ namespace OpenPose.Example {
             // SET NEW FIGURE!
             rawInputToDebug = new Vector3[14];
             Array.Copy(joints, rawInputToDebug, joints.Length);
-            OPPose poseNEW = new OPPose(joints, available, frames, currentframeIndex);
+            OPPose poseNEW = new OPPose(joints, available, frames, currentframeIndex, currentFigureIndex);
             return poseNEW;
         }
 
 
 
-        OPPose prevFigure=null;
+     
+         
         private void estimateAndSave3D(OPPose figure)
         {
             // STEP_A: Find k-BM.
             sc.algNeighbours.SetNeighbours(figure, sc.k, base_clusters);
             // STEP_B: Find Best 3D.
-            figure.selectedN = sc.algEstimation.GetEstimation(prevFigure, figure, sc.m, base_rotationFiles);
-            // Set the figure as the previous one, and go to the next frame.
-            prevFigure = figure;
+            figure.Estimation3D = sc.algEstimation.GetEstimation(figure, sc.m, base_rotationFiles);
         }
 
 
@@ -269,12 +268,17 @@ namespace OpenPose.Example {
                 fpsText.text = avgFrameRate.ToString("F1") + " FPS";
 
                 // | | |  Get figures from data and estimate 3D.  | | | //
+
+                OPPose[] prevFigures = new OPPose[20];  // Instances to the prev figure of each figure id.
                 for(int k=0; k<numberPeople; k++)
                 {
-                    OPPose pose = getFigureFromData(ref datum, k, renderThreshold, currframe);  // Get Figure k.
+                    
+                    OPPose pose = getFigureFromData(ref datum, k, renderThreshold, currframe, k);  // Get Figure k.
                     currframe.figures.Add(pose);                                                // Add Figure to the Frame. It's ok if it is null.
                     if (pose == null) continue;                                                 // Don't do an estimation if it is null.
+                    pose.prevFigure = prevFigures[k];                                           // Set previous figure to the pose.
                     estimateAndSave3D(pose);                                                    // Estimate and Save Figure's 3D.
+                    prevFigures[k] = pose;
                 }
 
                 // FINALLY, EXPORT DATA TO OTHER SCRIPTS:

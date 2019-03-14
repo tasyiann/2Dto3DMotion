@@ -35,8 +35,8 @@ public class Visual_BestMatch : MonoBehaviour
         /* Draw results. */
         if (figureToDebug!=null)
         {
-            if(figureToDebug.selectedN.projection.joints.Length!=0) // Check, because in some cases the length is zero...
-                gL.drawFigure(true, Color.green, figureToDebug.selectedN.projection.joints, null, center);
+            if(figureToDebug.Estimation3D.projection.joints.Length!=0) // Check, because in some cases the length is zero...
+                gL.drawFigure(true, Color.green, figureToDebug.Estimation3D.projection.joints, null, center);
             if (figureToDebug.joints.Length != 0)                   // Check, because in some cases the length is zero...
                 gL.drawFigure(true, Color.yellow, figureToDebug.joints, figureToDebug.available, center);
         }

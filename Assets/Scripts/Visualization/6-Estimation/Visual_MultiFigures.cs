@@ -7,7 +7,7 @@ public class Visual_MultiFigures : MonoBehaviour
     public DataInFrame script;                    // Use this script to get data.
     public List<GameObject> modelsRaw;            // List of the models.
     public List<GameObject> modelsFiltered;       // List of the models.
-    public List<OPPose> figures;
+    private List<OPPose> figures;
     public List<Visual_ApplyOn3DModel> components_toSetData_Raw;
     public List<Visual_ApplyOn3DModel> components_toSetData_Filtered;
     public Camera cameraRaw;
@@ -46,7 +46,8 @@ public class Visual_MultiFigures : MonoBehaviour
             {
                 if (models[i].activeSelf)
                     models[i].SetActive(false);
-            }  
+            }
+         
         }
     }
 
@@ -103,8 +104,8 @@ public class Visual_MultiFigures : MonoBehaviour
         setActiveModelsOnScene(modelsFiltered);
         updateModelsOnScene(components_toSetData_Raw);
         updateModelsOnScene(components_toSetData_Filtered);
-        repositionCameraOnX(cameraRaw, modelsRaw);
-        repositionCameraOnX(cameraFiltered, modelsFiltered);
+        //repositionCameraOnX(cameraRaw, modelsRaw);
+        //repositionCameraOnX(cameraFiltered, modelsFiltered);
     }
 
 

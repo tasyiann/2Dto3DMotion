@@ -6,7 +6,7 @@ using Winterdust;
 [System.Serializable()]
 public class NearestEstimation : AlgorithmEstimation {
 
-    public override Neighbour GetEstimation(OPPose previous, OPPose current, int m=0, List<List<Rotations>> rotationFiles=null)
+    public override Neighbour GetEstimation(OPPose current, int m=0, List<List<Rotations>> rotationFiles=null)
     {
         if (current.neighbours.Count != 0)
             return current.neighbours[0];

@@ -170,4 +170,40 @@ public class GLDraw {
         GL.End();
     }
 
+    public void drawCube()
+    {
+
+        Vector3[] v = {
+            new Vector3 (0, 0, 0),
+            new Vector3 (1, 0, 0),
+            new Vector3 (1, 1, 0),
+            new Vector3 (0, 1, 0),
+            new Vector3 (0, 1, 1),
+            new Vector3 (1, 1, 1),
+            new Vector3 (1, 0, 1),
+            new Vector3 (0, 0, 1),
+        };
+
+
+
+        GL.PushMatrix();
+        material.SetPass(1);
+        GL.Begin(GL.QUADS);
+        square(v[0],v[1],v[2],v[3]);
+        square(v[3], v[4], v[5], v[2]);
+        square(v[2], v[5], v[6], v[1]);
+        square(v[0], v[7], v[6], v[1]);
+        square(v[4], v[7], v[5], v[6]);
+        square(v[0], v[3], v[4], v[7]);
+        GL.End();
+        GL.PopMatrix();
+    }
+
+    private void square(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4)
+    {
+        GL.Vertex(v1);
+        GL.Vertex(v2);
+        GL.Vertex(v3);
+        GL.Vertex(v4);
+    }
 }

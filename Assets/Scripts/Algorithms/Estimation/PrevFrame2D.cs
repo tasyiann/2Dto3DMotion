@@ -10,14 +10,19 @@ using System.Globalization;
 [System.Serializable()]
 public class PrevFrame2D : AlgorithmEstimation
 {
-    public override Neighbour GetEstimation(OPPose previous, OPPose current, int m = 0, List<List<Rotations>> rotationFiles = null)
+    public override Neighbour GetEstimation(OPPose current, int m = 0, List<List<Rotations>> rotationFiles = null)
     {
+        
+
         // Case 1: Zero neighbours found for this op pose.
         if (current.neighbours.Count == 0)
             return null;
 
+        OPPose previous = current.prevFigure;
+
+
         // Case 2: Previous is null.
-        if (previous == null || previous.selectedN == null)
+        if (previous == null || previous.Estimation3D == null)
             return current.neighbours[0];
 
         // Case 3: Previous selectedN is not null.
@@ -27,7 +32,7 @@ public class PrevFrame2D : AlgorithmEstimation
         Neighbour minNeighbour = null;
         foreach (Neighbour n in current.neighbours)
         {
-            float distance = n.projection.Distance2D(previous.selectedN.projection);
+            float distance = n.projection.Distance2D(previous.Estimation3D.projection);
             // Save the minimum distance.
             if (distance < min)
             {

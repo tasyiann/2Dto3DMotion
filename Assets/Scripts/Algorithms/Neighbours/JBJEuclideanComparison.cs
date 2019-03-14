@@ -19,7 +19,7 @@ public class JBJEuclideanComparison : AlgorithmSetNeighbours
         SortedList<float, Neighbour> neighbours = new SortedList<float, Neighbour>();
         // Find the nearest clusters to search.
         IList<Cluster> nearestClusters = nearestClustersToSearch(opPose, clusters, amountOfClustersToSearch);
-        opPose.selectedClusters = nearestClusters; // So we can debug this later.
+        opPose.setSelectedClusters(nearestClusters); // So we can debug this later.
         int nearestNeighboursCounter = 0;
 
         foreach (Cluster cluster in nearestClusters)

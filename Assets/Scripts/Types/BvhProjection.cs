@@ -12,7 +12,7 @@ public class BvhProjection {
     public int frameNum;
     public int angle;
     public Vector3[] joints;
-
+    public float distanceFromRepresentative;
 
     public BvhProjection(int rotationID, int frameNumber, int projectAngle, Vector3 [] allJoints, int fileID=0)
     {

@@ -36,7 +36,7 @@ public class Visual_ApplyOn3DModel : MonoBehaviour
     public Transform model;
     private Model3D m3d;
 
-    public Vector3[] jointsPositions;
+    private Vector3[] jointsPositions;
 
 
     
@@ -45,6 +45,7 @@ public class Visual_ApplyOn3DModel : MonoBehaviour
     {
         m3d = new Model3D(model);
         initializeOneEuroFilter();
+        
         if(!multiFigures)
             selectedPoseToDebug = script.selectedPoseToDebug;
     }
@@ -58,7 +59,7 @@ public class Visual_ApplyOn3DModel : MonoBehaviour
         if (!multiFigures)
             selectedPoseToDebug = script.selectedPoseToDebug;
 
-        jointsPositions = selectedPoseToDebug.selectedN.projection.joints;
+        jointsPositions = selectedPoseToDebug.Estimation3D.projection.joints;
 
         if (keepUpdatingParameters)
             updateParametersRotationFilters();

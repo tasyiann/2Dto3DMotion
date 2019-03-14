@@ -49,7 +49,7 @@ public class Scenario  {
             File.Copy(@inputDir+"\\video.mp4", dirname+"\\video.mp4");
         // Create and Save the scenario file.
         var myUniqueFileName = string.Format(@"{0}", DateTime.Now.Ticks);
-        // DataParsing.WriteToBinaryFile(dirname+"\\"+myUniqueFileName+".sc", this); << DO NOT SAVE THE BINARY. THIS WAS OLD FEATURE.
+        DataParsing.WriteToBinaryFile(dirname+"\\"+myUniqueFileName+".sc", this); //<< DO NOT SAVE THE BINARY. THIS WAS OLD FEATURE.
         // Save the log file.
         SaveLog(this, dirname, myUniqueFileName+".xml");
         Debug.Log("Scenario has been saved.");

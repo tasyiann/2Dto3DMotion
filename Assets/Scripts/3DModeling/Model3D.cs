@@ -51,14 +51,14 @@ public class Model3D
     public Model3D(Transform model3d, float angle=0)
     {
         model = model3d;
-        joints = setJoints();
+        joints = setJoints(model);
         hips = GameObject.Find(model.name+"/Hips");
         this.angle = angle;
         offsets = setOffsets();
         //Debug.Log(debugOffsets());
     }
 
-    private List<Transform> setJoints()
+    public static List<Transform> setJoints(Transform model, string name = "")
     {
         List<Transform> list = new List<Transform>();
         foreach (var val in Enum.GetValues(typeof(EnumJoint)))
@@ -67,19 +67,19 @@ public class Model3D
             /* EDITED: Neck. Get the movement of neck. */
             /* OLD: We want Spine, not Spine1. Because Spine is the Parent of Spine1, and moves better the model. */
             Transform result;
-            if (val.ToString().CompareTo("Spine1") == 0)
+            if (val.ToString().CompareTo(name+"Spine1") == 0)
             {
-                result = model.FindDeepChild("Neck");
+                result = model.FindDeepChild(name+"Neck");
             }
           
             else
             {
-                result = model.FindDeepChild(val.ToString());
+                result = model.FindDeepChild(name+val.ToString());
             }
 
             if (!result)
             {
-                Debug.Log("THE JOINT IS NULL >>>>>>>>>>>>>>>>>>>>>>>>>" + val.ToString());
+                Debug.Log("THE JOINT IS NULL >>>>>>>>>>>>>>>>>>>>>>>>>" + name+val.ToString());
             }
             else
             {

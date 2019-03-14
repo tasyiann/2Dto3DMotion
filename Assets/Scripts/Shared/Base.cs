@@ -12,11 +12,12 @@ public static class Base {
     private static bool alreadyInitialized = false;
     public static EnumScaleMethod ScaleMethod = EnumScaleMethod.SCALE_LIMBS;
     private static string small_DB = @"Databases\v1-18720";
-    private static string big_DB = @"Databases\5min-updatedScale";
-    public static string Path = big_DB; 
+    private static string new_DB = @"Databases\NEW";
+
+    public static string Path = new_DB; 
     public static string Clustering = "5000-clusters";
-  
-    public static int numClustersToSearch = 20;
+
+    public static int numClustersToSearch = 25;
     public static int projectionsPerFrame = 30;
 
    
@@ -29,6 +30,7 @@ public static class Base {
     public static int jointsAmount = Enum.GetNames(typeof(EnumJoint)).Length;        // Joints in a tuple.
 
     // Current scenario to be displayed.
+    public static FigureIdentifier figureIdentifier = new FigureIdentifier();
     public static Scenario sc = null;
     public static void SetCurrentScenario(Scenario s) { sc = s; Debug.Log("Scenario has been set."); }
     public static string base_CurrentDir;
@@ -36,14 +38,19 @@ public static class Base {
 
 
 
-    public static void initialize()
+    public static void initialize(bool doClusters, bool doProjections, bool doRotations)
     {
+        string rotDir =   Path + @"\Rotations\"; ;
+        string reprFile = Path + @"\Clusters\" + Clustering + @"\Representatives\Representatives";
+        string projDir =  Path + @"\Projections\";
+        string clustDir = Path + @"\Clusters\" + Clustering + @"\";
+
+
         if (alreadyInitialized) return;
 
-        base_rotationFiles = InitializeRotations();              // All rotation files.
-        base_clusters = InitializeClusters();                    // All clusters.
-        InitializeRepresentatives(Path + "\\Clusters\\" + Clustering + "\\Representatives\\Representatives");
-        base_not_clustered = InitializeNotClustered();           // All projections not clustered.
+        if(doRotations)base_rotationFiles = InitializeRotations(rotDir);             // All rotation files.
+        if(doClusters)base_clusters = InitializeClusters(clustDir, reprFile);        // All clusters.
+        if(doProjections)base_not_clustered = InitializeNotClustered(projDir);       // All projections not clustered.
 
         alreadyInitialized = true;
         Debug.Log("Initialization is done!");
@@ -54,7 +61,7 @@ public static class Base {
      * 1st line is the representative of the 1st cluster etc...
      * 
      * */
-    private static void InitializeRepresentatives(string filename)
+    private static void InitializeRepresentatives(List<Cluster> listClusters,string @filename)
     {
         try {
             StreamReader sr = File.OpenText(filename);
@@ -62,14 +69,14 @@ public static class Base {
             int i = 0;
             while ((tuple = sr.ReadLine()) != null)
             {
-                base_clusters[i].representative = ParseIntoProjection(tuple);
+                listClusters[i].setRepresentative(ParseIntoProjection(tuple));
                 i++;
             }
             Debug.Log(">Representatives have been read.");
             sr.Close();
         } catch(Exception e)
         {
-            Debug.Log("Representatives file not found.");
+            Debug.Log("Representatives file not found. Is path correct? "+filename + "\n\n" + e.Message + "\n\n" + e.StackTrace);
         }
         
 
@@ -113,18 +120,19 @@ public static class Base {
 
 
 
-    private static List<Cluster> InitializeClusters()
+    public static List<Cluster> InitializeClusters(string clustersDirPath, string representativesFilePath)
     {
-        string dirName = Path + "\\Clusters\\" + Clustering+"\\";
+        // TODO!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         List <Cluster> listClusters = new List<Cluster>();
 
         // -- Sort file entries by their numerical name. --
-        string[] fileEntries = sortFilesNumerically(Directory.GetFiles(dirName),dirName);
+        string[] fileEntries = sortFilesNumerically(Directory.GetFiles(clustersDirPath), clustersDirPath);
 
 
         foreach (string fileName in fileEntries)
         {
+            //Debug.Log("Reading Clucter: "+fileName);
             List<BvhProjection> listOfProjections = new List<BvhProjection>();
             StreamReader sr = File.OpenText(fileName);
             string tuple = String.Empty;
@@ -132,11 +140,11 @@ public static class Base {
             {
                 try
                 {
-                    listOfProjections.Add(ParseIntoProjection(tuple, Int32.Parse(fileName.Replace(dirName, ""))));
+                    listOfProjections.Add(ParseIntoProjection(tuple, Int32.Parse(fileName.Replace(clustersDirPath, ""))));
                 }
                 catch (Exception e)
                 {
-                    Debug.Log("dirName is: " + dirName + "and filename is: "+fileName);
+                    Debug.Log("Error on getting clusters: dirName is: " + clustersDirPath + "and filename is: "+fileName+"\n\n"+e.Message+"\n\n"+e.StackTrace);
                     throw e;
                 }
                 
@@ -145,53 +153,20 @@ public static class Base {
             sr.Close();
         }
         Debug.Log(">Clustered Projections have been read.");
+
+        // Init representatives:
+        InitializeRepresentatives(listClusters,representativesFilePath);
+
         return listClusters;
     }
 
 
 
-    //private static List<List<BvhProjection>> InitializeMainClusters()
-    //{
-    //    string dirName = Path + "\\MainClusters\\" + ClusteringMain + "\\";
-
-    //    List<List<BvhProjection>> listClusters = new List<List<BvhProjection>>();
-
-    //    // -- Sort file entries by their numerical name. --
-    //    string[] fileEntries = sortFilesNumerically(Directory.GetFiles(dirName), dirName);
 
 
-    //    foreach (string fileName in fileEntries)
-    //    {
-    //        List<BvhProjection> cluster = new List<BvhProjection>();
-    //        StreamReader sr = File.OpenText(fileName);
-    //        string tuple = String.Empty;
-    //        while ((tuple = sr.ReadLine()) != null)
-    //        {
-    //            try
-    //            {
-    //                cluster.Add(ParseIntoProjection(tuple, Int32.Parse(fileName.Replace(dirName, ""))));
-    //            }
-    //            catch (Exception e)
-    //            {
-    //                Debug.Log("dirName is: " + dirName + "and filename is: " + fileName);
-    //                throw e;
-    //            }
-
-    //        }
-    //        listClusters.Add(cluster);
-    //        sr.Close();
-    //    }
-
-    //    Debug.Log(">Clustered Projections have been read.");
-    //    return listClusters;
-    //}
-
-
-
-
-    private static List<List<BvhProjection>> InitializeNotClustered()
+    public static List<List<BvhProjection>> InitializeNotClustered(string dirName)
     {
-        string dirName = Path+"\\Projections\\";
+
         List<List<BvhProjection>> listClusters = new List<List<BvhProjection>>();
         string[] fileEntries = sortFilesNumerically(Directory.GetFiles(dirName), dirName);
 
@@ -211,10 +186,10 @@ public static class Base {
         return listClusters;
     }
 
-    private static List<List<Rotations>> InitializeRotations()
+    public static List<List<Rotations>> InitializeRotations(string dirname)
     {
         List<List<Rotations>> listRotationsFiles = new List<List<Rotations>>();
-        string dirname = Path + "\\Rotations\\";
+
         string[] fileEntries = sortFilesNumerically(Directory.GetFiles(dirname), dirname);
         foreach (string fileName in fileEntries)
         {
@@ -307,7 +282,7 @@ public static class Base {
         List<BvhProjection> representatives = new List<BvhProjection>();
         foreach (Cluster cluster in base_clusters)
         {
-            representatives.Add(cluster.representative);
+            representatives.Add(cluster.Representative);
         }
         return representatives;
     }
