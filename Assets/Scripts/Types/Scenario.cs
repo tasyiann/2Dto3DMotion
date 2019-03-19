@@ -16,14 +16,14 @@ public class Scenario  {
     public List<OPFrame> frames;
     public Log log;
 
-    public Scenario(string inputdir, int kNN, int mWindow, AlgorithmEstimation algEst, AlgorithmSetNeighbours algNN)
+    public Scenario(string inputdir)
     {
         frames = new List<OPFrame>();
         inputDir = inputdir;
-        k = kNN;
-        m = mWindow;
-        algEstimation = algEst;
-        algNeighbours = algNN;
+        k = Base.k;
+        m = Base.m;
+        algEstimation = Base.Estimation3dAlgorithm;
+        algNeighbours = Base.NeighboursAlgorithm;
         log = new Log();
     }
 

@@ -17,7 +17,7 @@ public class TestingScript : MonoBehaviour {
         /* Get rotations of the source file. */
         
         string alltext = System.IO.File.ReadAllText(filename);
-        string motion = alltext.Substring(alltext.LastIndexOf("Frame Time:"));
+        //string motion = alltext.Substring(alltext.LastIndexOf("Frame Time:"));
         // Debug.Log(motion);
 
         /* Try sth new*/
@@ -30,7 +30,7 @@ public class TestingScript : MonoBehaviour {
 
         List<Vector3[]> frames = new List<Vector3[]>();
 
-        int iteration = 0;
+        //int iteration = 0;
         while(index < lines.Length)
         {
            // Debug.Log(lines[index]);

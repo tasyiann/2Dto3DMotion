@@ -185,7 +185,7 @@ namespace OpenPose.Example {
             }
 
             // Identification :TODO:
-            long id = datum.poseIds.Get(personID);
+            // long id = datum.poseIds.Get(personID);
             // Debug.Log("The id is:"+id);
 
             // Pose
@@ -222,7 +222,7 @@ namespace OpenPose.Example {
             // STEP_A: Find k-BM.
             sc.algNeighbours.SetNeighbours(figure, sc.k, base_clusters);
             // STEP_B: Find Best 3D.
-            figure.Estimation3D = sc.algEstimation.GetEstimation(figure, sc.m, base_rotationFiles);
+            figure.Estimation3D = sc.algEstimation.SetEstimation(figure, sc.m, base_rotationFiles);
         }
 
 

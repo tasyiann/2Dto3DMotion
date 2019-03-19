@@ -44,7 +44,7 @@ public class OldScenario : MonoBehaviour {
 
     private string findScenarioFile()
     {
-        List<List<BvhProjection>> listClusters = new List<List<BvhProjection>>();
+        //List<List<BvhProjection>> listClusters = new List<List<BvhProjection>>();
         string[] fileEntries = Directory.GetFiles(url);
 
         foreach (string fileName in fileEntries)

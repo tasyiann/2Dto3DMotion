@@ -4,23 +4,26 @@ using UnityEngine;
 using System.IO;
 using System;
 using System.Globalization;
+using UnityEngine.UI;
+using System.Threading;
 
 /* Shared components between classes. */
-public static class Base {
+public static class Base
+{
 
     // Variables
     private static bool alreadyInitialized = false;
-    public static EnumScaleMethod ScaleMethod = EnumScaleMethod.SCALE_LIMBS;
-    private static string small_DB = @"Databases\v1-18720";
-    private static string new_DB = @"Databases\NEW";
+    public static string Path;
+    public static string Clustering;
+    public static int numClustersToSearch;
+    public static int projectionsPerFrame;
+    public static EnumScaleMethod ScaleMethod;
+    public static int k;
+    public static int m;
+    public static AlgorithmEstimation Estimation3dAlgorithm;
+    public static AlgorithmSetNeighbours NeighboursAlgorithm;
+    public static int[] base_orderOfComparableRotations;
 
-    public static string Path = new_DB; 
-    public static string Clustering = "5000-clusters";
-
-    public static int numClustersToSearch = 25;
-    public static int projectionsPerFrame = 30;
-
-   
     // Data
     public static List<List<Rotations>> base_rotationFiles;          // All rotation files.
     public static List<Cluster> base_clusters;                       // All clusters.
@@ -32,38 +35,115 @@ public static class Base {
     // Current scenario to be displayed.
     public static FigureIdentifier figureIdentifier = new FigureIdentifier();
     public static Scenario sc = null;
-    public static void SetCurrentScenario(Scenario s) { sc = s; Debug.Log("Scenario has been set."); }
+    public static void SetCurrentScenario(Scenario s) { sc = s; Debug.Log("NEW Scenario has been set. Input: "+sc.inputDir); }
     public static string base_CurrentDir;
-    public static int[] base_orderOfComparableRotations = { 4, 2, 8, 9, 10, 5, 6, 7, 14, 15, 16, 11, 12, 13 };
+
+    public static Text progressInfoText;
+    public static Thread threadProjections;
+    public static Thread threadClusters;
+    public static Thread threadRotations;
 
 
-
-    public static void initialize(bool doClusters, bool doProjections, bool doRotations)
+    private static void initialise_DataBase_Variables()
     {
-        string rotDir =   Path + @"\Rotations\"; ;
-        string reprFile = Path + @"\Clusters\" + Clustering + @"\Representatives\Representatives";
-        string projDir =  Path + @"\Projections\";
-        string clustDir = Path + @"\Clusters\" + Clustering + @"\";
+        alreadyInitialized = false;
+        Path = DataBaseParametersReader.Instance.Parameters.databasePath;
+        Clustering = DataBaseParametersReader.Instance.Parameters.clusteringFolder;
+        projectionsPerFrame = DataBaseParametersReader.Instance.Parameters.projectionsPerFrame;
+        ScaleMethod = DataBaseParametersReader.Instance.Parameters.ScaleMethod;
+    }
 
+    private static void initialise_Algorithms_Variables()
+    {
+        numClustersToSearch = AlgorithmsParametersReader.Instance.Parameters.numberOfClustersToSearch;
+        k = AlgorithmsParametersReader.Instance.Parameters.k;
+        m = AlgorithmsParametersReader.Instance.Parameters.m;
+        Estimation3dAlgorithm = AlgorithmsParametersReader.Instance.Parameters.estimation3dAlgorithm;
+        NeighboursAlgorithm = AlgorithmsParametersReader.Instance.Parameters.neighboursAlgorithm;
+        base_orderOfComparableRotations = AlgorithmsParametersReader.Instance.Parameters.orderOfComparableRotations;
+    }
 
+    public static void Threads_StartInit(bool doClusters, bool doProjections, bool doRotations, Text text)
+    {
+        initialise_DataBase_Variables(); // < important! :)
+        initialise_Algorithms_Variables();
+
+        text.text += "\n";
         if (alreadyInitialized) return;
 
-        if(doRotations)base_rotationFiles = InitializeRotations(rotDir);             // All rotation files.
-        if(doClusters)base_clusters = InitializeClusters(clustDir, reprFile);        // All clusters.
-        if(doProjections)base_not_clustered = InitializeNotClustered(projDir);       // All projections not clustered.
+        if (doProjections)
+        {
+            threadProjections = new Thread(new ThreadStart(thread_InitializeNotClustered));
+            threadProjections.Start();
+            //thread.Join();
+            //text.text += base_getNumberOfProjections() + " Projections [OK]\n";
+        }
+        if (doClusters)
+        {
+            threadClusters = new Thread(new ThreadStart(thread_InitializeClusters));
+            threadClusters.Start();
+            //thread.Join();
+            //text.text += base_clusters.Count + "Clusters [OK]\n";
+        }
+        if (doRotations)
+        {
+            threadRotations = new Thread(new ThreadStart(thread_InitializeRotations));
+            threadRotations.Start();
+            //thread.Join();
+            //text.text += " Rotations of " + getNumberOfRotations() +" animation frames [OK]\n";
+        }
 
         alreadyInitialized = true;
-        Debug.Log("Initialization is done!");
+
     }
+
+
+    public static bool areThreadsDone()
+    {
+        return !threadProjections.IsAlive && !threadClusters.IsAlive && !threadRotations.IsAlive;
+    }
+
+
+    public static int getNumberOfRotations()
+    {
+        int counter = 0;
+        foreach (List<Rotations> r in base_rotationFiles)
+        {
+            counter += r.Count;
+        }
+        return counter;
+    }
+
+
+    private static void thread_InitializeNotClustered()
+    {
+        string projDir = Path + @"\Projections\";
+        base_not_clustered = InitializeNotClustered(projDir);
+    }
+
+    private static void thread_InitializeClusters()
+    {
+        string reprFile = Path + @"\Clusters\" + Clustering + @"\Representatives\Representatives";
+        string clustDir = Path + @"\Clusters\" + Clustering + @"\";
+        base_clusters = InitializeClusters(clustDir, reprFile);
+    }
+
+    private static void thread_InitializeRotations()
+    {
+        string rotDir = Path + @"\Rotations\";
+        base_rotationFiles = InitializeRotations(rotDir);
+    }
+
 
     /**
      * Each line is a representative of a cluster.
      * 1st line is the representative of the 1st cluster etc...
      * 
      * */
-    private static void InitializeRepresentatives(List<Cluster> listClusters,string @filename)
+    private static void InitializeRepresentatives(List<Cluster> listClusters, string @filename)
     {
-        try {
+        try
+        {
             StreamReader sr = File.OpenText(filename);
             string tuple = String.Empty;
             int i = 0;
@@ -74,11 +154,12 @@ public static class Base {
             }
             Debug.Log(">Representatives have been read.");
             sr.Close();
-        } catch(Exception e)
-        {
-            Debug.Log("Representatives file not found. Is path correct? "+filename + "\n\n" + e.Message + "\n\n" + e.StackTrace);
         }
-        
+        catch (Exception e)
+        {
+            Debug.Log("Representatives file not found. Is path correct? " + filename + "\n\n" + e.Message + "\n\n" + e.StackTrace);
+        }
+
 
     }
 
@@ -124,7 +205,7 @@ public static class Base {
     {
         // TODO!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        List <Cluster> listClusters = new List<Cluster>();
+        List<Cluster> listClusters = new List<Cluster>();
 
         // -- Sort file entries by their numerical name. --
         string[] fileEntries = sortFilesNumerically(Directory.GetFiles(clustersDirPath), clustersDirPath);
@@ -136,7 +217,7 @@ public static class Base {
             List<BvhProjection> listOfProjections = new List<BvhProjection>();
             StreamReader sr = File.OpenText(fileName);
             string tuple = String.Empty;
-            while ((tuple = sr.ReadLine()) != null )
+            while ((tuple = sr.ReadLine()) != null)
             {
                 try
                 {
@@ -144,10 +225,10 @@ public static class Base {
                 }
                 catch (Exception e)
                 {
-                    Debug.Log("Error on getting clusters: dirName is: " + clustersDirPath + "and filename is: "+fileName+"\n\n"+e.Message+"\n\n"+e.StackTrace);
+                    Debug.Log("Error on getting clusters: dirName is: " + clustersDirPath + "and filename is: " + fileName + "\n\n" + e.Message + "\n\n" + e.StackTrace);
                     throw e;
                 }
-                
+
             }
             listClusters.Add(new Cluster(listOfProjections));
             sr.Close();
@@ -155,7 +236,7 @@ public static class Base {
         Debug.Log(">Clustered Projections have been read.");
 
         // Init representatives:
-        InitializeRepresentatives(listClusters,representativesFilePath);
+        InitializeRepresentatives(listClusters, representativesFilePath);
 
         return listClusters;
     }
@@ -210,7 +291,7 @@ public static class Base {
 
 
 
-    private static BvhProjection ParseIntoProjection(string tuple, int clusterID=0)
+    private static BvhProjection ParseIntoProjection(string tuple, int clusterID = 0)
     {
         // tuple format: frame rotation joints[]
         string[] array = tuple.Split(' ');
@@ -234,27 +315,27 @@ public static class Base {
     {
         List<Vector3> rotations = new List<Vector3>();
         string[] array = tuple.Split(' ');
-        
+
         for (int i = 0; i < array.Length; i += 3)
         {
-            if (array[i].CompareTo("")==0)
+            if (array[i].CompareTo("") == 0)
                 continue;
             try
             {
 
                 rotations.Add(new Vector3(
-           float.Parse(array[i+1], CultureInfo.InvariantCulture),     // i+1 is x
-           float.Parse(array[i+2], CultureInfo.InvariantCulture),     // i+2 is y
+           float.Parse(array[i + 1], CultureInfo.InvariantCulture),     // i+1 is x
+           float.Parse(array[i + 2], CultureInfo.InvariantCulture),     // i+2 is y
            float.Parse(array[i], CultureInfo.InvariantCulture)));     // i   is z
 
             }
             catch (Exception e)
             {
-                Debug.Log("Couldn't convert string: "+array[i] +" _ "+array[i+1]+" _ "+array[i+2]+ " to float.");
+                Debug.Log("Couldn't convert string: " + array[i] + " _ " + array[i + 1] + " _ " + array[i + 2] + " to float.");
                 throw e;
             }
 
-           
+
         }
         return new Rotations(rotations);
     }
@@ -262,9 +343,9 @@ public static class Base {
     public static int base_getNumberOfProjections()
     {
         int counter = 0;
-        foreach (Cluster cluster in base_clusters)
+        foreach (List<BvhProjection> p in base_not_clustered)
         {
-            counter += cluster.getNumberOfProjections;
+            counter += p.Count;
         }
         return counter;
     }

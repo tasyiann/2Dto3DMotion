@@ -10,26 +10,24 @@ using System.Globalization;
 [System.Serializable()]
 public class PrevFrameWindow3D : AlgorithmEstimation
 {
-    private static int projectionsPerFrame = Base.projectionsPerFrame;                            // Used in save3DpointsInWindow().
-    private static List<List<BvhProjection>> base_not_clustered = Base.base_not_clustered;        // All projections not clustered. Used also just in save3DpointsInWindow().
-    private static int rotationDegrees = 360 / projectionsPerFrame;
 
-    public override Neighbour GetEstimation(OPPose current, int m=0, List<List<Rotations>> rotationFiles=null)
+
+    public override Neighbour SetEstimation(OPPose current, int m=0, List<List<Rotations>> rotationFiles=null)
     {
+
         // Case 1: Zero neighbours found for this op pose.
         if (current.neighbours.Count == 0)
             return null;
 
-        OPPose previous = current.prevFigure;
 
         // Case 2: Previous is null.
+        OPPose previous = current.prevFigure;
         if (previous == null)
         {
             Debug.Log("Previous is null, Returning the first nearest projection.");
             return current.neighbours[0];
         }
 
-        //Debug.Log("Previous is not null, trying to get prevWindow.");
         // Case 3: Previous selectedN is not null.
         // Create the window of previous.
         List<List<Vector3>> prevWindow = createPrevWindow(current,m,rotationFiles);
@@ -60,6 +58,7 @@ public class PrevFrameWindow3D : AlgorithmEstimation
 
         if (min == float.MaxValue)          // Means that all prev figures were null
             return current.neighbours[0];   // then return the first one.
+
 
         return minNeighbour;
     }
@@ -149,7 +148,7 @@ public class PrevFrameWindow3D : AlgorithmEstimation
         float normqB = norm(qB);
         Quaternion qA_norm = new Quaternion( qA.x / normqA, qA.y / normqA, qA.z / normqA, qA.w / normqA);
         Quaternion qB_norm = new Quaternion( qB.x / normqB, qB.y / normqB, qB.z / normqB, qB.w / normqB);
-        Quaternion quatinv = Quaternion.Inverse(qA);
+        Quaternion quatinv = Quaternion.Inverse(qA_norm); // is this correct?
         Quaternion multiplication = qB_norm*quatinv;
         Quaternion qlog = quatlog(multiplication); 
         float qLogNorm = norm(qlog);
@@ -218,8 +217,9 @@ public class PrevFrameWindow3D : AlgorithmEstimation
                 window.Add(rotationFiles[projection.rotationFileID][frameIndex].getComparableRotations());
                 // Save the window : each figure as 3D points (so we can debug it later).
                 // So.. the problem here is that if Neighbour n, already has a window saved, we shouldn't save it again.
+
                 if(!alreadySavedWindows)
-                  save3DpointsInWindow(n, projection.rotationFileID, frameIndex, projectionsPerFrame);
+                  save3DpointsInWindow(n, projection.rotationFileID, frameIndex, Base.projectionsPerFrame);
             }
             
         }
@@ -229,8 +229,8 @@ public class PrevFrameWindow3D : AlgorithmEstimation
 
     private void save3DpointsInWindow(Neighbour n, int fileIndex, int frameIndex, int projectionsPerFrame)
     {
-    
-        n.windowIn3Dpoints.Add(base_not_clustered[fileIndex][frameIndex*projectionsPerFrame + n.projection.angle/rotationDegrees]);
+        int rotationDegrees = 360 / projectionsPerFrame;
+        n.windowIn3Dpoints.Add(Base.base_not_clustered[fileIndex][frameIndex*projectionsPerFrame + n.projection.angle/rotationDegrees]);
     }
 
 }

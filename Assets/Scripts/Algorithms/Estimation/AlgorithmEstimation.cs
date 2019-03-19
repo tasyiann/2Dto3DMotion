@@ -7,5 +7,5 @@ using System;
 [System.Serializable()]
 public abstract class AlgorithmEstimation {
     
-    public abstract Neighbour GetEstimation(OPPose current, int m = 0, List<List<Rotations>> rotationFiles = null);
+    public abstract Neighbour SetEstimation(OPPose current, int m = 0, List<List<Rotations>> rotationFiles = null);
 }

@@ -149,7 +149,7 @@ public class VMOpFigure : MonoBehaviour
     private void updateScalingFactors()
     {
         Raw_text.text = "Raw Figure scaled by " + JSONscale +" just to fit in frame.";
-        Scaled_text.text = "with interpolation : Figure actually scaled by " + scalingFactor_ACTUAL_USED + " using "+Base.ScaleMethod.ToString();
+        Scaled_text.text = "with interpolation : Figure actually scaled by " + scalingFactor_ACTUAL_USED + " using "+ Base.ScaleMethod.ToString();
         Limbs_text.text = "w/out interpolation using LIMBS: " + scalingFactor_LIMBS + " using limb: "+usedLIMB.ToString();
         Height_text.text = "w/out interpolation using HEIGHT: "+ scalingFactor_HEIGHT+ " with fixed height = "+Scaling.scalingHeightFixed;
     }

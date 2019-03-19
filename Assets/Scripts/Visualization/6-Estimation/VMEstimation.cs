@@ -11,7 +11,7 @@ public class VMEstimation : DataInFrame
 {
 
 
-    private static Scenario sc = Base.sc;   // Data. Please revise this.
+    private Scenario sc = Base.sc;          // Data.
     public GameObject VideoplayerGO;        // Set video player.
     
     public bool automatic;                  // Automatic play of video.

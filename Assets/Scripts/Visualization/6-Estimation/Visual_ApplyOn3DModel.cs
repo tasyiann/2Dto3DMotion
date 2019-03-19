@@ -59,7 +59,8 @@ public class Visual_ApplyOn3DModel : MonoBehaviour
         if (!multiFigures)
             selectedPoseToDebug = script.selectedPoseToDebug;
 
-        jointsPositions = selectedPoseToDebug.Estimation3D.projection.joints;
+        if(selectedPoseToDebug!= null && selectedPoseToDebug.Estimation3D!=null && selectedPoseToDebug.Estimation3D.projection!=null)
+            jointsPositions = selectedPoseToDebug.Estimation3D.projection.joints;
 
         if (keepUpdatingParameters)
             updateParametersRotationFilters();

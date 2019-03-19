@@ -7,13 +7,35 @@ using UnityEngine;
 /// </summary>
 public class FigureIdentifier
 {
-    private readonly int MAX_HISTORY_NUM_PREV_FRAMES = 3;
+
+    private static readonly int MAX_HISTORY_NUM_PREV_FRAMES = 5;
     private float averageDistanceThreshold = 10f;
-    private List<Queue<OPPose>> identifications;
+    private Dictionary<int,Identification> identifications;
+
+
+    public class Identification
+    {
+        public int id;
+        public Queue<OPPose> log;
+
+        public Identification(int id)
+        {
+            log = new Queue<OPPose>();
+            this.id = id; 
+        }
+
+        public void Enqueue(OPPose figure)
+        {
+            log.Enqueue(figure);
+            if (log.Count > MAX_HISTORY_NUM_PREV_FRAMES)
+                log.Dequeue();
+        }
+    }
+
 
     public FigureIdentifier()
     {
-        identifications = new List<Queue<OPPose>>();
+        identifications = new Dictionary<int, Identification>();
     }
 
     /// <summary>
@@ -25,29 +47,63 @@ public class FigureIdentifier
     {
         if (frame == null || frame.figures == null)
             return null;
-        /* 1. Remove any poses that hips can not be identified. */
-        /* 2. Find the id number with the nearest hips.         */
+        /* 1. Remove any poses that hips can not be identified.      */
+        /* 2. Find the id number with the nearest hips (root).       */
+        /* 3. Assign the id number to the pose.                      */
+        /* 4. Save the pose to its corresponding identification log. */
+        /* 5. In each frame, each identification should be assigned a value. pose or null */
         SortedList<int, OPPose> list = new SortedList<int, OPPose>();
+        List<int> idsUsedInThisFrame = new List<int>();
         foreach (OPPose figure in frame.figures)
         {
             if (isPoseValid(figure))
             {
-                figure.id = identifyFigure(figure);
-                if (figure.id != -1)
+                int id = identifyFigure(figure);
+                figure.id = id;
+                if (id != -1)
                 {
-                    list.Add(figure.id, figure);
+                    list.Add(id, figure);
+                    SavePoseInPositionHistory(figure, id);
+                    idsUsedInThisFrame.Add(id);
                 }
             }
         }
+        
+        for(int i=0; i<identifications.Count; i++)
+        {
+            if (!idsUsedInThisFrame.Contains(i))
+                identifications[i].Enqueue(null);
+        }
+        Debug.Log(ToString());
         return new List<OPPose>(list.Values);
     }
+
+
+    public override string ToString()
+    {
+        string s = "";
+        int counter = 0;
+        foreach (Identification identification in identifications.Values)
+        {
+            s += "[id:" + counter + "]->";
+            foreach (OPPose figure in identification.log)
+            {
+                if (figure == null)
+                    s += "null ";
+                else
+                    s += figure.getRoot_IMG()+" ";
+            }
+            s += "\n";
+            counter++;
+        }
+        return s;
+    }
+    
 
     public bool isPoseValid(OPPose pose)
     {
         if (pose.available[(int)EnumJoint.LeftUpLeg] && pose.available[(int)EnumJoint.RightUpLeg])
-        {
             return true;
-        }
         else
             return false;
     }
@@ -56,7 +112,6 @@ public class FigureIdentifier
     {
         if (entry == null)
         {
-            SavePoseInPositionHistory(entry);
             return -1;
         }
             
@@ -64,8 +119,8 @@ public class FigureIdentifier
         // First entry!:
         if (identifications.Count == 0)
         {
-            Queue<OPPose> newIdentification = new Queue<OPPose>();
-            identifications.Add(newIdentification);
+            Identification newIdentification = new Identification(0);
+            identifications.Add(0,newIdentification);
             newIdentification.Enqueue(entry);
             return 0;
         }
@@ -77,20 +132,20 @@ public class FigureIdentifier
         for(int id=0; id<identifications.Count; id++)
         {
             // Calcualte distance with this id.
-            Queue<OPPose> identificationLog = identifications[id];
+            Identification identificationLog = identifications[id];
             float distanceWithThisID = 0;
-            int countNotNullPoses = 0;
-            foreach (OPPose pose in identificationLog)
+            foreach (OPPose pose in identificationLog.log)
             {
-                if (pose == null)
-                    continue;
-
-                distanceWithThisID += pose.getHipDistance_IMG_RAW(entry);
-                countNotNullPoses++;
+                if (pose != null)
+                {
+                    /* Find the first not null pose, and compare. */
+                    distanceWithThisID = pose.getHipDistance_IMG(entry);
+                    break;
+                }
             }
-            // Get the average:
-            if(countNotNullPoses!=0)
-                distanceWithThisID = distanceWithThisID / countNotNullPoses;
+            
+            // An se ena id, einai sto MAX tou me ola null. Tote na to diagrafw, kai na arithmw ksana ola ta ids apo tin arxi.
+            // bad idea, gt ta xalasei i arithmisi twn ids, kai tha iparxei mperdema me ta prosfata anatethimena ids.
 
             // Update the minimum id.
             if(distanceWithThisID < minimumDistance)
@@ -104,17 +159,12 @@ public class FigureIdentifier
         // Should we create a new identification for this entry?
         if(minimumID==-1 || minimumDistance >= averageDistanceThreshold)
         {
-            return -1;
-            //Queue<OPPose> newIdentification = new Queue<OPPose>();
-            //identifications.Add(newIdentification);
-            //newIdentification.Enqueue(entry);
-            //minimumID = identifications.Count - 1;
+            int newId = identifications.Count - 1;
+            Identification newIdentification = new Identification(newId);
+            identifications.Add(newId,newIdentification);
+            newIdentification.Enqueue(entry);
+            minimumID = newId;
         }
-        else // Use the minimumID (Do not create another identification).
-        {
-            SavePoseInPositionHistory(entry, minimumID);
-        }
-
         return minimumID;
     }
 
@@ -129,10 +179,8 @@ public class FigureIdentifier
         }
 
         // Save null pose in all identifications, except the identification that has taken this pose.
-        Queue<OPPose> log = identifications[id];
+        Identification log = identifications[id];
         log.Enqueue(entry);
-        if (log.Count > MAX_HISTORY_NUM_PREV_FRAMES)
-            log.Dequeue();
     }
 
 }

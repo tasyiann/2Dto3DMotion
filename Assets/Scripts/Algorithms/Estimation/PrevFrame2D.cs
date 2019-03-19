@@ -10,7 +10,7 @@ using System.Globalization;
 [System.Serializable()]
 public class PrevFrame2D : AlgorithmEstimation
 {
-    public override Neighbour GetEstimation(OPPose current, int m = 0, List<List<Rotations>> rotationFiles = null)
+    public override Neighbour SetEstimation(OPPose current, int m = 0, List<List<Rotations>> rotationFiles = null)
     {
         
 

@@ -9,13 +9,12 @@ using System.Text;
 public class JBJEuclideanComparison : AlgorithmSetNeighbours
 {
 
-    private static int amountOfClustersToSearch = Base.numClustersToSearch;
-
-
 
 
     public override void SetNeighbours(OPPose opPose, int k, List<Cluster> clusters)
     {
+        int amountOfClustersToSearch = Base.numClustersToSearch;
+
         SortedList<float, Neighbour> neighbours = new SortedList<float, Neighbour>();
         // Find the nearest clusters to search.
         IList<Cluster> nearestClusters = nearestClustersToSearch(opPose, clusters, amountOfClustersToSearch);

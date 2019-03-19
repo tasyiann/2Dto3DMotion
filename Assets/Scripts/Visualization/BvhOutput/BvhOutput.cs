@@ -33,7 +33,7 @@ public class BvhOutput : MonoBehaviour {
         {
             bvh.moveSkeleton(skeleton, currentFrame);
             // Debug root rotation
-            Quaternion qrot = bvh.allBones[0].localFrameRotations[currentFrame];
+            //Quaternion qrot = bvh.allBones[0].localFrameRotations[currentFrame];
             /*
             Vector3 rotationFromBvh = qrot.eulerAngles;
             // [INITIALIZE]: Convert Euler to Quaternion for each axis. 

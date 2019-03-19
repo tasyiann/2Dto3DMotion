@@ -11,8 +11,8 @@ using System.Runtime.Serialization;
 public class DataParsing
 {
 
-    private static Scenario sc = Base.sc;                                                   // Scenario to be saved.
-    private static List<OPFrame> frames = Base.getFrames();                                 // The same instance as scenario (Please review this).
+    private static Scenario sc;
+    private static List<OPFrame> frames;
     private static List<Cluster> base_clusters = Base.base_clusters;                        // Clustered projections.
     private static List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;      // Rotations.
 
@@ -21,21 +21,16 @@ public class DataParsing
     private static float EstimationAlgorithmTime;     // Execution time of Best 3D Algorithm.
 
 
-    // 1 Euro filter
-    static OneEuroFilter<Quaternion>[] rotationFiltersJoints = new OneEuroFilter<Quaternion>[14];
-    static OneEuroFilter<Quaternion> rotationFilterHips;
-     static public bool filterOn = true;
-     static public float filterFrequency = 120.0f;
-     static public float filterMinCutoff = 1.0f;
-     static public float filterBeta = 0.0f;
-     static public float filterDcutoff = 1.0f;
-     static public float noiseAmount = 1.0f;
-     static float timer = 0.0f;
-
-
     /// <summary> The pipeline of estimating the 3D of OpenPose Output.</summary>
     public static void OFFLINE_Pipeline()
     {
+        sc = Base.sc;       // Scenario to be saved.
+        frames = sc.frames;
+        if (Base.base_clusters==null || Base.base_not_clustered==null || Base.base_rotationFiles==null)
+        {
+            Debug.LogError("DISASTER. BYE.");
+            return;
+        }
 
         // First thing to do: INITIALISE 
         Debug.Log("Entering OFFLINE mode.");
@@ -84,7 +79,7 @@ public class DataParsing
                         }
                         
                     }
-                    currFigure.Estimation3D = sc.algEstimation.GetEstimation(currFigure, sc.m, base_rotationFiles);
+                    currFigure.Estimation3D = sc.algEstimation.SetEstimation(currFigure, sc.m, base_rotationFiles);
                     // Offline implementation is done. But with real-time, we need to display each frame.
                     // So, we need somehow to render the current 3D on screen. (On every input from pipes).
                 }
@@ -112,42 +107,26 @@ public class DataParsing
 
 
 
-    private static void initialise1EuroFilter()
+
+    // TODO
+    private void write3DEstimation_POSITIONS_inFile()
     {
-        for (int i = 0; i < rotationFiltersJoints.Length; i++)
+        string s = "";
+        foreach (Neighbour n in estimation)
         {
-            rotationFiltersJoints[i] = new OneEuroFilter<Quaternion>(filterFrequency);
-        }
-        rotationFilterHips = new OneEuroFilter<Quaternion>(filterFrequency);
-        updateParametersRotationFilters(); // + update parameteres
-    }
-
-
-    private static void updateParametersRotationFilters()
-    {
-        rotationFilterHips.UpdateParams(filterFrequency, filterMinCutoff, filterBeta, filterDcutoff);
-        foreach (OneEuroFilter<Quaternion> rotfilter in rotationFiltersJoints)
-        {
-            rotfilter.UpdateParams(filterFrequency, filterMinCutoff, filterBeta, filterDcutoff);
-        }
-    }
-
-
-
-    private static void applyOneEuroFilter(Neighbour[] rawEstimation)
-    {
-        foreach (Neighbour frame in rawEstimation)
-        {
-            Vector3[] jointsPositions = frame.projection.joints;
-            Quaternion[] rotations = Model3D.calculateRawRotations(jointsPositions);
-            Quaternion hipRotation = Model3D.getHips(jointsPositions);
-            for (int i=0; i<rotations.Length; i++)
+            Vector3[] joints = n.projection.joints;
+            foreach (Vector3 joint in joints)
             {
-                rotations[i] = rotationFiltersJoints[i].Filter(rotations[i]);
+                s += joint.x + " " + joint.y + " " + joint.z;
             }
-            Quaternion filteredHips = rotationFilterHips.Filter(hipRotation);
-            frame.setRotations(rotations,filteredHips);
+            s += "\n";
         }
+    }
+
+
+    private void write3DEstimation_ROTATIONS_inFile()
+    {
+
     }
 
 

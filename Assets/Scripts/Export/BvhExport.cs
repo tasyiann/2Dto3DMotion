@@ -110,7 +110,7 @@ public class BvhExport
         float R31 = sin(psi) * sin(phi) - sin(theta) * cos(psi) * cos(phi);
         float R32 = cos(psi) * sin(phi) + sin(theta) * sin(psi) * cos(phi);
         float R33 = cos(theta) * cos(phi);
-        Matrix4x4 m = new Matrix4x4(new Vector4(R11, R12, R13), new Vector4(R21,R22,R23), new Vector4(31,32,33), Vector4.zero);
+        Matrix4x4 m = new Matrix4x4(new Vector4(R11, R12, R13), new Vector4(R21,R22,R23), new Vector4(R31,R32,R33), Vector4.zero);
         return m;
     }
 
@@ -304,7 +304,7 @@ public class BvhExport
             List<Vector3> rotations = frameRotations.getAllRotations();
             Vector3 defaultRootRotation = new Vector3(90, 90, 0); // Default. Please don't delete this. It is useful to debug.
             Vector3 rootRotation = defaultRootRotation;
-            float angle = 180;
+            //float angle = 180;
             rootRotation = defaultRootRotation; //getFinalRootRotation(rotations[0], angle, counter);
             MotionLines.Add(CreateMLine(Vector3.zero, rootRotation, rotations));
             counter++;

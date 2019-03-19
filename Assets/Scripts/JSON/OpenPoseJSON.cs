@@ -6,6 +6,7 @@ using UnityEngine;
 using System.IO;
 using Newtonsoft.Json;
 
+
 public class OpenPoseJSON {
 
     
@@ -57,7 +58,8 @@ public class OpenPoseJSON {
             frame.figures.Add(pose);
             currentFigureIndex++; // Go to the next figure in the same frame.
         }
-        frame.figures = figureIdentifier.sortFiguresInFrame(frame);
+        //frame.figures = figureIdentifier.sortFiguresInFrame(frame);
+        sortFiguresByX(frame);
         return frame;
     }
 
@@ -113,7 +115,7 @@ public class OpenPoseJSON {
             
             list.Add(keyX,pose);
         }
-        Debug.Log(str);
+        // Debug.Log(str);
         // Assign the id.
         List<OPPose> listNew = new List<OPPose>(list.Values);
         int id = 0;

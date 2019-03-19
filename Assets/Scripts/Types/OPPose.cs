@@ -76,8 +76,17 @@ public class OPPose
         Estimation3D = null;
     }
 
+    public Vector2 getRoot_IMG()
+    {
+        int LeftUpLeg = (int)EnumJoint.LeftUpLeg;
+        int RightUpLeg = (int)EnumJoint.RightUpLeg;
+        if (!available[LeftUpLeg] || !available[RightUpLeg])
+            return Vector2.zero; 
+        else
+            return (jointsIMAGE[LeftUpLeg] + jointsIMAGE[RightUpLeg]) / 2;
+    }
 
-    public float getHipDistance_IMG_RAW(OPPose pose)
+    public float getHipDistance_IMG(OPPose pose)
     {
 
         int LeftUpLeg = (int)EnumJoint.LeftUpLeg;
@@ -130,7 +139,7 @@ public class OPPose
             float y = k.pose_keypoints_2d[i + 1] * -1.0f; // y axis is reversed
             Vector2 xy = new Vector2(x, y);
             jointsRAW[i / 3] = xy;
-            jointsIMAGE[i / 3] = jointsRAW[i / 3]; // << 8/3 assinged
+            jointsIMAGE[i / 3] = xy; // << 8/3 assinged
             /* Check if joint is available in json */
             if (x == 0 && y == 0)
                 available[i / 3] = false;
