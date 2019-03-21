@@ -19,6 +19,7 @@ public class InitiateBase : MonoBehaviour {
         if (Base.areThreadsDone())
         {
             Debug.Log("Initialization is done!");
+            Debug.Log("x=" + Base.x);
             UnityEngine.SceneManagement.SceneManager.LoadScene(0);
         }
 

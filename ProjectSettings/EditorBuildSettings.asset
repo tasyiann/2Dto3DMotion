@@ -53,4 +53,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/OpenPose/Examples/Scenes/Real-Time.unity
     guid: d14f1fe1776644745acd186bbfe3a269
+  - enabled: 1
+    path: Assets/Scenes/OnScreen/Post Processing.unity
+    guid: 298cd10e38599d24395b8d764709601c
   m_configObjects: {}

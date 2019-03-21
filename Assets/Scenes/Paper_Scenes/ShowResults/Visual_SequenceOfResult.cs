@@ -7,7 +7,7 @@ public class Visual_SequenceOfResult : MonoBehaviour
 
 
     public Material material;               // The material used in gl lines.
-    public VMEstimation script;             // Reference to the script which determines the selected pose to debug.
+    public ControlFrames_viaVideo script;             // Reference to the script which determines the selected pose to debug.
     public const int MaxFiguresPerLine = 5;
     public Vector3 offsetToCorner = new Vector3(20f, 15f, 0);            // We use this, so we can get to the up left corner of camera.
     public Vector3 offsetBetweenFigures = new Vector3(4f, 0f, 0);      // Space between figures.

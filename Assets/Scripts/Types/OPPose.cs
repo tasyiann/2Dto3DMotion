@@ -13,7 +13,7 @@ public class OPPose
     private static readonly float threshold_Figures_Differ = 10;            // Threshold : maximum distance between 2 figures of same ID.
     private static int id_counter = -1;                                     // Increase counter when new figure appears in video.
 
-    public static int KEYPOINTS_NUMBER = Base.jointsAmount;
+    public static int KEYPOINTS_NUMBER = Base.numberOfJoints;
     public static FigureIdentifier figureIdentifier = Base.figureIdentifier;
 
 

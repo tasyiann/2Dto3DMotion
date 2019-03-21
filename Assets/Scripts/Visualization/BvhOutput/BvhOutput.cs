@@ -13,7 +13,7 @@ public class BvhOutput : MonoBehaviour {
     GameObject skeleton = null;
     private int currentFrame = -1;
     int numOfFrames = 0;
-    public VMEstimation estimationScript;
+    public ControlFrames_viaVideo estimationScript;
 
 
     void Start () {

@@ -8,7 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 
 
-public class DataParsing
+public class OfflineDataProcessing
 {
 
     private static Scenario sc;
@@ -16,7 +16,7 @@ public class DataParsing
     private static List<Cluster> base_clusters = Base.base_clusters;                        // Clustered projections.
     private static List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;      // Rotations.
 
-    public static Neighbour[] estimation;             // Estimation to Debug. We will not debug all figures at the same time.
+   
     private static float kNNAlgorithmTime;            // Execution time of k-BM Algorithm.
     private static float EstimationAlgorithmTime;     // Execution time of Best 3D Algorithm.
 
@@ -80,22 +80,20 @@ public class DataParsing
                         
                     }
                     currFigure.Estimation3D = sc.algEstimation.SetEstimation(currFigure, sc.m, base_rotationFiles);
-                    // Offline implementation is done. But with real-time, we need to display each frame.
-                    // So, we need somehow to render the current 3D on screen. (On every input from pipes).
+                    // Offline implementation is done.
                 }
                 frameCounter++;
             }
         }
-        // Iterate frames, and create a list of the 3D estimation frames, for each figure appeared in video.
-        estimation = getEstimationArray(0);
+   
+        string dir3DEstimation = Path.GetFullPath(@"3DEstimations");
+        write3DEstimation_POSITIONS_PER_JOINT_inFile(dir3DEstimation);
 
-
-
-        // >> Apply one Euro filter <<
-        //initialise1EuroFilter();
-        //applyOneEuroFilter(estimation);
-
-
+        // << SGOLAY MATLAB >>
+        Base.initializeMatlabCommunication();
+        Sgolay sgolay = new Sgolay(Base.MatlabSocket);
+        sgolay.ApplySgolay(dir3DEstimation);
+        Debug.Log("Sgolay is being applied via Matlab...");
 
         Debug.Log("Estimation Done.");
         // Set log
@@ -106,11 +104,10 @@ public class DataParsing
     }
 
 
-
-
-    // TODO
-    private void write3DEstimation_POSITIONS_inFile()
+    private static void write3DEstimation_POSITIONS_inFile(string FilePath)
     {
+        // Iterate frames, and create a list of the 3D estimation frames, for each figure appeared in video.
+        Neighbour[] estimation = getEstimationArray(0);
         string s = "";
         foreach (Neighbour n in estimation)
         {
@@ -121,6 +118,31 @@ public class DataParsing
             }
             s += "\n";
         }
+        File.WriteAllText(FilePath, s);
+    }
+
+
+    private static void write3DEstimation_POSITIONS_PER_JOINT_inFile(string DirectoryPath)
+    {
+        // Iterate frames, and create a list of the 3D estimation frames, for each figure appeared in video.
+        Neighbour[] estimation = getEstimationArray(0);
+        int num_of_joints = Enum.GetNames(typeof(EnumJoint)).Length;
+        string [] s = new string[num_of_joints];
+        foreach (Neighbour n in estimation)
+        {
+            Vector3[] joints = n.projection.joints;
+            for(int i=0; i<num_of_joints; i++)
+            {
+                Vector3 joint = joints[i];
+                s[i] += joint.x + " " + joint.y + " " + joint.z+"\n";
+            }
+        }
+
+        for(int i=0; i<num_of_joints; i++)
+        {
+            File.WriteAllText(DirectoryPath+@"\"+i+"_joint.3D", s[i]);
+        }
+        
     }
 
 
@@ -143,7 +165,7 @@ public class DataParsing
 
 
 
-    private static Neighbour[] getEstimationArray(int person_index)
+    public static Neighbour[] getEstimationArray(int person_index)
     {
         List<Neighbour> result = new List<Neighbour>();
         // Make sure scenario is the updated one from Base. <<< Why?

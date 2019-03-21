@@ -49,12 +49,13 @@ public class Scenario  {
             File.Copy(@inputDir+"\\video.mp4", dirname+"\\video.mp4");
         // Create and Save the scenario file.
         var myUniqueFileName = string.Format(@"{0}", DateTime.Now.Ticks);
-        DataParsing.WriteToBinaryFile(dirname+"\\"+myUniqueFileName+".sc", this); //<< DO NOT SAVE THE BINARY. THIS WAS OLD FEATURE.
+
         // Save the log file.
         SaveLog(this, dirname, myUniqueFileName+".xml");
         Debug.Log("Scenario has been saved.");
+
         // Create and Save bvh file.
-        BvhExport export = new BvhExport("TemplateBVH\\"+"template.bvh", DataParsing.estimation);
+        BvhExport export = new BvhExport("TemplateBVH\\"+"template.bvh", OfflineDataProcessing.getEstimationArray(0));
         export.CreateBvhFile(dirname +"\\" + myUniqueFileName+".bvh");
         Debug.Log("Bvh has been saved");
     }

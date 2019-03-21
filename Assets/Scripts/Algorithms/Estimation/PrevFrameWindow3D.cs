@@ -78,23 +78,8 @@ public class PrevFrameWindow3D : AlgorithmEstimation
 
 
         // So, now we have: |t-1|t-2|t-3|t-4|...|t-n|
-        // But we want to reorder it to: |t-n|...|t-4|t-3|t-2|t-1| to match with the other windows
-        List<OPPose> ordered_prevPoses = new List<OPPose>();
-        for (int i = m-1; i >= 0; i--)
-        {
-            // If the list is smaller than the m.
-            if (i >= prevPoses.Count)
-            {
-                ordered_prevPoses.Add(null);
-            }
-            else
-            {
-                ordered_prevPoses.Add(prevPoses[i]);
-            }
-        }
-
         // Create windows
-        foreach (OPPose prev in ordered_prevPoses)
+        foreach (OPPose prev in prevPoses)
         {
             if (prev == null || prev.Estimation3D==null || prev.Estimation3D.projection==null)
             {
@@ -108,10 +93,7 @@ public class PrevFrameWindow3D : AlgorithmEstimation
         }
 
         //Debug.Log("Creating prev window DONE. Succeeded in "+prevPoses.Count+ " not null poses. But final window list has length of "+window.Count);
-
-
        return window;
-        
     }
 
 
@@ -203,13 +185,13 @@ public class PrevFrameWindow3D : AlgorithmEstimation
         List<List<Vector3>> window = new List<List<Vector3>>();
         int mainFrameNum = projection.frameNum;
         bool alreadySavedWindows = false;
-        if (n.windowIn3Dpoints.Count != 0)  //TODO: Please re-write this method. :(
+        if (n.windowIn3Dpoints.Count != 0) 
             alreadySavedWindows = true;
 
-        for (int i=m; i>0; i--) // Includes the corresponding 3D, of the selected projection.
+        for (int i=1; i<=m; i++) // Includes the corresponding 3D, of the selected projection.
         {
             // Check if that frame exists in the rotationFile.
-            if (mainFrameNum - i < 0 || mainFrameNum - i >= rotationFiles[projection.rotationFileID].Count)
+            if (mainFrameNum - i < 0)
                 window.Add(null);
             else
             {
@@ -217,7 +199,6 @@ public class PrevFrameWindow3D : AlgorithmEstimation
                 window.Add(rotationFiles[projection.rotationFileID][frameIndex].getComparableRotations());
                 // Save the window : each figure as 3D points (so we can debug it later).
                 // So.. the problem here is that if Neighbour n, already has a window saved, we shouldn't save it again.
-
                 if(!alreadySavedWindows)
                   save3DpointsInWindow(n, projection.rotationFileID, frameIndex, Base.projectionsPerFrame);
             }

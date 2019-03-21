@@ -25,7 +25,7 @@ public class OldScenario : MonoBehaviour {
             Debug.Log("Scenario File not found!");
             return;
         }
-        Scenario scenario = (Scenario)DataParsing.readBinaryfile(scenarioFileName);
+        Scenario scenario = (Scenario)OfflineDataProcessing.readBinaryfile(scenarioFileName);
         scenario.SetInputDir(url);
         Base.SetCurrentScenario(scenario); // <<<
 

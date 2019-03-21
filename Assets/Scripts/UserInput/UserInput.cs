@@ -19,7 +19,7 @@ public class UserInput : MonoBehaviour {
     public void GO_OFFLINE()
     {
         GenerateNewScenario();
-        DataParsing.OFFLINE_Pipeline();
+        OfflineDataProcessing.OFFLINE_Pipeline();
         UnityEngine.SceneManagement.SceneManager.LoadScene(7); // Estimation Scene
     }
 

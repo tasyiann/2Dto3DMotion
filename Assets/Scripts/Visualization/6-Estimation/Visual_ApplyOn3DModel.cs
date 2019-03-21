@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.IO;
+using System.Globalization;
 
 public class Visual_ApplyOn3DModel : MonoBehaviour
 {
     public enum smoothMovement
     {
-        LERP, ONE_EURO, NONE
+        LERP, ONE_EURO, SGOLAY, NONE
     }
 
     public bool multiFigures; // Please tick this if you're going to use Multi figures script.
@@ -38,11 +40,41 @@ public class Visual_ApplyOn3DModel : MonoBehaviour
 
     private Vector3[] jointsPositions;
 
-
+    private List<List<Vector3>> estimation_Sgolay;
     
+    private void readEstimationWithSgolayFromFiles(string path)
+    {
+        estimation_Sgolay = new List<List<Vector3>>();
+        
+        for(int i=0; i<Base.numberOfJoints; i++)
+        {
+            string textFile = path+@"\"+i + "_joint_SGolayed.3D";
+            using (StreamReader file = new StreamReader(textFile))
+            {
+                string ln;
+                List<Vector3> joint = new List<Vector3>();
+                while ((ln = file.ReadLine()) != null)
+                {
+                    string[] array = ln.Split(' ');
+
+                    joint.Add(new Vector3(float.Parse(array[0], CultureInfo.InvariantCulture),
+                        float.Parse(array[1], CultureInfo.InvariantCulture),
+                        float.Parse(array[2], CultureInfo.InvariantCulture)));
+                }
+                file.Close();
+                estimation_Sgolay.Add(joint);
+            }
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
+        if((int)AnimationSmoothness == (int)smoothMovement.SGOLAY)
+        {
+           readEstimationWithSgolayFromFiles(@"3DEstimations\SgolayApplied");
+        }
+
         m3d = new Model3D(model);
         initializeOneEuroFilter();
         
@@ -72,10 +104,22 @@ public class Visual_ApplyOn3DModel : MonoBehaviour
             {
                 case smoothMovement.LERP: { m3d.moveSkeletonLERP(jointsPositions);                                                           break; }
                 case smoothMovement.ONE_EURO: { m3d.moveSkeleton_OneEuroFilter(jointsPositions, rotationFiltersJoints, rotationFilterHips);  break; }
+                case smoothMovement.SGOLAY: { m3d.moveSkeletonLERP(getSgolayVectorOfJoints());                                               break; }
                 default: { m3d.moveSkeleton(jointsPositions);                                                                                break; }
             }
         }
     }
+
+    private Vector3[] getSgolayVectorOfJoints()
+    {
+        Vector3[] joints = new Vector3[Base.numberOfJoints];
+        for(int i=0; i<estimation_Sgolay.Count; i++)
+        {
+            joints[i] = estimation_Sgolay[i][script.currentFrame];
+        }
+        return joints;
+    }
+
 
     private void updateParametersRotationFilters()
     {

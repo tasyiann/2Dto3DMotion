@@ -23,6 +23,7 @@ public static class Base
     public static AlgorithmEstimation Estimation3dAlgorithm;
     public static AlgorithmSetNeighbours NeighboursAlgorithm;
     public static int[] base_orderOfComparableRotations;
+    public static MatlabUnitySocket MatlabSocket;
 
     // Data
     public static List<List<Rotations>> base_rotationFiles;          // All rotation files.
@@ -30,7 +31,7 @@ public static class Base
     public static List<List<BvhProjection>> base_not_clustered;      // All projections not clustered.
 
     public static int metadataInFile = 3;                                            // Metadata in a tuple.
-    public static int jointsAmount = Enum.GetNames(typeof(EnumJoint)).Length;        // Joints in a tuple.
+    public static int numberOfJoints = Enum.GetNames(typeof(EnumJoint)).Length;        // Joints in a tuple.
 
     // Current scenario to be displayed.
     public static FigureIdentifier figureIdentifier = new FigureIdentifier();
@@ -43,6 +44,12 @@ public static class Base
     public static Thread threadClusters;
     public static Thread threadRotations;
 
+
+    public static void initializeMatlabCommunication()
+    {
+        MatlabSocket = new MatlabUnitySocket();
+        MatlabSocket.setupSocket();
+    }
 
     private static void initialise_DataBase_Variables()
     {
@@ -63,6 +70,7 @@ public static class Base
         base_orderOfComparableRotations = AlgorithmsParametersReader.Instance.Parameters.orderOfComparableRotations;
     }
 
+    static public int x = 0;
     public static void Threads_StartInit(bool doClusters, bool doProjections, bool doRotations, Text text)
     {
         initialise_DataBase_Variables(); // < important! :)
@@ -75,24 +83,27 @@ public static class Base
         {
             threadProjections = new Thread(new ThreadStart(thread_InitializeNotClustered));
             threadProjections.Start();
-            //thread.Join();
+            threadProjections.Join();
+            x++;
             //text.text += base_getNumberOfProjections() + " Projections [OK]\n";
         }
         if (doClusters)
         {
             threadClusters = new Thread(new ThreadStart(thread_InitializeClusters));
             threadClusters.Start();
-            //thread.Join();
+            threadProjections.Join();
+            x++;
             //text.text += base_clusters.Count + "Clusters [OK]\n";
         }
         if (doRotations)
         {
             threadRotations = new Thread(new ThreadStart(thread_InitializeRotations));
             threadRotations.Start();
-            //thread.Join();
+            threadProjections.Join();
+            x++;
             //text.text += " Rotations of " + getNumberOfRotations() +" animation frames [OK]\n";
         }
-
+        x++;
         alreadyInitialized = true;
 
     }
@@ -301,7 +312,7 @@ public static class Base
         List<Vector3> joints = new List<Vector3>();
         // metadata in file are: fileID_matchWithRotationFiles, frame, degrees
         metadataInFile = 3;
-        for (int i = metadataInFile; i < metadataInFile + jointsAmount * 3; i += 3)
+        for (int i = metadataInFile; i < metadataInFile + numberOfJoints * 3; i += 3)
         {
             joints.Add(new Vector3(float.Parse(array[i], CultureInfo.InvariantCulture),
                 float.Parse(array[i + 1], CultureInfo.InvariantCulture),
