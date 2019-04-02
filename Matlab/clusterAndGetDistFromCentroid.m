@@ -10,4 +10,5 @@ load([dirSource,'\Y_full',num2str(index),'.mat'],'Y_full'); % Load Y_Full
 % Calculate dist from centroid
 dist = meanDistanceFromCentroid(idx,C,Y_full);
 plotClusters(Y_full,idx,C,num_clusters,2);
-exit
+
+pause;

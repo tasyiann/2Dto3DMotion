@@ -4,9 +4,9 @@
 sourceDir = 'Big-Database-new-Scaling\Source_CLUSTERING_TESTS'; % Where L_T, Yfull matrices are.
 outputDir = 'Big-Database-new-Scaling\Output_CLUSTERING_TESTS\Clustering_Analysis'; % Where to save the analysis of clustering.
 groupsNum = 1;
-clustersNumInitial = 10;
+clustersNumInitial = 400;
 clustersOffset = 100;
-minThreshold = 0.01;
+minThreshold = 0.007;
 beforeDist = 0;
 
 
@@ -19,7 +19,7 @@ for i=1:groupsNum                            % For each group of Data:
     counter = 1;                             % Reset the counter.
                                              % - - - - - - - - - - --
     while mean_last10items > minThreshold    % Repeat until, mean of the dif between iterations is below thshld. 
-        dist = clusterAndGetDistFromCentroid(sourceDir,i,clustersNum);  % Get mean dist between clusters and their representative.
+        dist = clusterAndGetDistFromCentroid(sourceDir,i,clustersNum);  % Get mean dist between clusters and their centroid.
         valueChange = abs(beforeDist - dist);                           % Keep track of how much mean dist changes between iterations.
         dataNumDist = [ dataNumDist ; [clustersNum dist valueChange] ]; % Save data in matrix.
         beforeDist = dist;                                              % Keep track of the adjacent iterations.

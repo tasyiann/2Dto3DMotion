@@ -1,3 +1,5 @@
+% Use this script to spit into groups, then make clusters.
+
 clear all;  % clear all var
 clc;        % Clear console
 
@@ -24,10 +26,10 @@ clear L;
 
 
 % For each .mat in the DB, do the clustering
-files = dir([dirNameT_L,'\*.mat']);    % Get all .mat of the dir.
-index = 1;                          % Index of .mat files. Used for arranging
+files = dir([dirNameT_L,'\*.mat']);     % Get all .mat of the dir.
+index = 1;                              % Index of .mat files. Used for arranging
 
-for file = files'                   % Iterate only according to T.mat files
+for file = files'                       % Iterate only according to T.mat files
     if( startsWith(file.name,"T") )
        if(index >=7) 
         clusterProjections(clusters,dirNameT_L, dirToSave, file,index,extension);

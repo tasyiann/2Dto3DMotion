@@ -1,6 +1,9 @@
 function makeClusters(dirSource,index,num_clusters,dirTarget)
 %MAKECLUSTERS Summary of this function goes here
 
+
+
+
 % Initialisation
 extension = '';
 load([dirSource,'\L_T',num2str(index),'.mat'],'L');         % Load L

@@ -1,5 +1,5 @@
 %% Merge Clusters
-reorderClusters('Big-Database-new-Scaling\Output\Results\500-clusters\ToBeMerged','Big-Database-new-Scaling\Output\Results\500-clusters\Merged');
+reorderClusters('Big-Database-new-Scaling\NEW_output\500\500-clusters','Big-Database-new-Scaling\NEW_output\500\Again_MERGED',10);
 
 %% PREPARATION OF MERGING: Dimensionality reduction on representatives
 % 
