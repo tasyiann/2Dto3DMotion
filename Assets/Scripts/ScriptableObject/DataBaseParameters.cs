@@ -15,9 +15,9 @@ public class DataBaseParameters : ScriptableObject
     /// </summary>
     public string clusteringFolder = "5000-clusters";
     /// <summary>
-    /// The scaling method being used. Default is SCALE_LIMBS.
+    /// The scaling method being used. Default is SCALE_HEIGHT.
     /// </summary>
-    public EnumScaleMethod ScaleMethod = EnumScaleMethod.SCALE_LIMBS;
+    public EnumScaleMethod ScaleMethod = EnumScaleMethod.SCALE_HEIGHT;
     /// <summary>
     /// How many projections per frame database is made of.
     /// </summary>

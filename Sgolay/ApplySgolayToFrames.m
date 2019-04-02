@@ -28,7 +28,7 @@ for i = 0 : (numberOfJoints-1)
     filename = strcat(dirname,"\",num2str(i),"_joint.3D");
     fprintf(1, 'Applying Sgolay to %s\n',filename);
     x = load(filename);
-    sgf = Sgolay_Joint_Position(x,order,framelen,i,visual);
+    sgf = ApplySgolay('Joint',x,order,framelen,visual,i);
     fprintf(1,'Number of frames: %d, %d\n',size(x,1),size(sgf,1));
     % Write in file
     outputDirName = strcat(dirname,"\SgolayApplied");

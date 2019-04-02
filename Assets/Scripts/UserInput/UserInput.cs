@@ -20,13 +20,13 @@ public class UserInput : MonoBehaviour {
     {
         GenerateNewScenario();
         OfflineDataProcessing.OFFLINE_Pipeline();
-        UnityEngine.SceneManagement.SceneManager.LoadScene(7); // Estimation Scene
+        UnityEngine.SceneManagement.SceneManager.LoadScene(7); // Single estimation Scene
     }
 
     public void GO_REALTIME()
     {
         GenerateNewScenario();
-        UnityEngine.SceneManagement.SceneManager.LoadScene(12); // Estimation Scene
+        UnityEngine.SceneManagement.SceneManager.LoadScene(10); // Real Time Scene
     }
 
 

@@ -40,7 +40,7 @@ public class GLDraw {
         for (int i=0; i<13; i++)
         {
            
-            if( (available == null) || (available!=null && available[jointPairs[i, 0]]==true && available[jointPairs[i, 1]]==true))
+            if( (available == null) || (available!=null && available.Length!=0 && available[jointPairs[i, 0]]==true && available[jointPairs[i, 1]]==true))
             {
                 // To tell where the stick figure is looking at
                 if (direction && (i==2 || i==3 || i==8 || i==9))

@@ -11,7 +11,7 @@ public class OpenPoseJSON {
 
     
     private readonly List<OPFrame> frames;          // The reference of Video Frames.
-    private static FigureIdentifier figureIdentifier = Base.figureIdentifier;
+    private FigureIdentifier figureIdentifier = new FigureIdentifier();
 
     public OpenPoseJSON(List<OPFrame> Frames)
     {
@@ -47,19 +47,18 @@ public class OpenPoseJSON {
         // Parse Json file and Create a Json Object with all info.
         JsonFileStruct jsonObj = JsonConvert.DeserializeObject<JsonFileStruct>(File.ReadAllText(@path));
         OPFrame frame = new OPFrame();
-        // Iterate poses in json Object : For each figure in the frame.
-        int currentFigureIndex = 0;
 
         foreach (Keypoints k in jsonObj.people)
         {
             // Initialise a pose, fill bodypositions, normalize data, identification : all done in contructor.
             // Use last frames, to interpolate scaling.
-            OPPose pose = new OPPose(k, frames, currentFrameIndex, currentFigureIndex);
+            OPPose pose = new OPPose(k, frames, currentFrameIndex, figureIdentifier);
             frame.figures.Add(pose);
-            currentFigureIndex++; // Go to the next figure in the same frame.
         }
         //frame.figures = figureIdentifier.sortFiguresInFrame(frame);
         sortFiguresByX(frame);
+        //sortFiguresByTheirID(frame);
+        // TODO: SORT THEM BY ID:)
         return frame;
     }
 

@@ -12,8 +12,6 @@ height=400;
 set(gcf,'position',[x0,y0,width,height]);
 
 
-%surf(peaks);
-%rotate3d('on');
 
 
 subplot(1,2,1);

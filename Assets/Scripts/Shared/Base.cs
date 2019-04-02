@@ -34,7 +34,6 @@ public static class Base
     public static int numberOfJoints = Enum.GetNames(typeof(EnumJoint)).Length;        // Joints in a tuple.
 
     // Current scenario to be displayed.
-    public static FigureIdentifier figureIdentifier = new FigureIdentifier();
     public static Scenario sc = null;
     public static void SetCurrentScenario(Scenario s) { sc = s; Debug.Log("NEW Scenario has been set. Input: "+sc.inputDir); }
     public static string base_CurrentDir;
@@ -70,7 +69,7 @@ public static class Base
         base_orderOfComparableRotations = AlgorithmsParametersReader.Instance.Parameters.orderOfComparableRotations;
     }
 
-    static public int x = 0;
+
     public static void Threads_StartInit(bool doClusters, bool doProjections, bool doRotations, Text text)
     {
         initialise_DataBase_Variables(); // < important! :)
@@ -83,27 +82,21 @@ public static class Base
         {
             threadProjections = new Thread(new ThreadStart(thread_InitializeNotClustered));
             threadProjections.Start();
-            threadProjections.Join();
-            x++;
-            //text.text += base_getNumberOfProjections() + " Projections [OK]\n";
+
         }
         if (doClusters)
         {
             threadClusters = new Thread(new ThreadStart(thread_InitializeClusters));
             threadClusters.Start();
-            threadProjections.Join();
-            x++;
-            //text.text += base_clusters.Count + "Clusters [OK]\n";
+
         }
         if (doRotations)
         {
             threadRotations = new Thread(new ThreadStart(thread_InitializeRotations));
             threadRotations.Start();
-            threadProjections.Join();
-            x++;
-            //text.text += " Rotations of " + getNumberOfRotations() +" animation frames [OK]\n";
+
         }
-        x++;
+
         alreadyInitialized = true;
 
     }

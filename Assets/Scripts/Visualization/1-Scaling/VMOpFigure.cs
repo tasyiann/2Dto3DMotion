@@ -12,12 +12,8 @@ using UnityEngine.UI;
 */
 public class VMOpFigure : MonoBehaviour
 {
+    public DataInFrame script;
 
-
-    private static Scenario sc = Base.sc;
-
-    public GameObject VideoplayerGO;
-    private UnityEngine.Video.VideoPlayer videoPlayer;
 
     public bool ShowUsedScaling;
     public bool ShowLimbsScaling;
@@ -51,9 +47,7 @@ public class VMOpFigure : MonoBehaviour
      */
     void Start()
     {
-        frames = sc.frames;
         gL = new GLDraw(Material);
-        setVideoPlayer();
     }
 
 
@@ -63,6 +57,8 @@ public class VMOpFigure : MonoBehaviour
     private void OnPostRender()
     {
         //updateText();
+        if (figure == null || figure.joints == null || figure.joints.Length == 0)
+            return;
 
         float newpos = 0;
 
@@ -71,8 +67,6 @@ public class VMOpFigure : MonoBehaviour
             // NORMALIZED DATA
             scalingFactor_ACTUAL_USED = figure.scaleFactor;
             gL.drawFigure(true, Color.green, figure.joints, figure.available, new Vector3(newpos, 0, 0));
-            if (figure.available[(int)EnumJoint.Head] && (figure.available[(int)EnumJoint.RightFoot] || figure.available[(int)EnumJoint.LeftFoot]))
-                drawBoundings(Color.green, figure.joints[(int)EnumJoint.Head], figure.joints[(int)EnumJoint.RightFoot], figure.joints[(int)EnumJoint.LeftFoot], 1000);
             newpos += 10;
         }
 
@@ -81,9 +75,9 @@ public class VMOpFigure : MonoBehaviour
         {
             // SCALE_LIMBS
             Scaling.getGlobalScaleFactor_USING_LIMBS(figure.jointsRAW, out usedLIMB, out scalingFactor_LIMBS);
-            gL.drawFigure(true, Color.black, figure.jointsRAW, figure.available, new Vector3(newpos, 0, 0), scalingFactor_LIMBS);
+            gL.drawFigure(true, Color.white, figure.jointsRAW, figure.available, new Vector3(newpos, 0, 0), scalingFactor_LIMBS);
             if (figure.available[(int)EnumJoint.Head] && (figure.available[(int)EnumJoint.RightFoot] || figure.available[(int)EnumJoint.LeftFoot]))
-                drawBoundings(Color.black, figure.jointsRAW[(int)EnumJoint.Head], figure.jointsRAW[(int)EnumJoint.RightFoot], figure.jointsRAW[(int)EnumJoint.LeftFoot], 1000, scalingFactor_LIMBS);
+                drawBoundings(Color.white, figure.jointsRAW[(int)EnumJoint.Head], figure.jointsRAW[(int)EnumJoint.RightFoot], figure.jointsRAW[(int)EnumJoint.LeftFoot], 1000, scalingFactor_LIMBS);
             newpos += 10;
         }
 
@@ -102,20 +96,40 @@ public class VMOpFigure : MonoBehaviour
             scalingFactor_HEIGHT = Scaling.getGlobalScaleFactor_USING_HEIGHT(figure.jointsRAW);
             gL.drawFigure(true, Color.yellow, figure.jointsRAW, figure.available, new Vector3(newpos, 0, 0), scalingFactor_HEIGHT);
             if (figure.available[(int)EnumJoint.Head] && (figure.available[(int)EnumJoint.RightFoot] || figure.available[(int)EnumJoint.LeftFoot]))
-                drawBoundings(Color.yellow, figure.jointsRAW[(int)EnumJoint.Head], figure.jointsRAW[(int)EnumJoint.RightFoot], figure.jointsRAW[(int)EnumJoint.LeftFoot], 1000, scalingFactor_HEIGHT);
-            //newpos += 10;
+                drawBoundingsHeighestPoint(Color.yellow, figure.jointsRAW, figure.available, 1000, scalingFactor_HEIGHT);
+        }
+            updateScalingFactors();
+    }
+
+
+
+
+    private void drawBoundingsHeighestPoint(Color color, Vector3[] joints, bool[] available, float length, float scaling = 1f)
+    {
+        float yMin = float.MaxValue, yMax = float.MinValue;
+        for(int i=0; i<joints.Length; i++)
+        {
+            Vector3 j = joints[i];
+            if (available[i] == false) continue;
+            if ((j*scaling).y < yMin)
+                yMin = (j*scaling).y;
+            if ((j*scaling).y > yMax)
+                yMax = (j*scaling).y;
         }
 
 
-            updateScalingFactors();
-        
+        gL.drawHorizontalLine(color, yMax, length);
+        gL.drawHorizontalLine(color, yMin, length);
     }
+
 
     private void drawBoundings(Color color, Vector3 head, Vector3 rightFoot, Vector3 leftFoot, float length, float scaling=1f)
     {
         gL.drawHorizontalLine(color, (head*scaling).y, length);
         gL.drawHorizontalLine(color, minNum((rightFoot*scaling).y, (leftFoot * scaling).y), length);
     }
+
+
 
     private float minNum(float a, float b)
     {
@@ -159,25 +173,7 @@ public class VMOpFigure : MonoBehaviour
      */
     void Update()
     {
-        if (Input.GetKey("w"))
-        {
-            CurrentFrame++;
-            if (CurrentFrame >= frames.Count)
-                CurrentFrame = 0;
-        }
-        if (Input.GetKey("s"))
-        {
-            CurrentFrame--;
-            if (CurrentFrame < 0)
-                CurrentFrame = frames.Count - 1;
-        }
-        /* Show video on Current frame. */
-        videoPlayer.frame = CurrentFrame; // <<<<<
-
-        if (frames[CurrentFrame].figures.Count > 0)
-        {
-            figure = frames[CurrentFrame].figures[0];
-        }
+        figure = script.selectedPoseToDebug;
     }
 
 
@@ -204,22 +200,6 @@ public class VMOpFigure : MonoBehaviour
         }
     }
 
-    /**
-     * Install the videoPlayer on the scene.
-     */
-    private void setVideoPlayer()
-    {
-        string url = sc.inputDir;
-        videoPlayer = VideoplayerGO.GetComponent(typeof(UnityEngine.Video.VideoPlayer)) as UnityEngine.Video.VideoPlayer;
-        if (videoPlayer == null)
-        {
-            Debug.Log("VideoPlayer is null");
-        }
-
-        if (url == null || url == "") Debug.Log("url is null");
-        videoPlayer.url = url + "\\video.mp4";
-        videoPlayer.Pause();
-    }
 
 
 }

@@ -26,6 +26,7 @@ public class Sgolay
         {
             Byte[] sendBytes = Encoding.UTF8.GetBytes(path);
             mySocket.mySocket.GetStream().Write(sendBytes, 0, sendBytes.Length);
+            Debug.Log("Applying Sgolay Filtering via Matlab...");
         }
         else
         {

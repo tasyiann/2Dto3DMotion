@@ -62,6 +62,8 @@ public class BvhExport
     {
         int counter = 0;
         List<string> lines = new List<string>();
+        // T-Pose:
+        lines.Add("0 0 0 -0 90 90 9.69808e-018 1.34041e-020 0.158382 1.41245e-030 7.06225e-031 2.48481e-017 -7.30747e-017 7.61111e-019 -1.19349 3.40995e-017 1.65719e-019 0.556895 -2.12238e-008 -1.53545e-005 -90.1584 -2.50273e-005 -2.47192e-012 6.55612e-006 1.52588e-005 -6.98387e-015 174.455 180 -4.60993e-005 -89.8417 -5.49628e-005 -2.25992e-011 3.612e-005 1.52588e-005 6.98387e-015 174.455 -3.94791 -0.248796 -175.995 -8.56334 0.17593 -0.870008 4.60942 -0.0775208 176.868 177.984 -0.125371 -176.036 -4.37326 0.0836638 -0.877309 2.35438 -0.0332512 176.598\n");
         foreach(Neighbour n in Estimation)
         {
             // If estimation in that frame does not exist.
@@ -72,7 +74,7 @@ public class BvhExport
             Vector3 defaultRootRotation = new Vector3(90, 90, 0); // Default. Please don't delete this. It is useful to debug.
             Vector3 rootRotation = defaultRootRotation;
             float angle = n.projection.angle;
-            rootRotation = getFinalRootRotation(rotations[0],angle,counter);
+            //rootRotation = getFinalRootRotation(rotations[0],angle,counter);
             //rootRotation = Model3D.BvhToUnityRotation(rootRotation, Model3D.AxisOrder.XYZ).eulerAngles;
             lines.Add(CreateMLine(Vector3.zero, rootRotation, rotations));
             counter++;
@@ -90,7 +92,6 @@ public class BvhExport
         s.Append(rootRotation.z + " " + rootRotation.x + " " + rootRotation.y + " ");
 
         for(int i=1; i<rotations.Count; i++) // start at 1 ==> skip rotation of the root.
-        //foreach (Vector3 eul in rotations)
         {
             s.Append(rotations[i].z + " " + rotations[i].x + " " + rotations[i].y + " ");
         }
@@ -226,9 +227,7 @@ public class BvhExport
     private string CreateMotionBody()
     {
         StringBuilder s = new StringBuilder();
-        s.Append("MOTION\nFrames: " + MotionLines.Count + "\nFrame Time: " + 0.0083333 + "\n");
-        // First line T-pose
-        s.Append("0 0 0 -0 90 90 9.69808e-018 1.34041e-020 0.158382 1.41245e-030 7.06225e-031 2.48481e-017 -7.30747e-017 7.61111e-019 -1.19349 3.40995e-017 1.65719e-019 0.556895 -2.12238e-008 -1.53545e-005 -90.1584 -2.50273e-005 -2.47192e-012 6.55612e-006 1.52588e-005 -6.98387e-015 174.455 180 -4.60993e-005 -89.8417 -5.49628e-005 -2.25992e-011 3.612e-005 1.52588e-005 6.98387e-015 174.455 -3.94791 -0.248796 -175.995 -8.56334 0.17593 -0.870008 4.60942 -0.0775208 176.868 177.984 -0.125371 -176.036 -4.37326 0.0836638 -0.877309 2.35438 -0.0332512 176.598\n");
+        s.Append("MOTION\nFrames: " + (MotionLines.Count) + "\nFrame Time: " + 0.0083333 + "\n");
         foreach (string line in MotionLines)
         {
             s.Append(line);

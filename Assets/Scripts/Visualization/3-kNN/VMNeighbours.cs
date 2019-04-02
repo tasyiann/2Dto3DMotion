@@ -19,7 +19,7 @@ public class VMNeighbours : MonoBehaviour
     public Material Material;           // The material used in gl lines.
     //public Text textInfo;             // Text (not in use yet.)
     private GLDraw gL;                  // GL lines.
-    List<OPFrame> frames = Base.sc.frames;
+    List<OPFrame> frames;
 
     /**
      * Initialisation.
@@ -28,6 +28,7 @@ public class VMNeighbours : MonoBehaviour
     {
         startingPos = new Vector2(-30, 40);
         gL = new GLDraw(Material);
+        frames = Base.sc.frames;
     }
 
 

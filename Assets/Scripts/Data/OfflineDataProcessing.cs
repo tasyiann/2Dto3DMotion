@@ -28,7 +28,7 @@ public class OfflineDataProcessing
         frames = sc.frames;
         if (Base.base_clusters==null || Base.base_not_clustered==null || Base.base_rotationFiles==null)
         {
-            Debug.LogError("DISASTER. BYE.");
+            Debug.LogError("PLEASE RUN THE PROPER SCENE TO LOAD THE DATABASE!");
             return;
         }
 
@@ -42,6 +42,7 @@ public class OfflineDataProcessing
         {
             if (Path.GetExtension(fileName).CompareTo(".json") == 0)
             {
+
                 OPFrame currFrame = parser.Parsefile(fileName, frameCounter);
                 frames.Add(currFrame);
                 // For each figure in the frame, calculate its 3D:
@@ -69,8 +70,6 @@ public class OfflineDataProcessing
                             // Set prevFigure of currentFigure << Set this also in the Real-Time
                             // The chain breaks if prevFigure is null. Find a way to fix this. (TODO).
                             currFigure.prevFigure = prevFigure;
-                            
-
                         }
                         catch(ArgumentOutOfRangeException e)
                         {
@@ -85,23 +84,26 @@ public class OfflineDataProcessing
                 frameCounter++;
             }
         }
-   
+        Debug.Log("Estimation Done.");
+        ApplySGOLAYViaMatlab();
+
+        // Set log
+        setLog();
+        // Save the scenario.
+        sc.Save();
+        Debug.Log("Saving BVH Done.");
+    }
+
+    private static void ApplySGOLAYViaMatlab()
+    {
         string dir3DEstimation = Path.GetFullPath(@"3DEstimations");
         write3DEstimation_POSITIONS_PER_JOINT_inFile(dir3DEstimation);
-
         // << SGOLAY MATLAB >>
         Base.initializeMatlabCommunication();
         Sgolay sgolay = new Sgolay(Base.MatlabSocket);
         sgolay.ApplySgolay(dir3DEstimation);
-        Debug.Log("Sgolay is being applied via Matlab...");
-
-        Debug.Log("Estimation Done.");
-        // Set log
-        setLog();
-        // Save the scenario.
-        // sc.Save();
-        // Debug.Log("Saving Done.");
     }
+
 
 
     private static void write3DEstimation_POSITIONS_inFile(string FilePath)
@@ -182,8 +184,13 @@ public class OfflineDataProcessing
         return result.ToArray();
     }
 
-
-
+    // Please delete this
+    private static void saveClustersAndNeighbours()
+    {
+        WriteToBinaryFile(@"Temp-ClustersAndNeighbours\CRAZY.bin", frames[16].figures[0]);
+        WriteToBinaryFile(@"Temp-ClustersAndNeighbours\clusters.bin",frames[16].figures[0].selectedClusters);
+        WriteToBinaryFile(@"Temp-ClustersAndNeighbours\neighbours.bin", frames[16].figures[0].neighbours);
+    }
 
 
     public static void WriteToBinaryFile(string fileName, System.Object obj)
@@ -192,8 +199,10 @@ public class OfflineDataProcessing
         BinaryFormatter bf = new BinaryFormatter();
         SurrogateSelector surrogateSelector = new SurrogateSelector();
         Vector3SerializationSurrogate vector3SS = new Vector3SerializationSurrogate();
+        QuaternionSerializationSurrogate quaternionSS = new QuaternionSerializationSurrogate();
 
         surrogateSelector.AddSurrogate(typeof(Vector3), new StreamingContext(StreamingContextStates.All), vector3SS);
+        surrogateSelector.AddSurrogate(typeof(Quaternion), new StreamingContext(StreamingContextStates.All), quaternionSS);
         bf.SurrogateSelector = surrogateSelector;
 
         FileStream file = File.Create(fileName);
@@ -208,8 +217,11 @@ public class OfflineDataProcessing
         BinaryFormatter bf = new BinaryFormatter();
         SurrogateSelector surrogateSelector = new SurrogateSelector();
         Vector3SerializationSurrogate vector3SS = new Vector3SerializationSurrogate();
+        QuaternionSerializationSurrogate quaternionSS = new QuaternionSerializationSurrogate();
+
 
         surrogateSelector.AddSurrogate(typeof(Vector3), new StreamingContext(StreamingContextStates.All), vector3SS);
+        surrogateSelector.AddSurrogate(typeof(Quaternion), new StreamingContext(StreamingContextStates.All), quaternionSS);
         bf.SurrogateSelector = surrogateSelector;
 
         FileStream file = File.Open(fileName, FileMode.Open);
@@ -219,3 +231,10 @@ public class OfflineDataProcessing
 
 
 }
+
+
+
+
+
+
+

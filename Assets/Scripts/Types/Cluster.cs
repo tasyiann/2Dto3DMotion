@@ -25,6 +25,10 @@ public class Cluster
     public Cluster(List<BvhProjection> projections_filled_with_data)
     {
         projections = projections_filled_with_data;
+        foreach (BvhProjection p in projections)
+        {
+            p.cluster = this;
+        }
     }
 
 

@@ -94,7 +94,7 @@ public class Scaling {
 
     private static ScaleInfo calculateScaleFactor(Vector3[] joints, EnumBONES[] bones, List<float> bonesSizes)
     {
-
+        if (joints == null || joints.Length == 0) return new ScaleInfo(0,EnumBONES.TORSO_HEIGHT);
         // A list to save the error (size difference)
         List<ScaleInfo> scalingFactorInfos = new List<ScaleInfo>();
 
@@ -127,6 +127,9 @@ public class Scaling {
     private static float getBoneSize(EnumBONES bone, Vector3[] joints)
     {
         // Starting and ending joints of the bone.
+        if (joints.Length <= pairs[(int)bone, 0])
+            return 0;
+
         Vector3 jointA = joints[pairs[(int)bone, 0]];
         Vector3 jointB;
 
@@ -189,8 +192,8 @@ public class Scaling {
             if (j.y > yMax)
                 yMax = j.y;
         }
-        float height = Math.Abs(yMin - yMax);
-        return interpolateResult(scalingHeightFixed/height,previousFactors);
+        float height = Vector2.Distance(new Vector3(0,yMin,0), new Vector3(0,yMax,0));
+        return scalingHeightFixed/height;
     }
 
 

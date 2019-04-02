@@ -1,0 +1,10 @@
+clear;
+clc;
+filename = '1';
+fprintf("Loading bvh %s...\n",filename);
+[skeleton, time, fps, fname] = loadbvh(filename);
+fprintf("Applying Sgolay...\n");
+SGF_Rotations = ApplySgolay('Skeleton',skeleton,3,11,0);
+fprintf("Exporting new bvh...\n");
+ExportToBvh(SGF_Rotations, filename);
+fprintf("Done!\n");

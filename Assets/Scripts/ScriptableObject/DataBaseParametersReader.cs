@@ -18,4 +18,15 @@ public class DataBaseParametersReader : MonoBehaviour
     public DataBaseParameters Parameters { get { return parameters; } }
 
 
+    override public string ToString()
+    {
+        string s = "";
+        foreach (var field in Parameters.GetType().GetFields())
+        {
+            s += field.Name + "= " + field.GetValue(parameters) + "\n";
+        }
+        return s;
+    }
+
+   
 }

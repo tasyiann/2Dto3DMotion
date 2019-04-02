@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   databasePath: Databases\NEW
   clusteringFolder: 5000-clusters
-  ScaleMethod: 0
+  ScaleMethod: 1
   projectionsPerFrame: 30

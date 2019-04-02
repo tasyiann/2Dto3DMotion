@@ -14,15 +14,17 @@ public class InitiateBase : MonoBehaviour {
         InitializeBase();   // Then initialise database.
     }
 
+
+
+
+
     private void Update()
     {
         if (Base.areThreadsDone())
         {
             Debug.Log("Initialization is done!");
-            Debug.Log("x=" + Base.x);
             UnityEngine.SceneManagement.SceneManager.LoadScene(0);
         }
-
     }
 
     private void InitializeBase()

@@ -18,7 +18,7 @@ namespace OpenPose.Example {
         private static List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;      // Rotations.
         public static Vector3[] estimation_to_debug = null;                                     // To debug 2D figure
         public static Vector3[] rawInputToDebug = null;
-
+        public static FigureIdentifier figureIdentifier = new FigureIdentifier();
 
         // The 2D human to control
         [SerializeField]
@@ -209,7 +209,7 @@ namespace OpenPose.Example {
             // SET NEW FIGURE!
             rawInputToDebug = new Vector3[14];
             Array.Copy(joints, rawInputToDebug, joints.Length);
-            OPPose poseNEW = new OPPose(joints, available, frames, currentframeIndex, currentFigureIndex);
+            OPPose poseNEW = new OPPose(joints, available, frames, currentframeIndex, figureIdentifier);
             return poseNEW;
         }
 

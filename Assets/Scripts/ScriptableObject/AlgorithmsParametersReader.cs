@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 public class AlgorithmsParametersReader : MonoBehaviour
@@ -16,4 +17,13 @@ public class AlgorithmsParametersReader : MonoBehaviour
     private AlgorithmsParameters parameters;
     public AlgorithmsParameters Parameters { get { return parameters;  } }
 
+    override public string ToString()
+    {
+        string s = "";
+        foreach (var field in Parameters.GetType().GetFields())
+        {
+            s += field.Name + "= " + field.GetValue(parameters) + "\n";
+        }
+        return s;
+    }
 }

@@ -33,7 +33,7 @@ public class Visual_BestMatch : MonoBehaviour
         if (showGrid) { gL.drawAxes(Color.white, center); } // TODO: Make axers relative to the camera.
 
         /* Draw results. */
-        if (figureToDebug!=null)
+        if (figureToDebug!=null && figureToDebug.Estimation3D!=null && figureToDebug.Estimation3D.projection!=null && figureToDebug.Estimation3D.projection.joints!=null)
         {
             if(figureToDebug.Estimation3D.projection.joints.Length!=0) // Check, because in some cases the length is zero...
                 gL.drawFigure(true, Color.green, figureToDebug.Estimation3D.projection.joints, null, center);
