@@ -106,8 +106,9 @@ public class V_ShowSampleSequenceOfMotion : MonoBehaviour
             BVH bvh = new BVH(fileName);
             for (int i = 0; i < figuresNum; i++)
             {
-                GameObject go = bvh.makeDebugSkeleton(false, "000000", jointSize);
+                GameObject go = bvh.makeDebugSkeleton(false, "FFFFFF", jointSize);
                 figures.Add(new BvhFigure(bvh, go,color,jointSize));
+                figuresNum = bvh.frameCount-1;
             }
         }
     }
