@@ -5,7 +5,6 @@ using UnityEngine;
 public class Display_ClustersSample : MonoBehaviour
 {
     private string clustersPath = @"Databases\NEW\Clusters\5000-clusters\";
-    private string representativesPath = @"Databases\NEW\Clusters\5000-clusters\Representatives\Representatives";
     public int currentCluster;
     public float startingRadius;
     public float radiusOffset;
@@ -36,7 +35,7 @@ public class Display_ClustersSample : MonoBehaviour
 
     void Start()
     {
-        clusters = Base.InitializeClusters(clustersPath, representativesPath);
+        clusters = Base.InitializeClusters(clustersPath);
         gL = new GLDraw(mat);
     }
 

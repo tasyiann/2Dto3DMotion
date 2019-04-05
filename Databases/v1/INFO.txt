@@ -1,0 +1,6 @@
+Scale method: Using Bone Length
+5 minutes Animation
+Projections: 216,000
+Rotation Angle: 12
+10 Groups, 500 clusters each
+Created on 04-Apr-19

@@ -6,16 +6,11 @@ using UnityEngine.UI;
 [RequireComponent(typeof(DataBaseParametersReader),typeof(AlgorithmsParametersReader))]
 public class InitiateBase : MonoBehaviour {
 
-    public Text progressText;
-    public bool Clusters, Projections, Rotations;
     Thread thread;
 
     void Start () {         // Start function. NOT awake. Awake is used in the DataBaseParametersReader class.
         InitializeBase();   // Then initialise database.
     }
-
-
-
 
 
     private void Update()
@@ -29,7 +24,7 @@ public class InitiateBase : MonoBehaviour {
 
     private void InitializeBase()
     {
-        Base.Threads_StartInit(Clusters, Projections, Rotations, progressText);
+        Base.Threads_StartInit();
     }
 
 

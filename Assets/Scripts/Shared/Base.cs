@@ -39,9 +39,8 @@ public static class Base
     public static string base_CurrentDir;
 
     public static Text progressInfoText;
-    public static Thread threadProjections;
-    public static Thread threadClusters;
-    public static Thread threadRotations;
+    public static Thread thread_A;
+    public static Thread thread_B;
 
 
     public static void initializeMatlabCommunication()
@@ -70,41 +69,27 @@ public static class Base
     }
 
 
-    public static void Threads_StartInit(bool doClusters, bool doProjections, bool doRotations, Text text)
+    public static void Threads_StartInit()
     {
-        initialise_DataBase_Variables(); // < important! :)
-        initialise_Algorithms_Variables();
+        // Initialize system parameters.
+        initialise_DataBase_Variables();    // < important! :)
+        initialise_Algorithms_Variables();  // < important! :)
 
-        text.text += "\n";
         if (alreadyInitialized) return;
 
-        if (doProjections)
-        {
-            threadProjections = new Thread(new ThreadStart(thread_InitializeNotClustered));
-            threadProjections.Start();
+        thread_A = new Thread(new ThreadStart(execute_thread_A));
+        thread_A.Start();
 
-        }
-        if (doClusters)
-        {
-            threadClusters = new Thread(new ThreadStart(thread_InitializeClusters));
-            threadClusters.Start();
-
-        }
-        if (doRotations)
-        {
-            threadRotations = new Thread(new ThreadStart(thread_InitializeRotations));
-            threadRotations.Start();
-
-        }
+        thread_B = new Thread(new ThreadStart(execute_thread_B));
+        thread_B.Start();
 
         alreadyInitialized = true;
-
     }
 
 
     public static bool areThreadsDone()
     {
-        return !threadProjections.IsAlive && !threadClusters.IsAlive && !threadRotations.IsAlive;
+        return !thread_A.IsAlive && !thread_B.IsAlive;
     }
 
 
@@ -119,53 +104,22 @@ public static class Base
     }
 
 
-    private static void thread_InitializeNotClustered()
+    private static void execute_thread_A()
     {
         string projDir = Path + @"\Projections\";
         base_not_clustered = InitializeNotClustered(projDir);
-    }
-
-    private static void thread_InitializeClusters()
-    {
-        string reprFile = Path + @"\Clusters\" + Clustering + @"\Representatives\Representatives";
-        string clustDir = Path + @"\Clusters\" + Clustering + @"\";
-        base_clusters = InitializeClusters(clustDir, reprFile);
-    }
-
-    private static void thread_InitializeRotations()
-    {
         string rotDir = Path + @"\Rotations\";
         base_rotationFiles = InitializeRotations(rotDir);
     }
 
-
-    /**
-     * Each line is a representative of a cluster.
-     * 1st line is the representative of the 1st cluster etc...
-     * 
-     * */
-    private static void InitializeRepresentatives(List<Cluster> listClusters, string @filename)
+    private static void execute_thread_B()
     {
-        try
-        {
-            StreamReader sr = File.OpenText(filename);
-            string tuple = String.Empty;
-            int i = 0;
-            while ((tuple = sr.ReadLine()) != null)
-            {
-                listClusters[i].setRepresentative(ParseIntoProjection(tuple));
-                i++;
-            }
-            Debug.Log(">Representatives have been read.");
-            sr.Close();
-        }
-        catch (Exception e)
-        {
-            Debug.Log("Representatives file not found. Is path correct? " + filename + "\n\n" + e.Message + "\n\n" + e.StackTrace);
-        }
-
-
+        string clustDir = Path + @"\Clusters\";
+        base_clusters = InitializeClusters(clustDir);
     }
+
+
+
 
 
 
@@ -205,43 +159,40 @@ public static class Base
 
 
 
-    public static List<Cluster> InitializeClusters(string clustersDirPath, string representativesFilePath)
+    public static List<Cluster> InitializeClusters(string clustersDirPath)
     {
-        // TODO!!!!!!!!!!!!!!!!!!!!!!!!!!
-
         List<Cluster> listClusters = new List<Cluster>();
-
-        // -- Sort file entries by their numerical name. --
-        string[] fileEntries = sortFilesNumerically(Directory.GetFiles(clustersDirPath), clustersDirPath);
-
-
+        string[] fileEntries = Directory.GetFiles(clustersDirPath); // Each file, is a group (as defined in thesis).
         foreach (string fileName in fileEntries)
         {
-            //Debug.Log("Reading Clucter: "+fileName);
-            List<BvhProjection> listOfProjections = new List<BvhProjection>();
+
             StreamReader sr = File.OpenText(fileName);
             string tuple = String.Empty;
+            int clusterNumber = 0;
+            List<BvhProjection> listOfProjections = new List<BvhProjection>(); ;
             while ((tuple = sr.ReadLine()) != null)
             {
-                try
+                // A cluster is initiate with a 'Cx' tag at the top.
+                if (tuple.StartsWith("C" + clusterNumber))
                 {
-                    listOfProjections.Add(ParseIntoProjection(tuple, Int32.Parse(fileName.Replace(clustersDirPath, ""))));
+                    // New cluster starts -> initialize listOfProjection which is the content of the cluster.
+                    listOfProjections = new List<BvhProjection>();
+                    Cluster cluster = new Cluster(listOfProjections);
+                    listClusters.Add(cluster);
+                    // The representative of the cluster is the first tuple, after the 'Cx' tag.
+                    tuple = sr.ReadLine();
+                    cluster.setRepresentative(ParseIntoProjection(tuple));
+                    // Go to the next cluster
+                    clusterNumber++;
                 }
-                catch (Exception e)
+                else
                 {
-                    Debug.Log("Error on getting clusters: dirName is: " + clustersDirPath + "and filename is: " + fileName + "\n\n" + e.Message + "\n\n" + e.StackTrace);
-                    throw e;
+                    listOfProjections.Add(ParseIntoProjection(tuple, clusterNumber));
                 }
-
             }
-            listClusters.Add(new Cluster(listOfProjections));
             sr.Close();
         }
         Debug.Log(">Clustered Projections have been read.");
-
-        // Init representatives:
-        InitializeRepresentatives(listClusters, representativesFilePath);
-
         return listClusters;
     }
 
