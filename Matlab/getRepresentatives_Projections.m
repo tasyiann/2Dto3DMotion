@@ -1,4 +1,4 @@
-function Representatives = getRepresentatives_Projections(C,Y_full, idx, T, dirname, kMW)
+function Representatives = getRepresentatives_Projections(C,Y_full, idx, L, dirname, kMW)
 % Find representatives of each cluster
 %
 %   D  - The distance matrix
@@ -15,7 +15,7 @@ function Representatives = getRepresentatives_Projections(C,Y_full, idx, T, dirn
 
 % -------------------------------------------------------------------------
 
-%% Sort objects according to their cluster id
+% Sort objects according to their cluster id
 %  Oid - sorted objects: each row is a couple of (ObjectID, clusterID)
 Representatives = cell(kMW,1);
 Oid = zeros(size(idx));
@@ -25,10 +25,10 @@ num_of_Objects = sz(1);
 Oid(:,1) = 1:num_of_Objects;
 Oid = sortrows(Oid,2);
 save('Oid.mat','Oid');
-%% INITIALIZE
+% INITIALIZE
 row=1;
 clusterId=1;        
-%% FIND REPRESENTATIVES
+% FIND REPRESENTATIVES
 % Iterate all objects.
 while row<=num_of_Objects
     % Find the representative object of that cluster.
@@ -44,11 +44,11 @@ while row<=num_of_Objects
         end
         row = row + 1;
     end
-    Representatives{clusterId} = T(:,repr)';
+    Representatives{clusterId} = L(:,repr)';
     % Go to the next cluster-id
     clusterId = clusterId + 1;
     % Write Representative in File
     %disp(repr);
-    dlmwrite(strcat(dirname,'\Representatives'),T(:,repr)','delimiter',' ','-append');
+    dlmwrite(strcat(dirname,'\Representatives'),L(:,repr)','delimiter',' ','-append');
 end
-%%
+%

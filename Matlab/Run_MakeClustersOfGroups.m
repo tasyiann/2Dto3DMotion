@@ -1,12 +1,13 @@
-clc;
+ clc;
 % This method uses the matrices and exports the clusters.
-sourceDir = 'Not-In-Git\Input'; % Where L_T, Yfull matrices are.
-outputDir = 'Not-In-Git\Output2';% Where to save the clusters.
+sourceDir = 'Source\v1-216000-Scaling-Bone-Length'; % Where L_T, Yfull matrices are.
+outputDir = 'Source\v1-216000-Scaling-Bone-Length\Output';% Where to save the clusters.
 groupsNum = 10;
 num_clusters = 500;
 
-% Clusters
-% for i=1:groupsNum                            % For each group of Data:
-%     makeClusters(sourceDir, i, 500, outputDir);
-% end
-makeClusters(sourceDir, 1, 500, 'Not-In-Git\Output2\Clusters');
+fprintf("..Start kMeans..\n");
+for i=1:groupsNum
+    fprintf("Processing group %d...",i);
+    makeClusters(sourceDir, i, 500, outputDir);
+    fprintf(" Done!\n");
+end

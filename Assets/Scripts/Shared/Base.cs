@@ -35,7 +35,7 @@ public static class Base
 
     // Current scenario to be displayed.
     public static Scenario sc = null;
-    public static void SetCurrentScenario(Scenario s) { sc = s; Debug.Log("NEW Scenario has been set. Input: "+sc.inputDir); }
+    public static void SetCurrentScenario(Scenario s) { sc = s; Debug.Log("NEW Scenario has been set. Input: " + sc.inputDir); }
     public static string base_CurrentDir;
 
     public static Text progressInfoText;
@@ -168,22 +168,24 @@ public static class Base
 
             StreamReader sr = File.OpenText(fileName);
             string tuple = String.Empty;
-            int clusterNumber = 0;
+            int clusterNumber = -1;
             List<BvhProjection> listOfProjections = new List<BvhProjection>(); ;
             while ((tuple = sr.ReadLine()) != null)
             {
                 // A cluster is initiate with a 'Cx' tag at the top.
-                if (tuple.StartsWith("C" + clusterNumber))
+                if (tuple.StartsWith("C" + (clusterNumber+1)))
                 {
+                    // Enter into the new cluster
+                    clusterNumber = clusterNumber + 1;
                     // New cluster starts -> initialize listOfProjection which is the content of the cluster.
                     listOfProjections = new List<BvhProjection>();
                     Cluster cluster = new Cluster(listOfProjections);
                     listClusters.Add(cluster);
                     // The representative of the cluster is the first tuple, after the 'Cx' tag.
                     tuple = sr.ReadLine();
-                    cluster.setRepresentative(ParseIntoProjection(tuple));
-                    // Go to the next cluster
-                    clusterNumber++;
+                    BvhProjection p = ParseIntoProjection(tuple);
+                    if(p!=null)
+                        cluster.setRepresentative(p);
                 }
                 else
                 {
@@ -213,7 +215,9 @@ public static class Base
             string tuple = String.Empty;
             while ((tuple = sr.ReadLine()) != null)
             {
-                cluster.Add(ParseIntoProjection(tuple, Int32.Parse(fileName.Replace(dirName, ""))));
+                BvhProjection p = ParseIntoProjection(tuple, Int32.Parse(fileName.Replace(dirName, "")));
+                if(p!=null)
+                    cluster.Add(p);
             }
             sr.Close();
             listClusters.Add(cluster);
@@ -249,18 +253,28 @@ public static class Base
     private static BvhProjection ParseIntoProjection(string tuple, int clusterID = 0)
     {
         // tuple format: frame rotation joints[]
-        string[] array = tuple.Split(' ');
-        int rotationFileID = int.Parse(array[0]);
-        int frame = int.Parse(array[1]);
-        int angle = int.Parse(array[2]);
+        int rotationFileID = 0, frame = 0, angle = 0;
         List<Vector3> joints = new List<Vector3>();
-        // metadata in file are: fileID_matchWithRotationFiles, frame, degrees
-        metadataInFile = 3;
-        for (int i = metadataInFile; i < metadataInFile + numberOfJoints * 3; i += 3)
+        try
         {
-            joints.Add(new Vector3(float.Parse(array[i], CultureInfo.InvariantCulture),
+            string[] array = tuple.Split(' ');
+            rotationFileID = int.Parse(array[0]);
+            frame = int.Parse(array[1]);
+            angle = int.Parse(array[2]);
+            joints = new List<Vector3>();
+            // metadata in file are: fileID_matchWithRotationFiles, frame, degrees
+            metadataInFile = 3;
+            for (int i = metadataInFile; i < metadataInFile + numberOfJoints * 3; i += 3)
+            {
+                joints.Add(new Vector3(float.Parse(array[i], CultureInfo.InvariantCulture),
                 float.Parse(array[i + 1], CultureInfo.InvariantCulture),
                 float.Parse(array[i + 2], CultureInfo.InvariantCulture)));
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Cluster"+clusterID+" There is an error in this line: " + tuple);
+            return null;
         }
         return new BvhProjection(rotationFileID, frame, angle, joints.ToArray(), clusterID);
     }

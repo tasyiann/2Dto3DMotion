@@ -18,7 +18,7 @@ Clusters = getClusters_Projections(L,idx, num_clusters);
 Representatives = getRepresentatives_Projections(C,Y_full, idx, L, [dirTarget,'\',num2str(num_clusters)], num_clusters);
 
 % Write clusters in file
-WriteClustersInFile(Clusters, Representatives, strcat(dirname,'\clustersInfo'));
+WriteClustersInFile(Clusters, Representatives, strcat(dirname,'\clusters',num2str(index)));
 
 end
 

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 564c3c76921552e4b9f17283a55381c7, type: 3}
   m_Name: DataBaseParameters
   m_EditorClassIdentifier: 
-  databasePath: Databases\v2
+  databasePath: Databases\v1
   clusteringFolder: 5000-clusters
-  ScaleMethod: 1
+  ScaleMethod: 0
   projectionsPerFrame: 30
