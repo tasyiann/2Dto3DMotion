@@ -10,6 +10,7 @@ using System.IO;
 /* OPFigure */
 public class VM3DModelDebug : MonoBehaviour 
 {
+    public Cluster selectedCluster;
     public bool clustered;
     private float distanceFromCluster;
     public Transform model_clusters;
@@ -77,22 +78,39 @@ public class VM3DModelDebug : MonoBehaviour
         {
             projectionIndex ++;
             updateFigureToShow();
-            updateText();
-            m3d_clusters.moveSkeleton(FigureToShow_cluster);
-            m3d_representative.moveSkeleton(FigureToShow_representative);
         }
         if (Input.GetKeyDown("s"))
         {
             projectionIndex --;
             updateFigureToShow();
-            updateText();
-            m3d_clusters.moveSkeleton(FigureToShow_cluster);
-            m3d_representative.moveSkeleton(FigureToShow_representative);
+
+        }
+        if(Input.GetKeyDown("a"))
+        {
+            clusterIndex--;
+            projectionIndex = 0;
+            updateFigureToShow();
+        }
+        if (Input.GetKeyDown("d"))
+        {
+            clusterIndex++;
+            projectionIndex = 0;
+            updateFigureToShow();
         }
     }
 
     private void updateFigureToShow()
     {
+        if (clusterIndex >= clusters.Count)
+        {
+            clusterIndex = 0;
+        }
+        if (clusterIndex < 0)
+        {
+            clusterIndex = 0;
+        }
+
+
         if (projectionIndex >= clusters[clusterIndex].projections.Count)
         {
             if (clusters.Count-1 > clusterIndex)
@@ -123,6 +141,12 @@ public class VM3DModelDebug : MonoBehaviour
         if ( distance < 0.1f )
             Debug.Log("<<<<<<< found!>>>>>>>");
         distanceFromCluster = distance;
+
+
+        updateText();
+        m3d_clusters.moveSkeleton(FigureToShow_cluster);
+        m3d_representative.moveSkeleton(FigureToShow_representative);
+        selectedCluster = clusters[clusterIndex];
     }
 
     private string displayJoints(Vector3[] joints)

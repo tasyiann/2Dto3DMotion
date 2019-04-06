@@ -192,7 +192,7 @@ public class Scaling {
             if (j.y > yMax)
                 yMax = j.y;
         }
-        float height = Vector2.Distance(new Vector3(0,yMin,0), new Vector3(0,yMax,0));
+        float height = Mathf.Abs(yMin - yMax);
         return scalingHeightFixed/height;
     }
 

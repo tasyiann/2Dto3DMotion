@@ -1,0 +1,742 @@
+..Start kMeans..
+Processing group 1...
+	Estimate best k...
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Number of cluster table:
+   1.0e+03 *
+
+         0         0         0
+    0.0100    1.4395    1.4395
+    0.0200    0.3404    1.0991
+    0.0300    0.1361    0.2043
+    0.0400    0.0737    0.0624
+    0.0500    0.0456    0.0282
+    0.0600    0.0308    0.0147
+    0.0700    0.0220    0.0088
+    0.0800    0.0165    0.0055
+    0.0900    0.0124    0.0042
+    0.1000    0.0097    0.0027
+    0.1100    0.0073    0.0023
+    0.1200    0.0061    0.0013
+    0.1300    0.0050    0.0011
+    0.1400    0.0044    0.0006
+    0.1500    0.0037    0.0007
+    0.1600    0.0031    0.0005
+    0.1700    0.0027    0.0004
+    0.1800    0.0024    0.0003
+    0.1900    0.0020    0.0004
+    0.2000    0.0017    0.0003
+    0.2100    0.0015    0.0002
+    0.2200    0.0013    0.0002
+    0.2300    0.0012    0.0002
+    0.2400    0.0010    0.0001
+    0.2500    0.0009    0.0001
+    0.2600    0.0008    0.0001
+    0.2700    0.0008    0.0001
+    0.2800    0.0006    0.0001
+    0.2900    0.0006    0.0000
+    0.3000    0.0005    0.0001
+    0.3100    0.0005    0.0000
+    0.3200    0.0004    0.0001
+    0.3300    0.0004    0.0000
+    0.3400    0.0004    0.0000
+    0.3500    0.0003    0.0000
+    0.3600    0.0003    0.0000
+    0.3700    0.0003    0.0000
+    0.3800    0.0002    0.0000
+    0.3900    0.0002    0.0000
+    0.4000    0.0002    0.0000
+    0.4100    0.0002    0.0000
+    0.4200    0.0002    0.0000
+    0.4300    0.0002    0.0000
+    0.4400    0.0001    0.0000
+    0.4500    0.0001    0.0000
+    0.4600    0.0001    0.0000
+    0.4700    0.0001    0.0000
+    0.4800    0.0001    0.0000
+    0.4900    0.0001    0.0000
+    0.5000    0.0001    0.0000
+    0.5100    0.0001    0.0000
+    0.5200    0.0001    0.0000
+    0.5300    0.0001    0.0000
+    0.5400    0.0001    0.0000
+    0.5500    0.0001    0.0000
+    0.5600    0.0000    0.0000
+    0.5700    0.0000    0.0000
+    0.5800    0.0000    0.0000
+
+	k=580
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+ Done!
+Processing group 2...
+	Estimate best k...
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Number of cluster table:
+   1.0e+03 *
+
+         0         0         0
+    0.0100    1.1143    1.1143
+    0.0200    0.2596    0.8547
+    0.0300    0.1174    0.1422
+    0.0400    0.0644    0.0530
+    0.0500    0.0409    0.0235
+    0.0600    0.0272    0.0137
+    0.0700    0.0191    0.0081
+    0.0800    0.0134    0.0056
+    0.0900    0.0105    0.0029
+    0.1000    0.0080    0.0025
+    0.1100    0.0065    0.0014
+    0.1200    0.0056    0.0010
+    0.1300    0.0044    0.0012
+    0.1400    0.0037    0.0007
+    0.1500    0.0031    0.0006
+    0.1600    0.0026    0.0005
+    0.1700    0.0023    0.0003
+    0.1800    0.0019    0.0004
+    0.1900    0.0017    0.0002
+    0.2000    0.0015    0.0002
+    0.2100    0.0013    0.0002
+    0.2200    0.0012    0.0001
+    0.2300    0.0010    0.0002
+    0.2400    0.0010    0.0001
+    0.2500    0.0008    0.0001
+    0.2600    0.0007    0.0001
+    0.2700    0.0007    0.0001
+    0.2800    0.0006    0.0001
+    0.2900    0.0006    0.0000
+    0.3000    0.0005    0.0001
+    0.3100    0.0004    0.0000
+    0.3200    0.0004    0.0000
+    0.3300    0.0004    0.0000
+    0.3400    0.0003    0.0000
+    0.3500    0.0003    0.0000
+    0.3600    0.0003    0.0000
+    0.3700    0.0003    0.0000
+    0.3800    0.0002    0.0000
+    0.3900    0.0002    0.0000
+    0.4000    0.0002    0.0000
+    0.4100    0.0002    0.0000
+    0.4200    0.0002    0.0000
+    0.4300    0.0002    0.0000
+    0.4400    0.0001    0.0000
+    0.4500    0.0001    0.0000
+    0.4600    0.0001    0.0000
+    0.4700    0.0001    0.0000
+    0.4800    0.0001    0.0000
+    0.4900    0.0001    0.0000
+    0.5000    0.0001    0.0000
+    0.5100    0.0001    0.0000
+    0.5200    0.0001    0.0000
+    0.5300    0.0001    0.0000
+    0.5400    0.0001    0.0000
+    0.5500    0.0001    0.0000
+    0.5600    0.0000    0.0000
+    0.5700    0.0000    0.0000
+    0.5800    0.0000    0.0000
+
+	k=580
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+ Done!
+Processing group 3...
+	Estimate best k...
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Number of cluster table:
+   1.0e+03 *
+
+         0         0         0
+    0.0100    1.6014    1.6014
+    0.0200    0.3481    1.2533
+    0.0300    0.1591    0.1890
+    0.0400    0.0898    0.0693
+    0.0500    0.0521    0.0377
+    0.0600    0.0362    0.0160
+    0.0700    0.0273    0.0089
+    0.0800    0.0200    0.0073
+    0.0900    0.0153    0.0047
+    0.1000    0.0122    0.0031
+    0.1100    0.0099    0.0023
+    0.1200    0.0079    0.0020
+    0.1300    0.0068    0.0012
+    0.1400    0.0056    0.0012
+    0.1500    0.0048    0.0008
+    0.1600    0.0039    0.0008
+    0.1700    0.0033    0.0006
+    0.1800    0.0030    0.0004
+    0.1900    0.0027    0.0003
+    0.2000    0.0024    0.0003
+    0.2100    0.0020    0.0004
+    0.2200    0.0018    0.0002
+    0.2300    0.0016    0.0002
+    0.2400    0.0014    0.0002
+    0.2500    0.0013    0.0002
+    0.2600    0.0011    0.0001
+    0.2700    0.0010    0.0001
+    0.2800    0.0009    0.0001
+    0.2900    0.0008    0.0001
+    0.3000    0.0007    0.0001
+    0.3100    0.0007    0.0000
+    0.3200    0.0006    0.0001
+    0.3300    0.0005    0.0001
+    0.3400    0.0005    0.0000
+    0.3500    0.0005    0.0001
+    0.3600    0.0005    0.0000
+    0.3700    0.0004    0.0001
+    0.3800    0.0003    0.0001
+    0.3900    0.0003    0.0000
+    0.4000    0.0003    0.0000
+    0.4100    0.0003    0.0000
+    0.4200    0.0003    0.0000
+    0.4300    0.0002    0.0000
+    0.4400    0.0002    0.0000
+    0.4500    0.0002    0.0000
+    0.4600    0.0002    0.0000
+    0.4700    0.0002    0.0000
+    0.4800    0.0002    0.0000
+    0.4900    0.0001    0.0000
+    0.5000    0.0001    0.0000
+    0.5100    0.0001    0.0000
+    0.5200    0.0001    0.0000
+    0.5300    0.0001    0.0000
+    0.5400    0.0001    0.0000
+    0.5500    0.0001    0.0000
+    0.5600    0.0001    0.0000
+    0.5700    0.0001    0.0000
+    0.5800    0.0001    0.0000
+    0.5900    0.0001    0.0000
+    0.6000    0.0001    0.0000
+
+	k=600
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+ Done!
+Processing group 4...
+	Estimate best k...
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+Number of cluster table:
+         0         0         0
+   10.0000  980.4407  980.4407
+   20.0000  237.6880  742.7527
+   30.0000  103.4141  134.2739
+   40.0000   58.2358   45.1783
+   50.0000   37.3638   20.8720
+   60.0000   26.2508   11.1130
+   70.0000   17.7685    8.4823
+   80.0000   13.5281    4.2404
+   90.0000   10.7096    2.8185
+  100.0000    8.0468    2.6629
+  110.0000    6.6591    1.3877
+  120.0000    5.2804    1.3787
+  130.0000    4.5081    0.7722
+  140.0000    3.6820    0.8262
+  150.0000    3.0784    0.6036
+  160.0000    2.6038    0.4745
+  170.0000    2.1158    0.4881
+  180.0000    1.8842    0.2316
+  190.0000    1.6465    0.2377
+  200.0000    1.4664    0.1802
+  210.0000    1.2440    0.2224
+  220.0000    1.1086    0.1353
+  230.0000    0.9831    0.1255
+  240.0000    0.8836    0.0996
+  250.0000    0.7979    0.0857
+  260.0000    0.7351    0.0628
+  270.0000    0.6462    0.0889
+  280.0000    0.5791    0.0671
+  290.0000    0.5315    0.0476
+  300.0000    0.4795    0.0519
+  310.0000    0.4385    0.0410
+  320.0000    0.4001    0.0384
+  330.0000    0.3639    0.0362
+  340.0000    0.3260    0.0380
+  350.0000    0.3038    0.0222
+  360.0000    0.2704    0.0334
+  370.0000    0.2474    0.0230
+  380.0000    0.2284    0.0190
+  390.0000    0.2088    0.0196
+  400.0000    0.1900    0.0188
+  410.0000    0.1749    0.0151
+  420.0000    0.1634    0.0116
+  430.0000    0.1456    0.0178
+  440.0000    0.1363    0.0093
+  450.0000    0.1301    0.0062
+  460.0000    0.1123    0.0177
+  470.0000    0.1038    0.0086
+  480.0000    0.0949    0.0089
+  490.0000    0.0871    0.0078
+  500.0000    0.0811    0.0060
+  510.0000    0.0717    0.0094
+  520.0000    0.0623    0.0094
+  530.0000    0.0622    0.0001
+  540.0000    0.0587    0.0035
+  550.0000    0.0508    0.0080
+  560.0000    0.0452    0.0056
+  570.0000    0.0422    0.0030
+
+	k=570
+Compute the distance from every point to each cluster centroid and the initial assignment of points to clusters
+Calculate cluster-wise sums of distances
+ Done!

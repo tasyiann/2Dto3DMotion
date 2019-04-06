@@ -14,7 +14,6 @@ public static class Base
     // Variables
     private static bool alreadyInitialized = false;
     public static string Path;
-    public static string Clustering;
     public static int numClustersToSearch;
     public static int projectionsPerFrame;
     public static EnumScaleMethod ScaleMethod;
@@ -53,7 +52,6 @@ public static class Base
     {
         alreadyInitialized = false;
         Path = DataBaseParametersReader.Instance.Parameters.databasePath;
-        Clustering = DataBaseParametersReader.Instance.Parameters.clusteringFolder;
         projectionsPerFrame = DataBaseParametersReader.Instance.Parameters.projectionsPerFrame;
         ScaleMethod = DataBaseParametersReader.Instance.Parameters.ScaleMethod;
     }
@@ -169,23 +167,30 @@ public static class Base
             StreamReader sr = File.OpenText(fileName);
             string tuple = String.Empty;
             int clusterNumber = -1;
-            List<BvhProjection> listOfProjections = new List<BvhProjection>(); ;
+            List<BvhProjection> listOfProjections = new List<BvhProjection>();
+            Cluster cluster = null;
             while ((tuple = sr.ReadLine()) != null)
             {
                 // A cluster is initiate with a 'Cx' tag at the top.
                 if (tuple.StartsWith("C" + (clusterNumber+1)))
                 {
+                    // Finish and Sort previous cluster.
+                    if(cluster!=null)
+                        cluster.SortCluster();
+
                     // Enter into the new cluster
                     clusterNumber = clusterNumber + 1;
                     // New cluster starts -> initialize listOfProjection which is the content of the cluster.
                     listOfProjections = new List<BvhProjection>();
-                    Cluster cluster = new Cluster(listOfProjections);
+                    cluster = new Cluster(listOfProjections);
                     listClusters.Add(cluster);
                     // The representative of the cluster is the first tuple, after the 'Cx' tag.
                     tuple = sr.ReadLine();
                     BvhProjection p = ParseIntoProjection(tuple);
-                    if(p!=null)
+                    if (p != null)
                         cluster.setRepresentative(p);
+                    else
+                        Debug.LogError("Representative of cluster "+clusterNumber+ " is undefined. Can not create cluster without its representative.");
                 }
                 else
                 {
@@ -206,6 +211,11 @@ public static class Base
     {
 
         List<List<BvhProjection>> listClusters = new List<List<BvhProjection>>();
+        if (!Directory.Exists(dirName))
+        {
+            Debug.LogWarning("Couldn't find Directory " + dirName);
+            return null;
+        }
         string[] fileEntries = sortFilesNumerically(Directory.GetFiles(dirName), dirName);
 
         foreach (string fileName in fileEntries)
@@ -229,7 +239,11 @@ public static class Base
     public static List<List<Rotations>> InitializeRotations(string dirname)
     {
         List<List<Rotations>> listRotationsFiles = new List<List<Rotations>>();
-
+        if( !Directory.Exists(dirname) )
+        {
+            Debug.LogWarning("Couldn't find Directory " + dirname);
+            return null;
+        }
         string[] fileEntries = sortFilesNumerically(Directory.GetFiles(dirname), dirname);
         foreach (string fileName in fileEntries)
         {
@@ -312,6 +326,8 @@ public static class Base
     public static int base_getNumberOfProjections()
     {
         int counter = 0;
+        if (base_not_clustered == null)
+            return 0;
         foreach (List<BvhProjection> p in base_not_clustered)
         {
             counter += p.Count;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Display_ClustersSample : MonoBehaviour
 {
-    private string clustersPath = @"Databases\NEW\Clusters\5000-clusters\";
+    public VM3DModelDebug script;
     public int currentCluster;
     public float startingRadius;
     public float radiusOffset;
@@ -24,8 +24,6 @@ public class Display_ClustersSample : MonoBehaviour
     public Vector3 representativePosition;
     public Vector3 projectionsPosition;
 
-
-    private List<Cluster> clusters;
     private GLDraw gL;
 
 
@@ -35,7 +33,6 @@ public class Display_ClustersSample : MonoBehaviour
 
     void Start()
     {
-        clusters = Base.InitializeClusters(clustersPath);
         gL = new GLDraw(mat);
     }
 
@@ -43,9 +40,8 @@ public class Display_ClustersSample : MonoBehaviour
     private float FiguresPerCircle;
     private void OnPostRender()
     {
-        if (clusters == null)
+        if (cluster == null || representative == null)
         {
-            Debug.LogError("Clusters is null!");
             return;
         }
 
@@ -74,9 +70,9 @@ public class Display_ClustersSample : MonoBehaviour
 
     void Update()
     {
-        cluster = clusters[currentCluster];
-        representative = cluster.Representative;
-        
+        cluster = script.selectedCluster;
+        if(cluster!=null)
+            representative = cluster.Representative;
     }
 
 

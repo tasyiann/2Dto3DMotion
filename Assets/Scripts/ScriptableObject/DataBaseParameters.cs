@@ -11,10 +11,6 @@ public class DataBaseParameters : ScriptableObject
     /// </summary>
     public string databasePath = @"Databases\NEW";
     /// <summary>
-    /// Name of cluster's folder. Folders should follow specific rules. 
-    /// </summary>
-    public string clusteringFolder = "5000-clusters";
-    /// <summary>
     /// The scaling method being used. Default is SCALE_HEIGHT.
     /// </summary>
     public EnumScaleMethod ScaleMethod = EnumScaleMethod.SCALE_HEIGHT;

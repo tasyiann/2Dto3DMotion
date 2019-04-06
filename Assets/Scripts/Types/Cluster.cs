@@ -14,10 +14,13 @@ public class Cluster
     public void setRepresentative(BvhProjection r)
     {
         representative = r;
+    }
+
+    public void SortCluster()
+    {
         setDistancesFromReperesentative();
         sortProjections();
     }
-
 
     public int getNumberOfProjections { get { return projections.Count; } }
 

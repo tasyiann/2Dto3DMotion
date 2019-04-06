@@ -29,7 +29,7 @@ public class Sgolay
         }
         else
         {
-            Debug.LogError("Matlab Socket is not set up.");
+            Debug.LogWarning("Matlab Socket is not set up.");
         }
     }
 

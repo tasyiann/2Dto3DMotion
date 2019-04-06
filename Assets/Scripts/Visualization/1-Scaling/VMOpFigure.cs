@@ -120,6 +120,9 @@ public class VMOpFigure : MonoBehaviour
 
         gL.drawHorizontalLine(color, yMax, length);
         gL.drawHorizontalLine(color, yMin, length);
+
+        //if (Mathf.Abs(yMax - yMin) != Scaling.scalingHeightFixed)
+        //    Debug.LogError("Scale Height is wrong. Height Should Be  "+ Scaling.scalingHeightFixed +" but it is "+ Mathf.Abs(yMax - yMin));
     }
 
 
@@ -163,9 +166,9 @@ public class VMOpFigure : MonoBehaviour
     private void updateScalingFactors()
     {
         Raw_text.text = "Raw Figure scaled by " + JSONscale +" just to fit in frame.";
-        Scaled_text.text = "with interpolation : Figure actually scaled by " + scalingFactor_ACTUAL_USED + " using "+ Base.ScaleMethod.ToString();
-        Limbs_text.text = "w/out interpolation using LIMBS: " + scalingFactor_LIMBS + " using limb: "+usedLIMB.ToString();
-        Height_text.text = "w/out interpolation using HEIGHT: "+ scalingFactor_HEIGHT+ " with fixed height = "+Scaling.scalingHeightFixed;
+        Scaled_text.text = "Figure actually scaled by " + scalingFactor_ACTUAL_USED + " using "+ Base.ScaleMethod.ToString();
+        Limbs_text.text = "Using Bones Length: " + scalingFactor_LIMBS + " using limb: "+usedLIMB.ToString();
+        Height_text.text = "Using Height: "+ scalingFactor_HEIGHT+ " with fixed height = "+Scaling.scalingHeightFixed;
     }
 
     /**
