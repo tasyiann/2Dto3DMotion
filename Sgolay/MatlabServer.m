@@ -7,7 +7,7 @@ clear rawData
 flushinput(tcpipServer);
 fopen(tcpipServer);
 
-fprintf(1,"Waiting for client's message...");
+fprintf(1,"Waiting for client's message...');
 rawData = fread(tcpipServer,100,'char');        % get raw data.
 for i=1:length(rawData) 
    s(i)= char(rawData(i));                      % convert data into char.

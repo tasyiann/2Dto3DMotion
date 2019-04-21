@@ -12,6 +12,8 @@ public class Neighbour {
     public Quaternion hipRotation;
     public List<BvhProjection> windowIn3Dpoints;    // The window used in the Algorithm.
 
+    
+
     public Neighbour(BvhProjection projection, float distance2D)
     {
         this.projection = projection;

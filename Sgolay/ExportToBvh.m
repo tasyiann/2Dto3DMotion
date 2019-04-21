@@ -28,7 +28,7 @@ while ischar(tline)
     end
     
     % Start changing the rot in file, when pass the Frame Time.
-    if isMotionSection==0 && startsWith(Header{i},"Frame Time")
+    if isMotionSection==0 && strncmpi(Header{i},'Frame Time',10)
         isMotionSection = 1;
     end
     

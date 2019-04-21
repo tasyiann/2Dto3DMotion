@@ -189,7 +189,7 @@ public class ProjectionManager : MonoBehaviour {
 
 
 
-    public static float getScaleFactor(BVH bvh, int[] order)
+    public static float getScaleFactorBVH(BVH bvh, int[] order)
     {
         Vector3[] joints = new Vector3[Enum.GetValues(typeof(EnumJoint)).Length];
         /* Set the global scale factor from frame -1, which is the T-Pose of the bvh. */
@@ -206,11 +206,7 @@ public class ProjectionManager : MonoBehaviour {
         // Determine Scaling Method (No need to use previousFactor parameter because
         // scaling factor is applied once in every animation).
         float scalingFactor; EnumBONES limbUSed;
-        if (scalingMethod == EnumScaleMethod.SCALE_LIMBS)
-            Scaling.getGlobalScaleFactor_USING_LIMBS(newProjection.joints, out limbUSed, out scalingFactor);
-        else
-            scalingFactor = Scaling.getGlobalScaleFactor_USING_HEIGHT(newProjection.joints);
-
+        Scaling.getGlobalScaleFactor_USING_LIMBS(newProjection.joints, out limbUSed, out scalingFactor);
         return scalingFactor;
     }
 
@@ -226,9 +222,8 @@ public class ProjectionManager : MonoBehaviour {
 
         // Scale bvh.
         if (normalized) { 
-            float sf = getScaleFactor(bvh, order);
+            float sf = getScaleFactorBVH(bvh, order);
             bvh.scale(sf);
-
         }
 
         foreach (var val in Enum.GetValues(typeof(EnumJoint)))

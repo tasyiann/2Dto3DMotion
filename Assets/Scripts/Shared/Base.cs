@@ -6,10 +6,14 @@ using System;
 using System.Globalization;
 using UnityEngine.UI;
 using System.Threading;
+using System.Text;
 
 /* Shared components between classes. */
 public static class Base
 {
+    #region vars
+    // State
+    public static bool isBaseInitialized = false;
 
     // Variables
     private static bool alreadyInitialized = false;
@@ -41,6 +45,7 @@ public static class Base
     public static Thread thread_A;
     public static Thread thread_B;
 
+    #endregion vars
 
     public static void initializeMatlabCommunication()
     {
@@ -66,7 +71,6 @@ public static class Base
         base_orderOfComparableRotations = AlgorithmsParametersReader.Instance.Parameters.orderOfComparableRotations;
     }
 
-
     public static void Threads_StartInit()
     {
         // Initialize system parameters.
@@ -84,12 +88,38 @@ public static class Base
         alreadyInitialized = true;
     }
 
-
     public static bool areThreadsDone()
     {
         return !thread_A.IsAlive && !thread_B.IsAlive;
     }
 
+    public static void writeAnimation3DPointsInCSVFile()
+    {
+        StringBuilder s = new StringBuilder();
+        int counter = 0;
+        int max = 5000;
+        s.AppendFormat("University of Cyprus 3D Points: Sample from CMU DataBase");
+        foreach (List<BvhProjection> file in base_not_clustered)
+        {
+            if (counter > max)
+                break;
+            for(int i=0; i<file.Count; i+= projectionsPerFrame)
+            {
+                s.AppendFormat("{0}", counter);
+                Vector3[] joints = file[i].joints;
+                foreach(Vector3 joint in joints)
+                {
+                    s.AppendFormat(", {0}, {1}, {2}", joint.x, joint.y, joint.z);
+                }
+                s.AppendFormat("\n");
+                counter++;
+                if (counter > max)
+                    break;
+            }
+        }
+        File.WriteAllText("CMU3DPoints.sample", s.ToString());
+        Debug.Log("File CMU Sample 3D Points has been exported!");
+    }
 
     public static int getNumberOfRotations()
     {
@@ -100,7 +130,6 @@ public static class Base
         }
         return counter;
     }
-
 
     private static void execute_thread_A()
     {
@@ -116,19 +145,14 @@ public static class Base
         base_clusters = InitializeClusters(clustDir);
     }
 
-
-
-
-
-
     private static string[] sortFilesNumerically(string[] fileEntries, string dirName)
     {
         List<string> list = new List<string>();
 
         // Keep only the filenames (number).
         foreach (string s in fileEntries)
-            list.Add(s.Replace(dirName, ""));
-
+            list.Add(s.Replace(dirName, "").Replace("\\","").Replace("/",""));
+     
         try
         {
             list.Sort((s, t) => System.Collections.Comparer.Default.Compare(Int32.Parse(s), Int32.Parse(t)));
@@ -154,8 +178,6 @@ public static class Base
         */
         return list2.ToArray();
     }
-
-
 
     public static List<Cluster> InitializeClusters(string clustersDirPath)
     {
@@ -202,10 +224,6 @@ public static class Base
         Debug.Log(">Clustered Projections have been read.");
         return listClusters;
     }
-
-
-
-
 
     public static List<List<BvhProjection>> InitializeNotClustered(string dirName)
     {
@@ -258,11 +276,9 @@ public static class Base
             sr.Close();
         }
         Debug.Log(">Rotations have been read.");
+        base_rotationFiles = listRotationsFiles;
         return listRotationsFiles;
     }
-
-
-
 
     private static BvhProjection ParseIntoProjection(string tuple, int clusterID = 0)
     {
@@ -293,7 +309,6 @@ public static class Base
         return new BvhProjection(rotationFileID, frame, angle, joints.ToArray(), clusterID);
     }
 
-
     public static Rotations StringToRotations(string tuple)
     {
         List<Vector3> rotations = new List<Vector3>();
@@ -309,7 +324,7 @@ public static class Base
                 rotations.Add(new Vector3(
            float.Parse(array[i + 1], CultureInfo.InvariantCulture),     // i+1 is x
            float.Parse(array[i + 2], CultureInfo.InvariantCulture),     // i+2 is y
-           float.Parse(array[i], CultureInfo.InvariantCulture)));     // i   is z
+           float.Parse(array[i], CultureInfo.InvariantCulture)));       // i   is z
 
             }
             catch (Exception e)

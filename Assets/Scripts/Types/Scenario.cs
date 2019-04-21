@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Xml.Linq;
+using System.Text;
 
 [System.Serializable()]
 public class Scenario  {
@@ -16,9 +17,12 @@ public class Scenario  {
     public List<OPFrame> frames;
     public Log log;
 
-    public Scenario(string inputdir)
+    public Scenario(string inputdir, List<OPFrame> knownFrames = null)
     {
-        frames = new List<OPFrame>();
+        if (knownFrames == null)
+            frames = new List<OPFrame>();
+        else
+            frames = knownFrames;
         inputDir = inputdir;
         k = Base.k;
         m = Base.m;
@@ -27,10 +31,6 @@ public class Scenario  {
         log = new Log();
     }
 
-    public void SetFrames(List<OPFrame> framesFromOpenPose)
-    {
-        frames = framesFromOpenPose;
-    }
 
     public void SetInputDir(string dirName)
     {
@@ -51,16 +51,50 @@ public class Scenario  {
         var myUniqueFileName = string.Format(@"{0}", DateTime.Now.Ticks);
 
         // Save the log file.
-        SaveLog(this, dirname, myUniqueFileName+".xml");
-        Debug.Log("Scenario has been saved.");
+        //SaveLog(this, dirname, myUniqueFileName+".xml");
+        //OfflineDataProcessing.WriteToBinaryFile(dirname + @"\Scenario"+myUniqueFileName+".sc",this);
+        //OfflineDataProcessing.WriteToBinaryFile(dirname + @"\Estimation" + myUniqueFileName, OfflineDataProcessing.getEstimationArray(0));
+        //Debug.Log("Scenario has been saved.");
 
         // Create and Save bvh file.
         BvhExport export = new BvhExport("TemplateBVH\\"+"template.bvh", OfflineDataProcessing.getEstimationArray(0));
-        export.CreateBvhFile(dirname +"\\" + myUniqueFileName+".bvh");
+        export.CreateBvhFile(dirname +"\\" + myUniqueFileName);
+
+        // Save ddd.mddd file
+        WriteDDDMDDDfile(dirname + "\\UCY_3D.mddd");
+
         Debug.Log("Bvh has been saved");
     }
 
-
+    private static void WriteDDDMDDDfile(string fileName)
+    {
+        Neighbour[] estimation = OfflineDataProcessing.getEstimationArray(0);
+        StringBuilder s = new StringBuilder();
+        int frameCounter = 0;
+        s.AppendLine("University of Cyprus 3D Estimation : Without Filtering");
+       
+        for(int k=0; k<estimation.Length; k++)
+        {
+            Neighbour n = estimation[k];
+            s.AppendFormat("{0}", frameCounter);
+            /*
+            while((n == null || n.projection == null || n.projection.joints.Length == 0) && k<estimation.Length )
+            {
+                n = estimation[++k];
+            }
+            if (k >= estimation.Length)
+                break;
+            */
+            for (int i = 0; i < n.projection.joints.Length; i++)
+            {
+                Vector3 joint = n.projection.joints[i];
+                s.AppendFormat(", {0}, {1}, {2}", joint.x, joint.y, joint.z);
+            }
+            s.Append("\n");
+            frameCounter++;
+        }
+        File.WriteAllText(fileName, s.ToString());
+    }
 
 
     public void SaveLog(Scenario sc, string dir, string filename)

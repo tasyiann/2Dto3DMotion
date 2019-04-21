@@ -25,15 +25,15 @@ order = 3;                  % Polynomial order : example 2nd, 3rd, 4th
 framelen = 11;              % The length of the window frame.
 %% Using Joint 3D Position
 for i = 0 : (numberOfJoints-1)
-    filename = strcat(dirname,"\",num2str(i),"_joint.3D");
+    filename = strcat(dirname,'\',num2str(i),"_joint.3D");
     fprintf(1, 'Applying Sgolay to %s\n',filename);
     x = load(filename);
     sgf = ApplySgolay('Joint',x,order,framelen,visual,i);
     fprintf(1,'Number of frames: %d, %d\n',size(x,1),size(sgf,1));
     % Write in file
-    outputDirName = strcat(dirname,"\SgolayApplied");
+    outputDirName = strcat(dirname,'\SgolayApplied");
     mkdir(outputDirName);
-    outputFilePath = strcat(outputDirName,"\",num2str(i),"_joint_SGolayed.3D");
+    outputFilePath = strcat(outputDirName,'\',num2str(i),"_joint_SGolayed.3D");
     dlmwrite(outputFilePath,sgf,'delimiter',' ');
 end
 

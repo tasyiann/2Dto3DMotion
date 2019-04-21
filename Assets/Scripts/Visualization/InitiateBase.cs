@@ -18,6 +18,8 @@ public class InitiateBase : MonoBehaviour {
         if (Base.areThreadsDone())
         {
             Debug.Log("Initialization is done!");
+            // Remove this later
+            // Base.writeAnimation3DPointsInCSVFile();
             UnityEngine.SceneManagement.SceneManager.LoadScene(0);
         }
     }

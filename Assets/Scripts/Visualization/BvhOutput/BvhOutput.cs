@@ -4,34 +4,60 @@ using UnityEngine;
 using System.IO;
 using Winterdust;
 
-public class BvhOutput : MonoBehaviour {
+public class BvhOutput : MonoBehaviour
+{
 
     public Transform t_camera;
-    public Transform model;
     private Vector3 position;
-    BVH bvh = null;
+    BVH bvh;
     GameObject skeleton = null;
-    private int currentFrame = -1;
+
+    private int currentFrame;
+    public int CurrentFrame
+    {
+        get => currentFrame;
+        set
+        {
+            currentFrame = value;
+            if (skeleton != null && CurrentFrame < numOfFrames)
+            {
+                bvh.moveSkeleton(skeleton, CurrentFrame);
+            }
+        }
+    }
+
+    public BVH Bvh
+    {
+        get => bvh;
+
+        set
+        {
+            bvh = value;
+            position = t_camera.position;                                                            // Set the position of bvh.
+            skeleton.transform.position = new Vector3(t_camera.position.x, t_camera.position.y, t_camera.position.z + 35f);     // Translate the skeleton, so it is visible from camera.
+            Debug.Log("Bvh length:" + bvh.frameCount);
+        }
+    }
+
     int numOfFrames = 0;
-    public ControlFrames_viaVideo estimationScript;
+    //public ControlFrames_viaVideo estimationScript;
 
 
-    void Start () {
+    void Start()
+    {
 
         initialiseBVH(Base.base_CurrentDir);        // Initialise BVH instance.
-        position = t_camera.position;               // Set the position of bvh.
-        skeleton.transform.position = new Vector3(position.x, position.y, position.z+35f);     // Translate the skeleton, so it is visible from camera.
-        Debug.Log("Bvh length:" + bvh.frameCount);
-	}
+
+    }
 
     private void Update()
     {
-        currentFrame = estimationScript.currentFrame + 1; // Plus one, because T-Pose is at position 0.
+        //CurrentFrame = estimationScript.currentFrame + 1; // Plus one, because T-Pose is at position 0.
 
         // Set frame to skeleton
-        if (skeleton != null && currentFrame<numOfFrames)
+        if (skeleton != null && CurrentFrame < numOfFrames)
         {
-            bvh.moveSkeleton(skeleton, currentFrame);
+            bvh.moveSkeleton(skeleton, CurrentFrame);
             // Debug root rotation
             //Quaternion qrot = bvh.allBones[0].localFrameRotations[currentFrame];
             /*
@@ -43,7 +69,7 @@ public class BvhOutput : MonoBehaviour {
             Quaternion qrotFinal = qY * qX * qZ; // Multiply them in the rotation order, in case of ZXY.
             */
             //model.rotation = qrot;
-        } 
+        }
     }
 
     public void initialiseBVH(string dir)
@@ -54,9 +80,9 @@ public class BvhOutput : MonoBehaviour {
             Debug.Log("Invalid directory! Can not find bvh file.");
             return;
         }
-        Debug.Log("Directory: "+dir);
+        Debug.Log("Directory: " + dir);
         string[] fileEntries = Directory.GetFiles(dir);
-        string bvhfilename=null;
+        string bvhfilename = null;
         foreach (string fileName in fileEntries)
         {
             Debug.Log("File entry: " + fileName);
@@ -77,7 +103,7 @@ public class BvhOutput : MonoBehaviour {
             bvh = new BVH(bvhfilename);
             numOfFrames = bvh.frameCount;
             skeleton = bvh.makeDebugSkeleton(false, "ffffff", 0.5f);
-            
+
         }
     }
 }

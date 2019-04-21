@@ -6,8 +6,9 @@ using Winterdust;
 public class V_ShowSampleSequenceOfMotion : MonoBehaviour
 {
     public bool play = false;
+    public bool showAllFrames = true;
     public string fileName;
-    public int figuresNum = 20;
+    public int figuresNum = 1;
     public int currentFrame;
     public Vector3 offsetBetween = new Vector3(10f,0f,0f);
     public int frameRate = 17;
@@ -85,7 +86,7 @@ public class V_ShowSampleSequenceOfMotion : MonoBehaviour
 
     void Start()
     {
-
+        initiate();
     }
 
     private void initiate()
@@ -108,7 +109,8 @@ public class V_ShowSampleSequenceOfMotion : MonoBehaviour
             {
                 GameObject go = bvh.makeDebugSkeleton(false, "FFFFFF", jointSize);
                 figures.Add(new BvhFigure(bvh, go,color,jointSize));
-                figuresNum = bvh.frameCount-1;
+                if(showAllFrames)
+                    figuresNum = bvh.frameCount-1;
             }
         }
     }
@@ -126,17 +128,18 @@ public class V_ShowSampleSequenceOfMotion : MonoBehaviour
     private void Update()
     {
 
-        if (!play)
-            return;
+       // if (!play)
+       //     return;
+       //
+       // if (!initiated)
+       //     initiate();
 
-        if (!initiated)
-            initiate();
-
-        offsetFrame = 0;
-        updateFrames();
-        repositionFigures();
-        updateFigures();
-        updateColorSize();
+        
+        //offsetFrame = 0;
+        //updateFrames();
+        //repositionFigures();
+        //updateFigures();
+        //updateColorSize();
     }
 
     private void updateFigures()

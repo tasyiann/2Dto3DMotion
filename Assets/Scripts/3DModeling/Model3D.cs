@@ -28,38 +28,26 @@ public static class TransformDeepChildExtension
 
 public class Model3D
 {
- 
-  
-
-
-
-
     Transform model;
-    List<Transform> joints;
-
+    public List<Transform> JointsGameObjects;
     List<Vector3> offsets;
     GameObject hips;
     private float angle;
     private float timeCount = 0.0f;
 
-    //int[,] pairs = new int[14, 2] { { 0, 0 }, { 0, 0 }, { 2, 3 }, { 3, 4 }, { 0, 0 },
-    //    { 5, 6 }, { 6, 7 }, { 0, 0 }, { 8, 9 }, { 9, 10 }, { 1, 2 }, { 11, 12 }, { 12, 13 }, {1,2} };
-
-
-    // int [,] bvhToModel = new int[] { }
 
     public Model3D(Transform model3d, float angle=0)
     {
         model = model3d;
-        joints = setJoints(model);
+        JointsGameObjects = setJoints(model);
         hips = GameObject.Find(model.name+"/Hips");
         this.angle = angle;
         offsets = setOffsets();
-        //Debug.Log(debugOffsets());
     }
-
+ 
     public static List<Transform> setJoints(Transform model, string name = "")
     {
+        Debug.Log("Getting transforms from model...");
         List<Transform> list = new List<Transform>();
         foreach (var val in Enum.GetValues(typeof(EnumJoint)))
         {
@@ -88,6 +76,13 @@ public class Model3D
             list.Add(result);
             //Debug.Log("GO: " + val.ToString());
         }
+        // Print out the list
+        string s = "";
+        foreach(Transform g in list)
+        {
+            s += g.name + " ";
+        }
+        Debug.Log(s);
         return list;
     }
 
@@ -99,7 +94,7 @@ public class Model3D
     public List<Vector3> setOffsets()
     {
         List<Vector3> list = new List<Vector3>();
-        foreach (Transform joint in joints)
+        foreach (Transform joint in JointsGameObjects)
         {
             list.Add(joint.transform.localPosition); 
         }
@@ -146,36 +141,48 @@ public class Model3D
      */
     public void moveSkeleton(Vector3[] newJointsPositions)
     {
-        Quaternion[] rotations = calculateRawRotations(newJointsPositions);  // Calculate Raw Rotations.
-        hips.transform.rotation = getHips(newJointsPositions);               // Set Hips Rotation.
+        Quaternion[] rotations = calculateRawRotations(newJointsPositions, hips.transform);  // Calculate Raw Rotations.
         for(int i=0; i<rotations.Length; i++)                                // Set Rotations in joints.
         {
             if (rotations[i] == Quaternion.identity)                         // Skip, if rotation is identity.
                 continue;
-            joints[i].rotation = rotations[i];
+            JointsGameObjects[i].rotation = rotations[i];
         }
     }
 
-  
+
+    public void moveSkeletonNEW(Vector3[] newJointsPositions)
+    {
+        Quaternion[] rotations = calculateRawRotationsWithTriangles(newJointsPositions, hips.transform);  // Calculate Raw Rotations.
+        for (int i = 0; i < rotations.Length; i++)                                // Set Rotations in joints.
+        {
+            if (rotations[i] == Quaternion.identity)                         // Skip, if rotation is identity.
+                continue;
+            JointsGameObjects[i].rotation = rotations[i];
+        }
+    }
+
+
     public void moveSkeleton_OneEuroFilter(Vector3[] newJointsPositions, OneEuroFilter<Quaternion>[] rotationFiltersJoints, OneEuroFilter<Quaternion> rotationFilterHips)
     {
-        Quaternion[] rotations = calculateRawRotations(newJointsPositions);                             // Calculate Raw Rotations.
-        hips.transform.rotation = rotationFilterHips.Filter(getHips(newJointsPositions));               // Set Hips Rotation.
+        Quaternion[] rotations = calculateRawRotations(newJointsPositions, hips.transform);         // Calculate Raw Rotations.
+        hips.transform.rotation = rotationFilterHips.Filter(hips.transform.rotation);               // Set Hips Rotation.
+
         for (int i = 0; i < rotations.Length; i++)                           // Set Rotations in joints.
         {
             if (rotations[i] == Quaternion.identity)                         // Skip, if rotation is identity.
                 continue;
-            joints[i].rotation = rotationFiltersJoints[i].Filter(rotations[i]);
+            JointsGameObjects[i].rotation = rotationFiltersJoints[i].Filter(rotations[i]);
         }
     }
 
 
     public void moveSkeleton_IK_POSITIONS(Vector3[] newJointsPositions, OneEuroFilter<Vector3>[] positionsFiltersJoints, OneEuroFilter<Quaternion> rotationFilterHips)
     {
-        hips.transform.rotation = rotationFilterHips.Filter(getHips(newJointsPositions));    // Set Hips Rotation.
-        for (int i = 0; i < joints.Count; i++)                                               // Set positions in joints.
+        hips.transform.rotation = rotationFilterHips.Filter(hips.transform.rotation);    // Set Hips Rotation.
+        for (int i = 0; i < JointsGameObjects.Count; i++)                                               // Set positions in joints.
         {
-            joints[i].position = positionsFiltersJoints[i].Filter(newJointsPositions[i]+hips.transform.position);
+            JointsGameObjects[i].position = positionsFiltersJoints[i].Filter(newJointsPositions[i]+hips.transform.position);
         }
     }
 
@@ -188,17 +195,17 @@ public class Model3D
         List<Quaternion> curr_jointsRot = new List<Quaternion>();
         foreach (var val in Enum.GetValues(typeof(EnumJoint)))
         {
-            curr_jointsRot.Add(joints[(int)val].rotation);
+            curr_jointsRot.Add(JointsGameObjects[(int)val].rotation);
         }
-        
+
         /* Set rotations with LERP. */
-        Quaternion[] rotations = calculateRawRotations(newJointsPositions);                            // Calculate Raw Rotations.
-        hips.transform.rotation = Quaternion.Lerp(curr_hipsRot,getHips(newJointsPositions),timeCount); // Set Hips Rotation with LEPR.
-        for (int i = 0; i < rotations.Length; i++)                                                     // Set Rotations in joints with LERP.
+        Quaternion[] rotations = calculateRawRotations(newJointsPositions, hips.transform);              // Calculate Raw Rotations.
+        hips.transform.rotation = Quaternion.Lerp(curr_hipsRot, hips.transform.rotation, timeCount);     // Set Hips Rotation with LEPR.
+        for (int i = 0; i < rotations.Length; i++)                                                       // Set Rotations in joints with LERP.
         {
-            if (rotations[i] == Quaternion.identity)                                                   // Skip, if rotation is identity.
+            if (rotations[i] == Quaternion.identity)                                                     // Skip, if rotation is identity.
                 continue;
-            joints[i].rotation = Quaternion.Lerp(curr_jointsRot[i],rotations[i],timeCount);
+            JointsGameObjects[i].rotation = Quaternion.Lerp(curr_jointsRot[i],rotations[i],timeCount);
         }
 
         /* Keep track of time, because of Lerp. */
@@ -208,12 +215,23 @@ public class Model3D
     }
 
 
-    public static Quaternion[] calculateRawRotations(Vector3[] newJoints)
+    public Quaternion[] calculateRawRotations(Vector3[] newJoints, Transform hips)
     {
+        hips.rotation = getHips(newJoints);               // Set Hips Rotation.
         Quaternion[] rotations = new Quaternion[14];
+
         /* HEAD           */ rotations[0] = Quaternion.identity;
-        /* SPINE          */ rotations[1] = Quaternion.identity;
-        /* RIGHT_ARM      */ rotations[2] = XLookRotation(newJoints[3] - newJoints[2], Vector3.up);
+        /* SPINE          */
+        //rotations[1] = Quaternion.FromToRotation(Vector3.down, (newJoints[1] - newJoints[0]).normalized);
+        //Vector3 tempRotations1 = new Vector3(rotations[1].eulerAngles.x, hips.rotation.eulerAngles.y, rotations[1].eulerAngles.z);
+        
+        //List<Vector3> source = new List<Vector3>() { new Vector3(-1f, 0f, 0f), new Vector3(1f, 0f, 0f), new Vector3(0f,1f,0f) };
+        //List<Vector3> target = new List<Vector3>() { newJoints[(int)EnumJoint.LeftUpLeg], newJoints[(int)EnumJoint.RightUpLeg], newJoints[(int)EnumJoint.Spine1] };
+        rotations[1] = Quaternion.identity;//Triangle3DRot(source, target);
+
+
+        /* RIGHT_ARM      */
+        rotations[2] = XLookRotation(newJoints[3] - newJoints[2], Vector3.up);
         /* RIGHT_FORE_ARM */ rotations[3] = XLookRotation(newJoints[4] - newJoints[3], Vector3.up);
         /* RIGHT_HAND     */ rotations[4] = Quaternion.identity;
         /* LEFT_ARM       */ rotations[5] = XLookRotation(-(newJoints[6] - newJoints[5]), Vector3.up);
@@ -227,6 +245,75 @@ public class Model3D
         /* LEFT_FOOT      */ rotations[13] = rotations[10];
         return rotations;
     }
+
+
+    public Quaternion[] calculateRawRotationsWithTriangles(Vector3[] j, Transform hips)
+    {
+        throw new NotImplementedException();
+        hips.rotation = getHips(j);
+        Quaternion[] rotations = new Quaternion[14];
+        /* HEAD           */
+        rotations[0] = Quaternion.identity;
+        /* SPINE          */
+        rotations[1] =
+        /* RIGHT_ARM      */
+        rotations[2] =
+        /* RIGHT_FORE_ARM */
+        rotations[3] =
+        /* RIGHT_HAND     */
+        rotations[4] =
+        /* LEFT_ARM       */
+        rotations[5] =
+        /* LEFT_FORE_ARM  */
+        rotations[6] =
+        /* LEFT_HAND      */
+        rotations[7] =
+        /* RIGHT_UP_LEG   */
+        rotations[8] =
+        /* RIGHT_LEG      */
+        rotations[9] =
+        /* RIGHT_FOOT     */
+        rotations[10] =
+        /* LEFT_UPLEG     */
+        rotations[11] =
+        /* LEFT_LEG       */
+        rotations[12] =
+        /* LEFT_FOOT      */
+        rotations[13] = Quaternion.identity;
+        return rotations;
+    }
+
+    private List<Vector3> createTriangle(Vector3 v1, Vector3 v2, Vector3 v3)
+    {
+        return new List<Vector3>() { v1, v3, v3 };
+    }
+
+
+
+    private Quaternion Triangle3DRot(List<Vector3> source, List<Vector3> target)
+    {
+        // https://stackoverflow.com/questions/11217680/how-to-calculate-the-quaternion-that-represents-a-triangles-3d-rotation
+        // Define a triangle plane
+        Vector3 s1, s2, s3, t1, t2, t3;
+        s1 = source[0];
+        s2 = source[1];
+        s3 = source[2];
+
+        // Yes, they are the same.
+        // Debug.Log(s1+","+JointsGameObjects[(int)JointsDefinition.LeftUpLeg].position);
+
+        t1 = target[0];
+        t2 = target[1];
+        t3 = target[2];
+        // Calculations
+        Vector3 normSource = Vector3.Cross((s1 - s2), (s1 - s3));
+        Vector3 normTarget = Vector3.Cross((t1 - t2), (t1 - t3));
+        Quaternion quat1 = Quaternion.FromToRotation(normSource, normTarget);
+        Quaternion quat2 = Quaternion.FromToRotation(quat1 * (s1 - s2), (t1 - t2));
+        Quaternion QuatFinal = quat2 * quat1;
+        return QuatFinal;
+    }
+
 
 
 
@@ -286,7 +373,7 @@ public class Model3D
         string s = "Rotations:\n";
         foreach (var val in Enum.GetValues(typeof(EnumJoint)))
         {
-            s += val.ToString() + ":" + (joints[(int)val].rotation.eulerAngles)+"\n";
+            s += val.ToString() + ":" + (JointsGameObjects[(int)val].rotation.eulerAngles)+"\n";
         }
         return s;
     }

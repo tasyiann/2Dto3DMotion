@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 564c3c76921552e4b9f17283a55381c7, type: 3}
   m_Name: DataBaseParameters
   m_EditorClassIdentifier: 
-  databasePath: Databases\v2_height
-  ScaleMethod: 1
+  databasePath: Databases\v1_bones
+  ScaleMethod: 0
   projectionsPerFrame: 30

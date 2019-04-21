@@ -11,6 +11,7 @@ public class DataBaseParametersReader : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        Base.isBaseInitialized = true;
     }
 
     [SerializeField]

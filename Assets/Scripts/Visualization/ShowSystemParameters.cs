@@ -9,7 +9,10 @@ public class ShowSystemParameters : MonoBehaviour
 
     void Start()
     {
-        text_info.text = "Database: \n" + DataBaseParametersReader.Instance.ToString() + "\nAlgorithm: \n" + AlgorithmsParametersReader.Instance.ToString();
+        if (Base.isBaseInitialized)
+            text_info.text = "Database: \n" + DataBaseParametersReader.Instance.ToString() + "\nAlgorithm: \n" + AlgorithmsParametersReader.Instance.ToString();
+        else
+            text_info.text = "PLEASE LOAD DATABASE TO START 3D ESTIMATION.";
     }
 
 

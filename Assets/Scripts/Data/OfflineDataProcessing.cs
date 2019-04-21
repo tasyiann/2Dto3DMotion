@@ -85,14 +85,18 @@ public class OfflineDataProcessing
             }
         }
         Debug.Log("Estimation Done.");
-        ApplySGOLAYViaMatlab();
-
+        coverEmptyEstimations(0);
+        Debug.Log("Removed null estimations for person '0'");
+        //ApplySGOLAYViaMatlab();
         // Set log
         setLog();
         // Save the scenario.
         sc.Save();
         Debug.Log("Saving BVH Done.");
     }
+
+
+
 
     private static void ApplySGOLAYViaMatlab()
     {
@@ -144,8 +148,10 @@ public class OfflineDataProcessing
         {
             File.WriteAllText(DirectoryPath+@"\"+i+"_joint.3D", s[i]);
         }
-        
     }
+
+
+
 
 
     private void write3DEstimation_ROTATIONS_inFile()
@@ -166,6 +172,44 @@ public class OfflineDataProcessing
     }
 
 
+    /// <summary>
+    /// Please call this method for 0, after 1, after 2 as person_index.
+    /// </summary>
+    /// <param name="person_index"></param>
+    private static void coverEmptyEstimations(int person_index)
+    {
+        //foreach (OPFrame frame in frames)
+        for(int k=0; k<frames.Count; k++)
+        {
+            int currentIndex = k;
+            OPFrame frame = frames[k];
+            
+            // If there is no estimation for person_index in this frame, then assigned the next existing one.
+            Neighbour n;
+            
+            while ( 
+                (frames[currentIndex].figures.Count <= person_index ||
+                frames[currentIndex].figures[person_index] == null ||
+                ( n = frames[currentIndex].figures[person_index].Estimation3D) == null ||
+                n.projection == null || n.projection.joints.Length == 0) && 
+                currentIndex < frames.Count
+                )
+            {
+                currentIndex++;
+            }
+                
+            if (currentIndex >= frames.Count)
+                break;
+            
+            // Add figures if missing.
+            if (frame.figures.Count <= person_index)
+                frame.figures.Add(frames[currentIndex].figures[person_index]);
+
+            frame.figures[person_index].Estimation3D = frames[currentIndex].figures[person_index].Estimation3D;
+        }
+    }
+
+
 
     public static Neighbour[] getEstimationArray(int person_index)
     {
@@ -183,6 +227,10 @@ public class OfflineDataProcessing
         }
         return result.ToArray();
     }
+
+
+
+
 
     // Please delete this
     private static void saveClustersAndNeighbours()
@@ -225,7 +273,9 @@ public class OfflineDataProcessing
         bf.SurrogateSelector = surrogateSelector;
 
         FileStream file = File.Open(fileName, FileMode.Open);
-        return bf.Deserialize(file);
+        object result = bf.Deserialize(file);
+        file.Close();
+        return result;
     }
 
 

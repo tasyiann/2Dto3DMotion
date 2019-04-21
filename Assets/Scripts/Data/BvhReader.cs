@@ -19,13 +19,6 @@ public class BvhReader
     public static List<List<Vector3[]>> bvhRotations = new List<List<Vector3[]>>();
     private int degrees;
     private float importPercentage;
-    string logFileString = "";
-
-
-
-
-
-
 
     public static int[] getOrderOfJoints(BVH bvh)
     {

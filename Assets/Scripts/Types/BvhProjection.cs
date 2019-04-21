@@ -39,6 +39,15 @@ public class BvhProjection {
         }
     }
 
+    public void convertPositionsToPoint(Vector3 x)
+    {
+        /* Joint - Root */
+        for (int i = 0; i < joints.Length; i++)
+        {
+            joints[i] = joints[i] - x;
+        }
+    }
+
     /* Scale positions, by multiplying with a scaleFactor. NOT USED*/
     public void scalePositions(float scaleFactor)
     {
