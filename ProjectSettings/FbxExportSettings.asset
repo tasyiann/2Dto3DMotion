@@ -15,6 +15,7 @@
             "."
         ],
         "fbxSavePaths": [
+            "Prefabs",
             "."
         ],
         "selectedFbxPath": 0,

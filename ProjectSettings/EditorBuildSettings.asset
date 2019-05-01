@@ -44,4 +44,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/OnScreen/0-MAIN_SCENE_LOAD DATABASE.unity
     guid: 472b078c5e85fd446973e736f7e156de
+  - enabled: 1
+    path: Assets/Scenes/OnScreen/8-ThesisResults.unity
+    guid: 16642eb03c9d9c446b56cf02bff1661e
   m_configObjects: {}

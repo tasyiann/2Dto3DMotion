@@ -12,7 +12,7 @@ using UnityEngine;
 //
 public class Visual_Window : MonoBehaviour
 {
-    private bool show3D=false;
+    public bool show3D=false;
     public GameObject figurePrefab;
     public GameObject figurePrevPrefab;
 
@@ -23,6 +23,8 @@ public class Visual_Window : MonoBehaviour
     public ControlFrames_viaVideo dataScript;       // Reference to the script which determines the selected pose to debug.
     public bool showSelectedOne;
     public bool showWindowGl;
+    public bool showPrev;
+
     public Vector3 offset;
     public Vector3 offsetToUpLeftCorner;
     public Vector3 previousSelectedWindowPosition; // <<
@@ -71,11 +73,8 @@ public class Visual_Window : MonoBehaviour
         pos = columnStartingPoint;
 
         // Initiate 3D figures
-        if (show3D)
-        {
-            initiateFigures();
-            initiateWindowOfPrevFrame();
-        }
+        initiateFigures();
+        initiateWindowOfPrevFrame();
         
     }
 
@@ -87,20 +86,24 @@ public class Visual_Window : MonoBehaviour
         int currentIndex = dataScript.currentFrame;
         int figureIndex = dataScript.personIndex;
 
-        pos_prev = previousSelectedWindowPosition;
-        for (int i = windowSize; i >= 1; i--)
+        if (showPrev)
         {
-            int k = currentIndex - i;
-            if (k < 0 || frames[k] == null || frames[k].figures == null || frames[k].figures[figureIndex] == null || frames[k].figures[figureIndex].Estimation3D == null || frames[k].figures[figureIndex].Estimation3D.projection == null || frames[k].figures[figureIndex].Estimation3D.projection.joints == null || frames[k].figures[figureIndex].Estimation3D.projection.joints.Length == 0)
+            pos_prev = center + previousSelectedWindowPosition;
+            for (int i = windowSize; i >= 1; i--)
             {
-                continue;
+                int k = currentIndex - i;
+                if (k < 0 || frames[k] == null || frames[k].figures == null || frames[k].figures[figureIndex] == null || frames[k].figures[figureIndex].Estimation3D == null || frames[k].figures[figureIndex].Estimation3D.projection == null || frames[k].figures[figureIndex].Estimation3D.projection.joints == null || frames[k].figures[figureIndex].Estimation3D.projection.joints.Length == 0)
+                {
+                    continue;
+                }
+                Vector3[] joints = frames[k].figures[figureIndex].Estimation3D.projection.joints;
+                gL.drawFigure(true, colorOfPrevWindow, joints, null, pos_prev);
+                pos_prev += new Vector3(offset.x, 0f, 0f);
             }
-            Vector3[] joints = frames[k].figures[figureIndex].Estimation3D.projection.joints;
-            gL.drawFigure(true, colorOfPrevWindow, joints, null, pos_prev);
-            pos_prev += new Vector3(5.6f, 0, 0);
+            if (dataScript.selectedPoseToDebug != null && dataScript.selectedPoseToDebug.Estimation3D != null && dataScript.selectedPoseToDebug.Estimation3D.projection != null && dataScript.selectedPoseToDebug.Estimation3D.projection.joints != null)
+                gL.drawFigure(true, colorOfkNearProjection, dataScript.selectedPoseToDebug.Estimation3D.projection.joints, null, pos_prev);
+
         }
-        if(dataScript.selectedPoseToDebug!=null && dataScript.selectedPoseToDebug.Estimation3D!=null && dataScript.selectedPoseToDebug.Estimation3D.projection!=null && dataScript.selectedPoseToDebug.Estimation3D.projection.joints!=null)
-            gL.drawFigure(true, colorOfkNearProjection, dataScript.selectedPoseToDebug.Estimation3D.projection.joints, null, pos_prev);
 
 
 
@@ -278,6 +281,14 @@ public class Visual_Window : MonoBehaviour
     }
 
 
+
+
+
+
+
+
+
+
     private void update3DModels()
     {
         int index = 0;
@@ -295,7 +306,7 @@ public class Visual_Window : MonoBehaviour
             {
                // Debug.Log("Window does not exist!");
                 // skip whole window
-                for (int i = 0; i < windowSize; i++)
+                for (int i = windowSize-1; i>=0; i--)
                 {
                     figures[index + i].setVisible(false);
                 }
@@ -305,7 +316,7 @@ public class Visual_Window : MonoBehaviour
 
 
             //foreach (BvhProjection f in n.windowIn3Dpoints)
-            for (int i = 0; i < windowSize; i++)
+            for (int i = windowSize-1; i>=0; i--)
             {
                 if (i >= n.windowIn3Dpoints.Count || n.windowIn3Dpoints[i] == null)  // Skip this position, if there isn't any figure in this pos of window.
                 {
@@ -337,7 +348,7 @@ public class Visual_Window : MonoBehaviour
         int currentIndex = dataScript.currentFrame;
         int figureIndex = dataScript.personIndex;
 
-        for (int i=0; i<windowSize; i++)
+        for (int i=windowSize; i>0; i--)
         {
             int k = currentIndex - i;
             if ( k < 0 || frames[k]==null || frames[k].figures==null || frames[k].figures[figureIndex]==null || frames[k].figures[figureIndex].Estimation3D==null || frames[k].figures[figureIndex].Estimation3D.projection==null || frames[k].figures[figureIndex].Estimation3D.projection.joints==null || frames[k].figures[figureIndex].Estimation3D.projection.joints.Length==0)
@@ -346,7 +357,7 @@ public class Visual_Window : MonoBehaviour
             }
             Vector3[] joints = frames[k].figures[figureIndex].Estimation3D.projection.joints;
             //Debug.Log("i-1:" +(i-1) + " prevFigures length:"+prevFigures.Count);
-            prevFigures[i-1].setJoints(joints);
+            prevFigures[windowSize-i].setJoints(joints);
         }
     }
 
@@ -363,10 +374,10 @@ public class Visual_Window : MonoBehaviour
 
     private void initiateWindowOfPrevFrame()
     {
-        pos_prev = new Vector3(0,60f,0);
+        pos_prev = center + previousSelectedWindowPosition;
 
         // One line of figures.
-        for(int i=0; i<windowSize; i++)
+        for (int i=0; i<windowSize; i++)
         {
 
             // Place 3D figure

@@ -16,7 +16,7 @@ public class OfflineDataProcessing
     private static List<Cluster> base_clusters = Base.base_clusters;                        // Clustered projections.
     private static List<List<Rotations>> base_rotationFiles = Base.base_rotationFiles;      // Rotations.
 
-   
+
     private static float kNNAlgorithmTime;            // Execution time of k-BM Algorithm.
     private static float EstimationAlgorithmTime;     // Execution time of Best 3D Algorithm.
 
@@ -26,7 +26,7 @@ public class OfflineDataProcessing
     {
         sc = Base.sc;       // Scenario to be saved.
         frames = sc.frames;
-        if (Base.base_clusters==null || Base.base_not_clustered==null || Base.base_rotationFiles==null)
+        if (Base.base_clusters == null || Base.base_not_clustered == null || Base.base_rotationFiles == null)
         {
             Debug.LogError("PLEASE RUN THE PROPER SCENE TO LOAD THE DATABASE!");
             return;
@@ -46,38 +46,14 @@ public class OfflineDataProcessing
                 OPFrame currFrame = parser.Parsefile(fileName, frameCounter);
                 frames.Add(currFrame);
                 // For each figure in the frame, calculate its 3D:
-                
+
                 foreach (OPPose currFigure in currFrame.figures)
                 {
-                    OPPose prevFigure = null;
                     // STEP_A: Find k-BM.
                     sc.algNeighbours.SetNeighbours(currFigure, sc.k, base_clusters);
+                    // Assign the previous figure of the current figure.
+                    currFigure.prevFigure = setPreviousFigure(frameCounter, currFigure);
                     // STEP_B: Find Best 3D.
-                    
-                    if (frameCounter != 0)
-                    {
-                        // Get access to the previous frame figure with the same ID. How? Figure it out!
-                        // << Attention. It might be null (not existed in prev frame).
-                        // I Need to handle this.
-                        try
-                        {
-                            // Check if figure exists in that frame.
-                            if (frames[frameCounter - 1].figures.Count <= currFigure.id)
-                                prevFigure = null;
-                            else
-                                prevFigure = frames[frameCounter - 1].figures[currFigure.id];
-
-                            // Set prevFigure of currentFigure << Set this also in the Real-Time
-                            // The chain breaks if prevFigure is null. Find a way to fix this. (TODO).
-                            currFigure.prevFigure = prevFigure;
-                        }
-                        catch(ArgumentOutOfRangeException e)
-                        {
-                            Debug.LogError(e.Message + "\n" + e.StackTrace);
-                            prevFigure = null;
-                        }
-                        
-                    }
                     currFigure.Estimation3D = sc.algEstimation.SetEstimation(currFigure, sc.m, base_rotationFiles);
                     // Offline implementation is done.
                 }
@@ -87,7 +63,8 @@ public class OfflineDataProcessing
         Debug.Log("Estimation Done.");
         coverEmptyEstimations(0);
         Debug.Log("Removed null estimations for person '0'");
-        //ApplySGOLAYViaMatlab();
+        // write3DEstimation_POSITIONS_PER_JOINT_inFile(@"SGolayTests\Test2-Without-Restriction");
+        // ApplySGOLAYViaMatlab();
         // Set log
         setLog();
         // Save the scenario.
@@ -96,7 +73,22 @@ public class OfflineDataProcessing
     }
 
 
-
+    private static OPPose setPreviousFigure(int frameCounter, OPPose currFigure)
+    {
+        if (frameCounter != 0)
+        {
+            // Check if figure exists in that frame.
+            if (frames[frameCounter - 1].figures.Count <= currFigure.id)
+            {
+                Debug.Log("ID: "+currFigure.id+", PREV IS NULL. SORRY!");
+                return null;
+            }
+                
+            else
+                return frames[frameCounter - 1].figures[currFigure.id];
+        }
+        return null;
+    }
 
     private static void ApplySGOLAYViaMatlab()
     {
@@ -133,20 +125,20 @@ public class OfflineDataProcessing
         // Iterate frames, and create a list of the 3D estimation frames, for each figure appeared in video.
         Neighbour[] estimation = getEstimationArray(0);
         int num_of_joints = Enum.GetNames(typeof(EnumJoint)).Length;
-        string [] s = new string[num_of_joints];
+        string[] s = new string[num_of_joints];
         foreach (Neighbour n in estimation)
         {
             Vector3[] joints = n.projection.joints;
-            for(int i=0; i<num_of_joints; i++)
+            for (int i = 0; i < num_of_joints; i++)
             {
                 Vector3 joint = joints[i];
-                s[i] += joint.x + " " + joint.y + " " + joint.z+"\n";
+                s[i] += joint.x + " " + joint.y + " " + joint.z + "\n";
             }
         }
 
-        for(int i=0; i<num_of_joints; i++)
+        for (int i = 0; i < num_of_joints; i++)
         {
-            File.WriteAllText(DirectoryPath+@"\"+i+"_joint.3D", s[i]);
+            File.WriteAllText(DirectoryPath + @"\" + i + "_joint.3D", s[i]);
         }
     }
 
@@ -179,28 +171,27 @@ public class OfflineDataProcessing
     private static void coverEmptyEstimations(int person_index)
     {
         //foreach (OPFrame frame in frames)
-        for(int k=0; k<frames.Count; k++)
+        for (int k = 0; k < frames.Count; k++)
         {
             int currentIndex = k;
             OPFrame frame = frames[k];
-            
+
             // If there is no estimation for person_index in this frame, then assigned the next existing one.
             Neighbour n;
-            
-            while ( 
+
+            while ( currentIndex < frames.Count &&
                 (frames[currentIndex].figures.Count <= person_index ||
                 frames[currentIndex].figures[person_index] == null ||
-                ( n = frames[currentIndex].figures[person_index].Estimation3D) == null ||
-                n.projection == null || n.projection.joints.Length == 0) && 
-                currentIndex < frames.Count
+                (n = frames[currentIndex].figures[person_index].Estimation3D) == null ||
+                n.projection == null || n.projection.joints.Length == 0) 
                 )
             {
                 currentIndex++;
             }
-                
+
             if (currentIndex >= frames.Count)
                 break;
-            
+
             // Add figures if missing.
             if (frame.figures.Count <= person_index)
                 frame.figures.Add(frames[currentIndex].figures[person_index]);
@@ -236,7 +227,7 @@ public class OfflineDataProcessing
     private static void saveClustersAndNeighbours()
     {
         WriteToBinaryFile(@"Temp-ClustersAndNeighbours\CRAZY.bin", frames[16].figures[0]);
-        WriteToBinaryFile(@"Temp-ClustersAndNeighbours\clusters.bin",frames[16].figures[0].selectedClusters);
+        WriteToBinaryFile(@"Temp-ClustersAndNeighbours\clusters.bin", frames[16].figures[0].selectedClusters);
         WriteToBinaryFile(@"Temp-ClustersAndNeighbours\neighbours.bin", frames[16].figures[0].neighbours);
     }
 

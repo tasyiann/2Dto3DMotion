@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 
@@ -15,10 +16,12 @@ public class SequenceOfFBX : MonoBehaviour
     private AnimationClip animationclip;
     //private float currFrame = 0f;
     private Vector3 position;
+    public GameObject container;
 
     List<GameObject> gameObjs = new List<GameObject>();
     void Start()
     {
+        container = new GameObject(Path.GetRandomFileName());
         float currentFrame = 0;
         while (currentFrame <= 1)
         {
@@ -68,6 +71,7 @@ public class SequenceOfFBX : MonoBehaviour
     private void createFigure(float currentFrame)
     {
         GameObject go = Instantiate(prefab);
+        go.transform.SetParent(container.transform);
         go.name = "figure"+ currentFrame;
         go.transform.position = position;
         position += offsetBetweenFigures;

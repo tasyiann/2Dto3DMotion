@@ -35,7 +35,7 @@ public class ObjectBuilderEditor : Editor
 public class V_BvhDebugger : MonoBehaviour
 {
     private BvhExport BvhExporter;
-   
+    public bool DisplayCorrectRoot;
     public Text textInfo;
 
     [Header("Paths to Files")]
@@ -61,6 +61,7 @@ public class V_BvhDebugger : MonoBehaviour
     [Header("Motion Sequence Properties")]
     public Vector3 offset = new Vector3(10f, 10f, 0f);
     public Material mat;
+    public Color colorDefault;
     public int maxPerLine = 30;
     private BVH bvh;
     private GameObject skeleton;
@@ -196,7 +197,7 @@ public class V_BvhDebugger : MonoBehaviour
             if (counter == CurrentFrame)
                 color = Color.red;
             else
-                color = Color.white;
+                color = colorDefault;
 
             counter++;   
             gl.drawFigure(true, color, frame.joints, null, position);
@@ -228,6 +229,8 @@ public class V_BvhDebugger : MonoBehaviour
 
             BvhProjection newProjection = new BvhProjection(0, i, 0, joints);
             newProjection.convertPositionsToRoot();
+            if(DisplayCorrectRoot)
+                newProjection.rotatePositions(estimation[CurrentFrame].projection.angle);
             list.Add(newProjection);
         }
         return list;

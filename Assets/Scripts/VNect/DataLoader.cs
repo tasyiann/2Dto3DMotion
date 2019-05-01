@@ -5,9 +5,9 @@ using FileHelpers;
 using System;
 using System.IO;
 using System.Globalization;
-using static VNectHacker.VNectSkeleton;
+using static AnimationFilesHacker.VNectSkeleton;
 
-namespace VNectHacker
+namespace AnimationFilesHacker
 {
     public class DataLoader
     {
@@ -46,10 +46,10 @@ namespace VNectHacker
             Comma, Tab
         }
 
-        public List<VNectFrame> getAllFrames(DataType typeOfData)
+        public List<AnimationFrame> getAllFrames(DataType typeOfData)
         {
             setParams(typeOfData);
-            List<VNectFrame> frames = new List<VNectFrame>();
+            List<AnimationFrame> frames = new List<AnimationFrame>();
 
 
             if ((int)delim == (int)Delimiter.Comma)
@@ -70,7 +70,7 @@ namespace VNectHacker
                     {
                         joints.Add((joints[(int)JointsDefinition.LeftUpLeg] + joints[(int)JointsDefinition.RightUpLeg]) / 2f);
                     }
-                    frames.Add(new VNectFrame(joints, record.frameNum));
+                    frames.Add(new AnimationFrame(joints, record.frameNum));
                 }
             }
 

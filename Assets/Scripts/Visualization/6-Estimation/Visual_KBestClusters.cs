@@ -9,7 +9,8 @@ public class Visual_KBestClusters : MonoBehaviour
     public Material material;                       // The material used in gl lines.
     public DataInFrame showEstimationScript;        // Reference to the script which determines the selected pose to debug.
     public bool showBestOne;                        // Different color on the best one
-    public Color color;
+    public Color colorDefault;
+
 
     private OPPose figureToDebug;                    // The chosen figure to debug, from showEstimationScript.
     private GLDraw gL;                               // GL lines.
@@ -22,7 +23,6 @@ public class Visual_KBestClusters : MonoBehaviour
     {
         gL = new GLDraw(material);
         resetPos();
-        color = new Color(1.18f, 0.58f, 0f); // orange
     }
 
     void Update()
@@ -51,7 +51,7 @@ public class Visual_KBestClusters : MonoBehaviour
                 Vector3 pos = new Vector2(posX, posY);
                 
                 
-                gL.drawFigure(true, color, cluster.Representative.joints, null, pos);
+                gL.drawFigure(true, colorDefault, cluster.Representative.joints, null, pos);
               
                 posX += offsetBetweenFigures.x;
                 neighCounter++;

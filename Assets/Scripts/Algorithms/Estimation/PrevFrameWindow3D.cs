@@ -6,6 +6,7 @@ using Winterdust;
 using System;
 using System.IO;
 using System.Globalization;
+using UnityEngine.Assertions;
 
 [System.Serializable()]
 public class PrevFrameWindow3D : AlgorithmEstimation
@@ -37,15 +38,22 @@ public class PrevFrameWindow3D : AlgorithmEstimation
         foreach(Neighbour n in current.neighbours)
         {
             // We should skip the same estimation. (?).. <<<<<<<<<
-            //if (n.projection == previous.selectedN.projection)
+            //if (n.projection == previous.Estimation3D.projection)
+            //{
+            //    Debug.Log("Excluding estimation of prev frame.");
             //    continue;
+            //}
+                
 
             //Debug.Log("Now, lets create the windows.");
             // Create the window of n
             List<List<Vector3>> window = createWindow(n, rotationFiles,n.projection, m);
             float distance = distanceOfWindows(prevWindow,window);
-            if (distance == 0) continue; // << Which means every prev figure is null.
-            // Save the minimum distance.
+            if (distance == 0)
+            {
+                continue; // << Which means every prev figure is null.
+            }
+                // Save the minimum distance.
             if (distance < min)
             {
                 min = distance;
@@ -59,7 +67,7 @@ public class PrevFrameWindow3D : AlgorithmEstimation
         if (min == float.MaxValue)          // Means that all prev figures were null
             return current.neighbours[0];   // then return the first one.
 
-
+        
         return minNeighbour;
     }
 
@@ -99,8 +107,10 @@ public class PrevFrameWindow3D : AlgorithmEstimation
 
     private float distanceOfWindows(List<List<Vector3>> w1_prevFrame, List<List<Vector3>> w2)
     {
-        float dist = 0;
+        float dist = 0f;
         int comparisonCounter = 0;
+        // Assure windows have always the same length
+        Assert.IsTrue(w1_prevFrame.Count == w2.Count);
         for (int i = 0; i < w1_prevFrame.Count && i < w2.Count; i++)
         {
             // If any of the window spot is null, then we can not compare that spot.
@@ -114,7 +124,8 @@ public class PrevFrameWindow3D : AlgorithmEstimation
                 dist += DistanceRotations(w1_prevFrame[i][j], w2[i][j]);
             }
         }
-        return dist/comparisonCounter; // return average distance.
+        float result = dist / comparisonCounter;
+        return result; // return average distance.
     }
 
     private static string disp(Quaternion q)
@@ -135,7 +146,7 @@ public class PrevFrameWindow3D : AlgorithmEstimation
         Quaternion qlog = quatlog(multiplication); 
         float qLogNorm = norm(qlog);
         float result = Mathf.Pow(qLogNorm, 2);
-        
+
         /*
         // Debug calculations
         string s = "";
@@ -154,7 +165,10 @@ public class PrevFrameWindow3D : AlgorithmEstimation
         s += " QuatLogRealNormPow2(result) \n " + result + "\n";
         Debug.Log(s);
         */
-        if (!HasValue(result)) return 0;
+        if (!HasValue(result))
+        {
+            return 0;
+        }
         return result;
     }
 
@@ -205,6 +219,7 @@ public class PrevFrameWindow3D : AlgorithmEstimation
             
         }
         //Debug.Log("Created window for "+"["+n.projection.clusterID+","+ n.projection.frameNum+"]");
+        //Debug.Log("Lengths: "+window[0]?.Count+", "+ window[1]?.Count + ", " + window[2]?.Count + ", " + window[3]?.Count);
         return window;
     }
 

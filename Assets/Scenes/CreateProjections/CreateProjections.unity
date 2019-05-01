@@ -216,9 +216,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ae2fdf7bccf77044ba16e3e3ecace56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChooseScalingMethod: 1
+  ChooseScalingMethod: 0
   BvhFilesDirectory: Databases\v1_height\BvhFiles
-  OutputDirectory: Databases\v1_height
+  OutputDirectory: Databases\v1_limbs_new_try
   Degrees: 12
 --- !u!1 &1926758031
 GameObject:

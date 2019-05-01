@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.14921463, g: 0.08781917, b: 0.16226, a: 1}
+  m_IndirectSpecularColor: {r: 0.14893314, g: 0.08770495, b: 0.16200268, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -372,8 +372,11 @@ MonoBehaviour:
     scaleFactor: 0
     limbFactor: 0
     neighbours: []
+    selectedClusters: []
     Estimation3D:
       projection:
+        cluster:
+          projections: []
         rotationFileID: 0
         frameNum: 0
         angle: 0
@@ -493,7 +496,7 @@ PrefabInstance:
     - target: {fileID: 1528194275243227153, guid: 9159c789405f00846ac67cd7b2ad5c1f,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8817613723079914262, guid: 9159c789405f00846ac67cd7b2ad5c1f,
         type: 3}
@@ -555,6 +558,21 @@ PrefabInstance:
       propertyPath: m_NormalizedViewPortRect.y
       value: 0.875
       objectReference: {fileID: 0}
+    - target: {fileID: 4843720393063562527, guid: 9159c789405f00846ac67cd7b2ad5c1f,
+        type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4843720393063562527, guid: 9159c789405f00846ac67cd7b2ad5c1f,
+        type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4843720393063562527, guid: 9159c789405f00846ac67cd7b2ad5c1f,
+        type: 3}
+      propertyPath: m_BackGroundColor.b
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4843720393063562513, guid: 9159c789405f00846ac67cd7b2ad5c1f,
         type: 3}
       propertyPath: showEstimationScript
@@ -575,11 +593,36 @@ PrefabInstance:
       propertyPath: orthographic size
       value: 15
       objectReference: {fileID: 0}
+    - target: {fileID: 8034111992718315513, guid: 9159c789405f00846ac67cd7b2ad5c1f,
+        type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8034111992718315513, guid: 9159c789405f00846ac67cd7b2ad5c1f,
+        type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8034111992718315513, guid: 9159c789405f00846ac67cd7b2ad5c1f,
+        type: 3}
+      propertyPath: m_BackGroundColor.b
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8034111992718315511, guid: 9159c789405f00846ac67cd7b2ad5c1f,
         type: 3}
       propertyPath: showEstimationScript
       value: 
       objectReference: {fileID: 513344891}
+    - target: {fileID: 4843720393063562515, guid: 9159c789405f00846ac67cd7b2ad5c1f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8034111992718315508, guid: 9159c789405f00846ac67cd7b2ad5c1f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9159c789405f00846ac67cd7b2ad5c1f, type: 3}
 --- !u!4 &282776711 stripped
@@ -868,7 +911,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 416595782}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -2000, y: -4000, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 890444710}
@@ -892,7 +935,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
@@ -936,12 +979,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 180d62ebe9a2b0049a2e4074818582d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  show3D: 1
   figurePrefab: {fileID: 1806108283}
   figurePrevPrefab: {fileID: 1182766110}
   material: {fileID: 2100000, guid: a5dc7a167ba62794daeec7dd7d900e94, type: 2}
   dataScript: {fileID: 513344891}
   showSelectedOne: 1
-  showWindowGl: 1
+  showWindowGl: 0
+  showPrev: 0
   offset: {x: 7.6, y: 10.4, z: 0}
   offsetToUpLeftCorner: {x: -51.5, y: 25, z: 0}
   previousSelectedWindowPosition: {x: -13.4, y: 34, z: 0}
@@ -949,8 +994,8 @@ MonoBehaviour:
   CollumnOffset: {x: 39.83, y: 0, z: 0}
   colorOfWindow: {r: 1, g: 0, b: 0.06844187, a: 1}
   colorOfPrevWindow: {r: 0, g: 1, b: 0.9800043, a: 1}
-  colorOfCorresponding3D: {r: 0, g: 0, b: 0, a: 0}
-  colorOfkNearProjection: {r: 1, g: 1, b: 1, a: 1}
+  colorOfCorresponding3D: {r: 0, g: 0, b: 0, a: 1}
+  colorOfkNearProjection: {r: 0, g: 0, b: 0, a: 1}
   colorOfSelected: {r: 0.3502059, g: 1, b: 0, a: 1}
   showkNearProjection: 1
   figureToDebug:
@@ -1004,6 +1049,8 @@ MonoBehaviour:
     limbFactor: 6
     neighbours:
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 17
         frameNum: 10
         angle: 84
@@ -1028,7 +1075,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 6
         angle: 84
         joints:
@@ -1047,7 +1096,9 @@ MonoBehaviour:
         - {x: -0.02363487, y: -2.134079, z: -0.4948799}
         - {x: 0.691046, y: -3.846708, z: -0.2229048}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 7
         angle: 84
         joints:
@@ -1066,7 +1117,9 @@ MonoBehaviour:
         - {x: -0.01599217, y: -2.128021, z: -0.4989403}
         - {x: 0.6784542, y: -3.846333, z: -0.2108606}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 8
         angle: 84
         joints:
@@ -1085,7 +1138,9 @@ MonoBehaviour:
         - {x: -0.01177084, y: -2.126441, z: -0.5085762}
         - {x: 0.6677513, y: -3.847091, z: -0.199617}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 9
         angle: 84
         joints:
@@ -1105,6 +1160,8 @@ MonoBehaviour:
         - {x: 0.6567242, y: -3.844894, z: -0.1861838}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 17
         frameNum: 118
         angle: 156
@@ -1129,7 +1186,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 114
         angle: 156
         joints:
@@ -1148,7 +1207,9 @@ MonoBehaviour:
         - {x: -0.07887335, y: -2.201453, z: -0.5234363}
         - {x: 0.7724813, y: -3.872053, z: -0.5696307}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 115
         angle: 156
         joints:
@@ -1167,7 +1228,9 @@ MonoBehaviour:
         - {x: -0.05765994, y: -2.184709, z: -0.5446606}
         - {x: 0.7886482, y: -3.858122, z: -0.5806143}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 116
         angle: 156
         joints:
@@ -1186,7 +1249,9 @@ MonoBehaviour:
         - {x: -0.06667984, y: -2.177358, z: -0.5623851}
         - {x: 0.7940241, y: -3.843256, z: -0.6049649}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 117
         angle: 156
         joints:
@@ -1206,6 +1271,8 @@ MonoBehaviour:
         - {x: 0.8032025, y: -3.836173, z: -0.6159595}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 17
         frameNum: 117
         angle: 156
@@ -1230,7 +1297,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 113
         angle: 156
         joints:
@@ -1249,7 +1318,9 @@ MonoBehaviour:
         - {x: -0.08180656, y: -2.230737, z: -0.4706166}
         - {x: 0.7775753, y: -3.89574, z: -0.5546819}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 114
         angle: 156
         joints:
@@ -1268,7 +1339,9 @@ MonoBehaviour:
         - {x: -0.07887335, y: -2.201453, z: -0.5234363}
         - {x: 0.7724813, y: -3.872053, z: -0.5696307}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 115
         angle: 156
         joints:
@@ -1287,7 +1360,9 @@ MonoBehaviour:
         - {x: -0.05765994, y: -2.184709, z: -0.5446606}
         - {x: 0.7886482, y: -3.858122, z: -0.5806143}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 116
         angle: 156
         joints:
@@ -1307,6 +1382,8 @@ MonoBehaviour:
         - {x: 0.7940241, y: -3.843256, z: -0.6049649}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 17
         frameNum: 7
         angle: 84
@@ -1331,7 +1408,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 3
         angle: 84
         joints:
@@ -1350,7 +1429,9 @@ MonoBehaviour:
         - {x: -0.01258165, y: -2.138394, z: -0.4904883}
         - {x: 0.7103791, y: -3.855585, z: -0.2750299}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 4
         angle: 84
         joints:
@@ -1369,7 +1450,9 @@ MonoBehaviour:
         - {x: -0.0102585, y: -2.135501, z: -0.4899742}
         - {x: 0.7074047, y: -3.852806, z: -0.258317}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 5
         angle: 84
         joints:
@@ -1388,7 +1471,9 @@ MonoBehaviour:
         - {x: -0.01252159, y: -2.132232, z: -0.4953569}
         - {x: 0.6974196, y: -3.849059, z: -0.2378093}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 6
         angle: 84
         joints:
@@ -1408,6 +1493,8 @@ MonoBehaviour:
         - {x: 0.691046, y: -3.846708, z: -0.2229048}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 17
         frameNum: 116
         angle: 156
@@ -1432,7 +1519,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 112
         angle: 156
         joints:
@@ -1451,7 +1540,9 @@ MonoBehaviour:
         - {x: -0.06755146, y: -2.232526, z: -0.4569148}
         - {x: 0.7512265, y: -3.917698, z: -0.5443082}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 113
         angle: 156
         joints:
@@ -1470,7 +1561,9 @@ MonoBehaviour:
         - {x: -0.08180656, y: -2.230737, z: -0.4706166}
         - {x: 0.7775753, y: -3.89574, z: -0.5546819}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 114
         angle: 156
         joints:
@@ -1489,7 +1582,9 @@ MonoBehaviour:
         - {x: -0.07887335, y: -2.201453, z: -0.5234363}
         - {x: 0.7724813, y: -3.872053, z: -0.5696307}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 115
         angle: 156
         joints:
@@ -1509,6 +1604,8 @@ MonoBehaviour:
         - {x: 0.7886482, y: -3.858122, z: -0.5806143}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 17
         frameNum: 115
         angle: 156
@@ -1533,7 +1630,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 111
         angle: 156
         joints:
@@ -1552,7 +1651,9 @@ MonoBehaviour:
         - {x: -0.1116673, y: -2.239518, z: -0.4305937}
         - {x: 0.6901168, y: -3.930552, z: -0.5546409}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 112
         angle: 156
         joints:
@@ -1571,7 +1672,9 @@ MonoBehaviour:
         - {x: -0.06755146, y: -2.232526, z: -0.4569148}
         - {x: 0.7512265, y: -3.917698, z: -0.5443082}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 113
         angle: 156
         joints:
@@ -1590,7 +1693,9 @@ MonoBehaviour:
         - {x: -0.08180656, y: -2.230737, z: -0.4706166}
         - {x: 0.7775753, y: -3.89574, z: -0.5546819}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 114
         angle: 156
         joints:
@@ -1610,6 +1715,8 @@ MonoBehaviour:
         - {x: 0.7724813, y: -3.872053, z: -0.5696307}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 17
         frameNum: 13
         angle: 60
@@ -1634,7 +1741,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 9
         angle: 60
         joints:
@@ -1653,7 +1762,9 @@ MonoBehaviour:
         - {x: 0.188983, y: -2.127502, z: -0.4787659}
         - {x: 0.6756752, y: -3.844894, z: 0.0970265}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 10
         angle: 60
         joints:
@@ -1672,7 +1783,9 @@ MonoBehaviour:
         - {x: 0.1761805, y: -2.13066, z: -0.5096347}
         - {x: 0.6603292, y: -3.83861, z: 0.09563133}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 11
         angle: 60
         joints:
@@ -1691,7 +1804,9 @@ MonoBehaviour:
         - {x: 0.1695952, y: -2.13374, z: -0.5442853}
         - {x: 0.6505053, y: -3.830621, z: 0.09380795}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 12
         angle: 60
         joints:
@@ -1711,6 +1826,8 @@ MonoBehaviour:
         - {x: 0.6486609, y: -3.819949, z: 0.09184506}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 17
         frameNum: 352
         angle: 36
@@ -1735,7 +1852,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 348
         angle: 36
         joints:
@@ -1754,7 +1873,9 @@ MonoBehaviour:
         - {x: 0.2654536, y: -2.13835, z: -0.9841324}
         - {x: 0.7818673, y: -3.748973, z: -0.173544}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 349
         angle: 36
         joints:
@@ -1773,7 +1894,9 @@ MonoBehaviour:
         - {x: 0.2445002, y: -2.17533, z: -0.9651037}
         - {x: 0.7789152, y: -3.77313, z: -0.1409235}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 350
         angle: 36
         joints:
@@ -1792,7 +1915,9 @@ MonoBehaviour:
         - {x: 0.2315474, y: -2.181561, z: -0.906684}
         - {x: 0.7730255, y: -3.784052, z: -0.096334}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 351
         angle: 36
         joints:
@@ -1812,6 +1937,8 @@ MonoBehaviour:
         - {x: 0.7884756, y: -3.772933, z: -0.09919077}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 17
         frameNum: 264
         angle: 228
@@ -1836,7 +1963,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 260
         angle: 228
         joints:
@@ -1855,7 +1984,9 @@ MonoBehaviour:
         - {x: 1.101479, y: -1.87758, z: 0.3035112}
         - {x: 1.582821, y: -3.50142, z: 1.109298}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 261
         angle: 228
         joints:
@@ -1874,7 +2005,9 @@ MonoBehaviour:
         - {x: 0.9922001, y: -1.969479, z: 0.1719837}
         - {x: 1.669539, y: -3.457039, z: 1.091885}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 262
         angle: 228
         joints:
@@ -1893,7 +2026,9 @@ MonoBehaviour:
         - {x: 0.8033062, y: -2.108181, z: -0.1343331}
         - {x: 1.679471, y: -3.389405, z: 0.9185866}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 263
         angle: 228
         joints:
@@ -1913,6 +2048,8 @@ MonoBehaviour:
         - {x: 1.63134, y: -3.282967, z: 0.6490801}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 17
         frameNum: 351
         angle: 36
@@ -1937,7 +2074,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 347
         angle: 36
         joints:
@@ -1956,7 +2095,9 @@ MonoBehaviour:
         - {x: 0.2641435, y: -2.099333, z: -0.9863774}
         - {x: 0.7576269, y: -3.720482, z: -0.1825192}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 348
         angle: 36
         joints:
@@ -1975,7 +2116,9 @@ MonoBehaviour:
         - {x: 0.2654536, y: -2.13835, z: -0.9841324}
         - {x: 0.7818673, y: -3.748973, z: -0.173544}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 349
         angle: 36
         joints:
@@ -1994,7 +2137,9 @@ MonoBehaviour:
         - {x: 0.2445002, y: -2.17533, z: -0.9651037}
         - {x: 0.7789152, y: -3.77313, z: -0.1409235}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 350
         angle: 36
         joints:
@@ -2014,6 +2159,8 @@ MonoBehaviour:
         - {x: 0.7730255, y: -3.784052, z: -0.096334}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 17
         frameNum: 14
         angle: 60
@@ -2038,7 +2185,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 10
         angle: 60
         joints:
@@ -2057,7 +2206,9 @@ MonoBehaviour:
         - {x: 0.1761805, y: -2.13066, z: -0.5096347}
         - {x: 0.6603292, y: -3.83861, z: 0.09563133}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 11
         angle: 60
         joints:
@@ -2076,7 +2227,9 @@ MonoBehaviour:
         - {x: 0.1695952, y: -2.13374, z: -0.5442853}
         - {x: 0.6505053, y: -3.830621, z: 0.09380795}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 12
         angle: 60
         joints:
@@ -2095,7 +2248,9 @@ MonoBehaviour:
         - {x: 0.1667116, y: -2.136621, z: -0.5804456}
         - {x: 0.6486609, y: -3.819949, z: 0.09184506}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 13
         angle: 60
         joints:
@@ -2115,6 +2270,8 @@ MonoBehaviour:
         - {x: 0.6513124, y: -3.807537, z: 0.08909881}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 17
         frameNum: 6
         angle: 84
@@ -2139,7 +2296,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 2
         angle: 84
         joints:
@@ -2158,7 +2317,9 @@ MonoBehaviour:
         - {x: -0.00754823, y: -2.131715, z: -0.4868207}
         - {x: 0.7084744, y: -3.853529, z: -0.2855556}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 3
         angle: 84
         joints:
@@ -2177,7 +2338,9 @@ MonoBehaviour:
         - {x: -0.01258165, y: -2.138394, z: -0.4904883}
         - {x: 0.7103791, y: -3.855585, z: -0.2750299}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 4
         angle: 84
         joints:
@@ -2196,7 +2359,9 @@ MonoBehaviour:
         - {x: -0.0102585, y: -2.135501, z: -0.4899742}
         - {x: 0.7074047, y: -3.852806, z: -0.258317}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 5
         angle: 84
         joints:
@@ -2216,6 +2381,8 @@ MonoBehaviour:
         - {x: 0.6974196, y: -3.849059, z: -0.2378093}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 13
         frameNum: 144
         angle: 132
@@ -2240,7 +2407,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 13
+      - cluster:
+          projections: []
+        rotationFileID: 13
         frameNum: 140
         angle: 132
         joints:
@@ -2259,7 +2428,9 @@ MonoBehaviour:
         - {x: 0.6528912, y: -2.149601, z: -0.6904738}
         - {x: 1.319923, y: -3.835837, z: -0.2113941}
         distanceFromRepresentative: 0
-      - rotationFileID: 13
+      - cluster:
+          projections: []
+        rotationFileID: 13
         frameNum: 141
         angle: 132
         joints:
@@ -2278,7 +2449,9 @@ MonoBehaviour:
         - {x: 0.6550975, y: -2.151116, z: -0.6894947}
         - {x: 1.327569, y: -3.834241, z: -0.2070936}
         distanceFromRepresentative: 0
-      - rotationFileID: 13
+      - cluster:
+          projections: []
+        rotationFileID: 13
         frameNum: 142
         angle: 132
         joints:
@@ -2297,7 +2470,9 @@ MonoBehaviour:
         - {x: 0.6574359, y: -2.15145, z: -0.6869091}
         - {x: 1.332808, y: -3.833096, z: -0.2034006}
         distanceFromRepresentative: 0
-      - rotationFileID: 13
+      - cluster:
+          projections: []
+        rotationFileID: 13
         frameNum: 143
         angle: 132
         joints:
@@ -2317,6 +2492,8 @@ MonoBehaviour:
         - {x: 1.336506, y: -3.831457, z: -0.1947703}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 13
         frameNum: 145
         angle: 132
@@ -2341,7 +2518,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 13
+      - cluster:
+          projections: []
+        rotationFileID: 13
         frameNum: 141
         angle: 132
         joints:
@@ -2360,7 +2539,9 @@ MonoBehaviour:
         - {x: 0.6550975, y: -2.151116, z: -0.6894947}
         - {x: 1.327569, y: -3.834241, z: -0.2070936}
         distanceFromRepresentative: 0
-      - rotationFileID: 13
+      - cluster:
+          projections: []
+        rotationFileID: 13
         frameNum: 142
         angle: 132
         joints:
@@ -2379,7 +2560,9 @@ MonoBehaviour:
         - {x: 0.6574359, y: -2.15145, z: -0.6869091}
         - {x: 1.332808, y: -3.833096, z: -0.2034006}
         distanceFromRepresentative: 0
-      - rotationFileID: 13
+      - cluster:
+          projections: []
+        rotationFileID: 13
         frameNum: 143
         angle: 132
         joints:
@@ -2398,7 +2581,9 @@ MonoBehaviour:
         - {x: 0.6627711, y: -2.148816, z: -0.6771013}
         - {x: 1.336506, y: -3.831457, z: -0.1947703}
         distanceFromRepresentative: 0
-      - rotationFileID: 13
+      - cluster:
+          projections: []
+        rotationFileID: 13
         frameNum: 144
         angle: 132
         joints:
@@ -2418,6 +2603,8 @@ MonoBehaviour:
         - {x: 1.33544, y: -3.832502, z: -0.1968382}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 18
         frameNum: 84
         angle: 60
@@ -2442,7 +2629,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 18
+      - cluster:
+          projections: []
+        rotationFileID: 18
         frameNum: 80
         angle: 60
         joints:
@@ -2461,7 +2650,9 @@ MonoBehaviour:
         - {x: 0.6614453, y: -2.186665, z: -0.4762276}
         - {x: 1.549441, y: -3.827511, z: -0.284056}
         distanceFromRepresentative: 0
-      - rotationFileID: 18
+      - cluster:
+          projections: []
+        rotationFileID: 18
         frameNum: 81
         angle: 60
         joints:
@@ -2480,7 +2671,9 @@ MonoBehaviour:
         - {x: 0.6540928, y: -2.210473, z: -0.4890193}
         - {x: 1.648844, y: -3.788604, z: -0.2945534}
         distanceFromRepresentative: 0
-      - rotationFileID: 18
+      - cluster:
+          projections: []
+        rotationFileID: 18
         frameNum: 82
         angle: 60
         joints:
@@ -2499,7 +2692,9 @@ MonoBehaviour:
         - {x: 0.6356806, y: -2.227906, z: -0.5303791}
         - {x: 1.723557, y: -3.738176, z: -0.2991798}
         distanceFromRepresentative: 0
-      - rotationFileID: 18
+      - cluster:
+          projections: []
+        rotationFileID: 18
         frameNum: 83
         angle: 60
         joints:
@@ -2519,6 +2714,8 @@ MonoBehaviour:
         - {x: 1.753752, y: -3.670972, z: -0.310072}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 13
         frameNum: 143
         angle: 132
@@ -2543,7 +2740,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 13
+      - cluster:
+          projections: []
+        rotationFileID: 13
         frameNum: 139
         angle: 132
         joints:
@@ -2562,7 +2761,9 @@ MonoBehaviour:
         - {x: 0.6435004, y: -2.149379, z: -0.6979}
         - {x: 1.308365, y: -3.837693, z: -0.2231472}
         distanceFromRepresentative: 0
-      - rotationFileID: 13
+      - cluster:
+          projections: []
+        rotationFileID: 13
         frameNum: 140
         angle: 132
         joints:
@@ -2581,7 +2782,9 @@ MonoBehaviour:
         - {x: 0.6528912, y: -2.149601, z: -0.6904738}
         - {x: 1.319923, y: -3.835837, z: -0.2113941}
         distanceFromRepresentative: 0
-      - rotationFileID: 13
+      - cluster:
+          projections: []
+        rotationFileID: 13
         frameNum: 141
         angle: 132
         joints:
@@ -2600,7 +2803,9 @@ MonoBehaviour:
         - {x: 0.6550975, y: -2.151116, z: -0.6894947}
         - {x: 1.327569, y: -3.834241, z: -0.2070936}
         distanceFromRepresentative: 0
-      - rotationFileID: 13
+      - cluster:
+          projections: []
+        rotationFileID: 13
         frameNum: 142
         angle: 132
         joints:
@@ -2620,6 +2825,8 @@ MonoBehaviour:
         - {x: 1.332808, y: -3.833096, z: -0.2034006}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 22
         frameNum: 120
         angle: 60
@@ -2644,7 +2851,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 22
+      - cluster:
+          projections: []
+        rotationFileID: 22
         frameNum: 116
         angle: 60
         joints:
@@ -2663,7 +2872,9 @@ MonoBehaviour:
         - {x: 0.891623, y: -2.10929, z: 0.002970815}
         - {x: 1.56772, y: -3.562221, z: 0.9775097}
         distanceFromRepresentative: 0
-      - rotationFileID: 22
+      - cluster:
+          projections: []
+        rotationFileID: 22
         frameNum: 117
         angle: 60
         joints:
@@ -2682,7 +2893,9 @@ MonoBehaviour:
         - {x: 0.846758, y: -2.161281, z: -0.1697679}
         - {x: 1.630814, y: -3.478515, z: 0.9109694}
         distanceFromRepresentative: 0
-      - rotationFileID: 22
+      - cluster:
+          projections: []
+        rotationFileID: 22
         frameNum: 118
         angle: 60
         joints:
@@ -2701,7 +2914,9 @@ MonoBehaviour:
         - {x: 0.774468, y: -2.213743, z: -0.4017923}
         - {x: 1.642577, y: -3.371568, z: 0.7913837}
         distanceFromRepresentative: 0
-      - rotationFileID: 22
+      - cluster:
+          projections: []
+        rotationFileID: 22
         frameNum: 119
         angle: 60
         joints:
@@ -2721,6 +2936,8 @@ MonoBehaviour:
         - {x: 1.608506, y: -3.237538, z: 0.6255277}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 18
         frameNum: 23
         angle: 324
@@ -2745,7 +2962,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 18
+      - cluster:
+          projections: []
+        rotationFileID: 18
         frameNum: 19
         angle: 324
         joints:
@@ -2764,7 +2983,9 @@ MonoBehaviour:
         - {x: 0.3114973, y: -2.167748, z: 0.9431164}
         - {x: -0.2203332, y: -3.810716, z: 1.675002}
         distanceFromRepresentative: 0
-      - rotationFileID: 18
+      - cluster:
+          projections: []
+        rotationFileID: 18
         frameNum: 20
         angle: 324
         joints:
@@ -2783,7 +3004,9 @@ MonoBehaviour:
         - {x: 0.319751, y: -2.170239, z: 1.011521}
         - {x: -0.2117674, y: -3.783401, z: 1.807159}
         distanceFromRepresentative: 0
-      - rotationFileID: 18
+      - cluster:
+          projections: []
+        rotationFileID: 18
         frameNum: 21
         angle: 324
         joints:
@@ -2802,7 +3025,9 @@ MonoBehaviour:
         - {x: 0.3794224, y: -2.197848, z: 1.02228}
         - {x: -0.1993147, y: -3.728315, z: 1.939107}
         distanceFromRepresentative: 0
-      - rotationFileID: 18
+      - cluster:
+          projections: []
+        rotationFileID: 18
         frameNum: 22
         angle: 324
         joints:
@@ -2822,6 +3047,8 @@ MonoBehaviour:
         - {x: -0.1493083, y: -3.654191, z: 2.032903}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 17
         frameNum: 15
         angle: 60
@@ -2846,7 +3073,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 11
         angle: 60
         joints:
@@ -2865,7 +3094,9 @@ MonoBehaviour:
         - {x: 0.1695952, y: -2.13374, z: -0.5442853}
         - {x: 0.6505053, y: -3.830621, z: 0.09380795}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 12
         angle: 60
         joints:
@@ -2884,7 +3115,9 @@ MonoBehaviour:
         - {x: 0.1667116, y: -2.136621, z: -0.5804456}
         - {x: 0.6486609, y: -3.819949, z: 0.09184506}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 13
         angle: 60
         joints:
@@ -2903,7 +3136,9 @@ MonoBehaviour:
         - {x: 0.1634117, y: -2.138402, z: -0.6135981}
         - {x: 0.6513124, y: -3.807537, z: 0.08909881}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 14
         angle: 60
         joints:
@@ -2923,6 +3158,8 @@ MonoBehaviour:
         - {x: 0.6495059, y: -3.796513, z: 0.083023}
         distanceFromRepresentative: 0
     - projection:
+        cluster:
+          projections: []
         rotationFileID: 13
         frameNum: 146
         angle: 132
@@ -2947,7 +3184,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 13
+      - cluster:
+          projections: []
+        rotationFileID: 13
         frameNum: 142
         angle: 132
         joints:
@@ -2966,7 +3205,9 @@ MonoBehaviour:
         - {x: 0.6574359, y: -2.15145, z: -0.6869091}
         - {x: 1.332808, y: -3.833096, z: -0.2034006}
         distanceFromRepresentative: 0
-      - rotationFileID: 13
+      - cluster:
+          projections: []
+        rotationFileID: 13
         frameNum: 143
         angle: 132
         joints:
@@ -2985,7 +3226,9 @@ MonoBehaviour:
         - {x: 0.6627711, y: -2.148816, z: -0.6771013}
         - {x: 1.336506, y: -3.831457, z: -0.1947703}
         distanceFromRepresentative: 0
-      - rotationFileID: 13
+      - cluster:
+          projections: []
+        rotationFileID: 13
         frameNum: 144
         angle: 132
         joints:
@@ -3004,7 +3247,9 @@ MonoBehaviour:
         - {x: 0.665387, y: -2.148177, z: -0.6784185}
         - {x: 1.33544, y: -3.832502, z: -0.1968382}
         distanceFromRepresentative: 0
-      - rotationFileID: 13
+      - cluster:
+          projections: []
+        rotationFileID: 13
         frameNum: 145
         angle: 132
         joints:
@@ -3023,8 +3268,11 @@ MonoBehaviour:
         - {x: 0.6620349, y: -2.148678, z: -0.6822007}
         - {x: 1.330438, y: -3.833941, z: -0.201612}
         distanceFromRepresentative: 0
+    selectedClusters: []
     Estimation3D:
       projection:
+        cluster:
+          projections: []
         rotationFileID: 17
         frameNum: 10
         angle: 84
@@ -3049,7 +3297,9 @@ MonoBehaviour:
       rotations: []
       hipRotation: {x: 0, y: 0, z: 0, w: 0}
       windowIn3Dpoints:
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 6
         angle: 84
         joints:
@@ -3068,7 +3318,9 @@ MonoBehaviour:
         - {x: -0.02363487, y: -2.134079, z: -0.4948799}
         - {x: 0.691046, y: -3.846708, z: -0.2229048}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 7
         angle: 84
         joints:
@@ -3087,7 +3339,9 @@ MonoBehaviour:
         - {x: -0.01599217, y: -2.128021, z: -0.4989403}
         - {x: 0.6784542, y: -3.846333, z: -0.2108606}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 8
         angle: 84
         joints:
@@ -3106,7 +3360,9 @@ MonoBehaviour:
         - {x: -0.01177084, y: -2.126441, z: -0.5085762}
         - {x: 0.6677513, y: -3.847091, z: -0.199617}
         distanceFromRepresentative: 0
-      - rotationFileID: 17
+      - cluster:
+          projections: []
+        rotationFileID: 17
         frameNum: 9
         angle: 84
         joints:
@@ -3129,7 +3385,9 @@ MonoBehaviour:
     appearanceOrder: 0
     id: 0
   selectedWin:
-  - rotationFileID: 17
+  - cluster:
+      projections: []
+    rotationFileID: 17
     frameNum: 6
     angle: 84
     joints:
@@ -3148,7 +3406,9 @@ MonoBehaviour:
     - {x: -0.02363487, y: -2.134079, z: -0.4948799}
     - {x: 0.691046, y: -3.846708, z: -0.2229048}
     distanceFromRepresentative: 0
-  - rotationFileID: 17
+  - cluster:
+      projections: []
+    rotationFileID: 17
     frameNum: 7
     angle: 84
     joints:
@@ -3167,7 +3427,9 @@ MonoBehaviour:
     - {x: -0.01599217, y: -2.128021, z: -0.4989403}
     - {x: 0.6784542, y: -3.846333, z: -0.2108606}
     distanceFromRepresentative: 0
-  - rotationFileID: 17
+  - cluster:
+      projections: []
+    rotationFileID: 17
     frameNum: 8
     angle: 84
     joints:
@@ -3186,7 +3448,9 @@ MonoBehaviour:
     - {x: -0.01177084, y: -2.126441, z: -0.5085762}
     - {x: 0.6677513, y: -3.847091, z: -0.199617}
     distanceFromRepresentative: 0
-  - rotationFileID: 17
+  - cluster:
+      projections: []
+    rotationFileID: 17
     frameNum: 9
     angle: 84
     joints:
@@ -3285,7 +3549,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
@@ -3552,8 +3816,11 @@ MonoBehaviour:
     scaleFactor: 0
     limbFactor: 0
     neighbours: []
+    selectedClusters: []
     Estimation3D:
       projection:
+        cluster:
+          projections: []
         rotationFileID: 0
         frameNum: 0
         angle: 0
@@ -3575,8 +3842,11 @@ MonoBehaviour:
     scaleFactor: 0
     limbFactor: 0
     neighbours: []
+    selectedClusters: []
     Estimation3D:
       projection:
+        cluster:
+          projections: []
         rotationFileID: 0
         frameNum: 0
         angle: 0
@@ -3595,7 +3865,7 @@ MonoBehaviour:
   currentFrame: 0
   VideoplayerGO: {fileID: 912773421}
   automatic: 1
-  showInfo: 0
+  showInfo: 1
   buttonAutomatic: {fileID: 474819855}
   textInfo: {fileID: 271769971}
   frames: []
@@ -3812,7 +4082,8 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: a5dc7a167ba62794daeec7dd7d900e94, type: 2}
   showEstimationScript: {fileID: 513344891}
   showBestOne: 0
-  color: {r: 0, g: 0, b: 0, a: 0}
+  colorDefault: {r: 0, g: 0, b: 0, a: 1}
+  colorBest: {r: 0, g: 0, b: 0, a: 0}
   offsetToCorner: {x: 17.4, y: 15, z: 0}
   offsetBetweenFigures: {x: 10, y: 10, z: 0}
 --- !u!81 &657580616
@@ -3841,7 +4112,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
@@ -4381,6 +4652,9 @@ MonoBehaviour:
   showGrid: 1
   material: {fileID: 2100000, guid: a5dc7a167ba62794daeec7dd7d900e94, type: 2}
   showEstimationScript: {fileID: 513344891}
+  inputColor: {r: 0.8396226, g: 0.13063136, b: 0, a: 1}
+  bestColor: {r: 0.08877765, g: 0.8301887, b: 0.011747932, a: 1}
+  axisColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!4 &928326575
 Transform:
   m_ObjectHideFlags: 0
@@ -4405,7 +4679,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
@@ -5241,7 +5515,7 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: a5dc7a167ba62794daeec7dd7d900e94, type: 2}
   showEstimationScript: {fileID: 513344891}
   showBestOne: 0
-  color: {r: 0, g: 0, b: 0, a: 0}
+  colorDefault: {r: 0, g: 0, b: 0, a: 0}
   offsetToCorner: {x: 20, y: 15, z: 0}
   offsetBetweenFigures: {x: 10, y: 10, z: 0}
 --- !u!81 &1497972229
@@ -5270,7 +5544,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
@@ -5398,8 +5672,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   t_camera: {fileID: 1502246054}
-  model: {fileID: 0}
-  estimationScript: {fileID: 0}
 --- !u!114 &1538582772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5437,8 +5709,11 @@ MonoBehaviour:
     scaleFactor: 0
     limbFactor: 0
     neighbours: []
+    selectedClusters: []
     Estimation3D:
       projection:
+        cluster:
+          projections: []
         rotationFileID: 0
         frameNum: 0
         angle: 0
@@ -5501,8 +5776,11 @@ MonoBehaviour:
     scaleFactor: 0
     limbFactor: 0
     neighbours: []
+    selectedClusters: []
     Estimation3D:
       projection:
+        cluster:
+          projections: []
         rotationFileID: 0
         frameNum: 0
         angle: 0
@@ -5676,7 +5954,7 @@ Camera:
   m_GameObject: {fileID: 1842599748}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 1, g: 1, b: 1, a: 1}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
@@ -5779,8 +6057,11 @@ MonoBehaviour:
     scaleFactor: 0
     limbFactor: 0
     neighbours: []
+    selectedClusters: []
     Estimation3D:
       projection:
+        cluster:
+          projections: []
         rotationFileID: 0
         frameNum: 0
         angle: 0
@@ -5883,7 +6164,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
@@ -6150,7 +6431,7 @@ Camera:
   m_GameObject: {fileID: 2066325758}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 1, g: 1, b: 1, a: 1}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
@@ -15560,6 +15841,26 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3210035711932810323, guid: 5a441a0308516e740803d824b23ee20b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5754012210210180978, guid: 5a441a0308516e740803d824b23ee20b,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5754012210210180978, guid: 5a441a0308516e740803d824b23ee20b,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5754012210210180978, guid: 5a441a0308516e740803d824b23ee20b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5754012210210180978, guid: 5a441a0308516e740803d824b23ee20b,
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0

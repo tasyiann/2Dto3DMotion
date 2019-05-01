@@ -125,8 +125,14 @@ public class ControlFrames_viaVideo : DataInFrame
 
     void Update()
     {
-
-
+        if (Input.GetKeyDown("1"))
+        {
+            personIndex = 0;
+        }
+        if (Input.GetKeyDown("2"))
+        {
+            personIndex = frames[currentFrame]!=null && frames[currentFrame].figures.Count > 1 ?  1 : 0;
+        }
 
 
 

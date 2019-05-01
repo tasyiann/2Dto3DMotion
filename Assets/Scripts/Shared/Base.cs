@@ -7,6 +7,7 @@ using System.Globalization;
 using UnityEngine.UI;
 using System.Threading;
 using System.Text;
+using UnityEngine.Assertions;
 
 /* Shared components between classes. */
 public static class Base
@@ -34,7 +35,7 @@ public static class Base
     public static List<List<BvhProjection>> base_not_clustered;      // All projections not clustered.
 
     public static int metadataInFile = 3;                                            // Metadata in a tuple.
-    public static int numberOfJoints = Enum.GetNames(typeof(EnumJoint)).Length;        // Joints in a tuple.
+    public static int numberOfJoints = Enum.GetNames(typeof(EnumJoint)).Length;      // Joints in a tuple.
 
     // Current scenario to be displayed.
     public static Scenario sc = null;
@@ -69,6 +70,7 @@ public static class Base
         Estimation3dAlgorithm = AlgorithmsParametersReader.Instance.Parameters.estimation3dAlgorithm;
         NeighboursAlgorithm = AlgorithmsParametersReader.Instance.Parameters.neighboursAlgorithm;
         base_orderOfComparableRotations = AlgorithmsParametersReader.Instance.Parameters.orderOfComparableRotations;
+        Assert.IsTrue(base_orderOfComparableRotations.Length == numberOfJoints);
     }
 
     public static void Threads_StartInit()

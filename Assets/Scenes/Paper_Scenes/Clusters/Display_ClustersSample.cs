@@ -5,7 +5,7 @@ using UnityEngine;
 public class Display_ClustersSample : MonoBehaviour
 {
     public VM3DModelDebug script;
-    public int currentCluster;
+    //public int currentCluster;
     public float startingRadius;
     public float radiusOffset;
     public float perCircleINIT =20f;

@@ -2,14 +2,14 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace VNectHacker
+namespace AnimationFilesHacker
 {
-    public class VNectFrame
+    public class AnimationFrame
     {
         public List<Vector3> SkeletonJoints { get; set; }
         public int FrameNumber { get; set; }
 
-        public VNectFrame(List<Vector3> skeleton, int frameNumber)
+        public AnimationFrame(List<Vector3> skeleton, int frameNumber)
         {
             SkeletonJoints = skeleton;
             FrameNumber = frameNumber;

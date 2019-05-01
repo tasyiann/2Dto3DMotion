@@ -47,6 +47,8 @@ public class ProjectionManager : MonoBehaviour {
 
     private void CreateFiles(string bvhfilename)
     {
+        if(!Directory.Exists(OutputDirectory))
+            Directory.CreateDirectory(OutputDirectory);
         Directory.CreateDirectory(OutputDirectory + "\\Projections\\");
         Directory.CreateDirectory(OutputDirectory + "\\Rotations\\");
         string positionsFilePath = OutputDirectory+ "\\Projections\\" + (filesCounter)+".p";

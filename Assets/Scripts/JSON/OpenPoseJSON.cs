@@ -57,6 +57,9 @@ public class OpenPoseJSON {
         }
         //frame.figures = figureIdentifier.sortFiguresInFrame(frame);
         sortFiguresByX(frame);
+
+
+
         //sortFiguresByTheirID(frame);
         // TODO: SORT THEM BY ID:)
         return frame;

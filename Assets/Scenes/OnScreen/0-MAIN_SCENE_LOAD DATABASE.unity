@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -399,10 +399,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 311f9137d8cc38745b25a274409855ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  progressText: {fileID: 1414672040}
-  Clusters: 1
-  Projections: 1
-  Rotations: 1
 --- !u!4 &1219914761
 Transform:
   m_ObjectHideFlags: 0
@@ -442,7 +438,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d66e86c7e2a6c749856a53526ca7da1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parameters: {fileID: 11400000, guid: b73b7a76e6c524443b4b3772ce3c4516, type: 2}
+  parameters: {fileID: 11400000, guid: 593ff2ca9e739724393ffb6ecb435957, type: 2}
 --- !u!1 &1296116948
 GameObject:
   m_ObjectHideFlags: 0

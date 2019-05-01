@@ -172,7 +172,7 @@ public class BvhExport
         if (Estimation != null)
         {
             MotionBody = CreateMotionBody(false);
-            System.IO.File.WriteAllText(filename+"_Without_Orientation.bvh", HierarchyBody + MotionBody);
+            System.IO.File.WriteAllText(filename/*+"_Without_Orientation.bvh"*/+".bvh", HierarchyBody + MotionBody);
             Debug.Log("Bvh without correct orientation has been exported.");
         }
         else
@@ -183,8 +183,13 @@ public class BvhExport
 
 
         // StepB: Fix the orientation
+        // correctOrientation(filename);
+    }
+
+    private void correctOrientation(string filename)
+    {
         // 1. Read bvh
-        bvh_without_orientation = new BVH(filename+ "_Without_Orientation.bvh");
+        bvh_without_orientation = new BVH(filename + "_Without_Orientation.bvh");
         // 2. Create Triangles Source
         for (int i = 0; i < bvh_without_orientation.frameCount; i++)
         {
@@ -219,8 +224,6 @@ public class BvhExport
         System.IO.File.WriteAllText(filename + ".bvh", HierarchyBody + MotionBody);
         Debug.Log("Bvh with correct orientation has been exported!!");
     }
-
-
 
 
 

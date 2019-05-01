@@ -36,15 +36,35 @@ public class Model3D
     private float timeCount = 0.0f;
 
 
-    public Model3D(Transform model3d, float angle=0)
+    public Model3D(Transform model3d, float angle = 0)
     {
         model = model3d;
         JointsGameObjects = setJoints(model);
-        hips = GameObject.Find(model.name+"/Hips");
+        hips = GameObject.Find(model.name + "/Hips");
         this.angle = angle;
         offsets = setOffsets();
     }
- 
+
+    public static void correctlyNameJoints(Transform model, string name = "")
+    {
+        Transform result;
+        foreach (var val in Enum.GetValues(typeof(EnumJoint)))
+        {
+            if ((int)val == (int)EnumJoint.Spine1)
+            {
+                result = model.FindDeepChild(name + "Neck");
+                result.name = "Neck";
+            }
+            else
+            {
+                result = model.FindDeepChild(name + val.ToString());
+                result.name = val.ToString();
+            }
+        }
+        result = model.FindDeepChild(name + "Hips");
+        result.name = "Hips";
+    }
+
     public static List<Transform> setJoints(Transform model, string name = "")
     {
         Debug.Log("Getting transforms from model...");
@@ -55,26 +75,15 @@ public class Model3D
             /* EDITED: Neck. Get the movement of neck. */
             /* OLD: We want Spine, not Spine1. Because Spine is the Parent of Spine1, and moves better the model. */
             Transform result;
-            if (val.ToString().CompareTo(name+"Spine1") == 0)
-            {
-                result = model.FindDeepChild(name+"Neck");
-            }
-          
+            if ((int)val == (int)EnumJoint.Spine1)
+                result = model.FindDeepChild(name + "Neck");
             else
-            {
                 result = model.FindDeepChild(name+val.ToString());
-            }
-
             if (!result)
             {
-                Debug.Log("THE JOINT IS NULL >>>>>>>>>>>>>>>>>>>>>>>>>" + name+val.ToString());
-            }
-            else
-            {
-                //Debug.Log("JOINT OK <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" + val.ToString());
+                Debug.Log("Joint not found :" + name+val.ToString());
             }
             list.Add(result);
-            //Debug.Log("GO: " + val.ToString());
         }
         // Print out the list
         string s = "";
@@ -86,11 +95,6 @@ public class Model3D
         return list;
     }
 
-
-
-
-
-
     public List<Vector3> setOffsets()
     {
         List<Vector3> list = new List<Vector3>();
@@ -101,39 +105,21 @@ public class Model3D
         return list;
     }
 
-
-
-
     private static Quaternion getRotation(Quaternion qX, Quaternion qY, Quaternion qZ)
     {
         return Quaternion.Euler(new Vector3(qX.eulerAngles.x, qY.eulerAngles.y, qZ.eulerAngles.z));
     }
 
-
-    public static Quaternion XLookRotation(Vector3 right, Vector3 up)
+    public void moveSkeletonOTHERAXES(Vector3[] newJointsPositions, Quaternion AxesRotation)
     {
-
-        Quaternion rightToForward = Quaternion.Euler(0f, -90f, 0f);
-        Quaternion forwardToTarget = Quaternion.LookRotation(right, up);
-
-        return forwardToTarget * rightToForward;
+        Quaternion[] rotations = calculateRawRotations(newJointsPositions, hips.transform);  // Calculate Raw Rotations.
+        for (int i = 0; i < rotations.Length; i++)              // Set Rotations in joints.
+        {
+            if (rotations[i] == Quaternion.identity)            // Skip, if rotation is identity.
+                continue;
+            JointsGameObjects[i].rotation = rotations[i];
+        }
     }
-
-
-
-
-    public static Quaternion YLookRotation(Vector3 up, Vector3 upwards)
-    {
-
-        Quaternion UpToForward = Quaternion.Euler(90f, 0f, 0f); // Correct, it's 90 degrees to make the positive y, into positive forward.
-        Quaternion forwardToTarget = Quaternion.LookRotation(up, upwards);
-
-        return forwardToTarget * UpToForward;
-    }
-
-
-
-
 
     /* Try modifying the rotations, using LookRotation function.
      * https://gamedev.stackexchange.com/questions/136712/locking-a-rotation-on-an-axisyaw-pitch-roll-based-on-a-parental-transform/136743#136743
@@ -143,18 +129,6 @@ public class Model3D
     {
         Quaternion[] rotations = calculateRawRotations(newJointsPositions, hips.transform);  // Calculate Raw Rotations.
         for(int i=0; i<rotations.Length; i++)                                // Set Rotations in joints.
-        {
-            if (rotations[i] == Quaternion.identity)                         // Skip, if rotation is identity.
-                continue;
-            JointsGameObjects[i].rotation = rotations[i];
-        }
-    }
-
-
-    public void moveSkeletonNEW(Vector3[] newJointsPositions)
-    {
-        Quaternion[] rotations = calculateRawRotationsWithTriangles(newJointsPositions, hips.transform);  // Calculate Raw Rotations.
-        for (int i = 0; i < rotations.Length; i++)                                // Set Rotations in joints.
         {
             if (rotations[i] == Quaternion.identity)                         // Skip, if rotation is identity.
                 continue;
@@ -176,7 +150,6 @@ public class Model3D
         }
     }
 
-
     public void moveSkeleton_IK_POSITIONS(Vector3[] newJointsPositions, OneEuroFilter<Vector3>[] positionsFiltersJoints, OneEuroFilter<Quaternion> rotationFilterHips)
     {
         hips.transform.rotation = rotationFilterHips.Filter(hips.transform.rotation);    // Set Hips Rotation.
@@ -185,7 +158,6 @@ public class Model3D
             JointsGameObjects[i].position = positionsFiltersJoints[i].Filter(newJointsPositions[i]+hips.transform.position);
         }
     }
-
 
     public void moveSkeletonLERP(Vector3[] newJointsPositions)
     {
@@ -215,109 +187,55 @@ public class Model3D
     }
 
 
+
+    public static Quaternion XLookRotation(Vector3 right, Vector3 up)
+    {
+        // X becomes FWD
+        // Z becomes LEFT
+        // Y remains UP
+        Quaternion rightToForward = Quaternion.Euler(0f, -90f, 0f);
+        Quaternion forwardToTarget = Quaternion.LookRotation(right, up);
+
+        return forwardToTarget * rightToForward;
+    }
+
+    public static Quaternion YLookRotation(Vector3 up, Vector3 upwards)
+    {
+        // Y becomes FWD
+        // Z becomes DOWN
+        // X remains RIGHT
+        Quaternion UpToForward = Quaternion.Euler(90f, 0f, 0f);
+        Quaternion forwardToTarget = Quaternion.LookRotation(up, upwards);
+
+        return forwardToTarget * UpToForward;
+    }
+
     public Quaternion[] calculateRawRotations(Vector3[] newJoints, Transform hips)
     {
-        hips.rotation = getHips(newJoints);               // Set Hips Rotation.
+        // The order matters. The rotations should be applied first to the parent and then to the child.
+        Vector3 root = (newJoints[8] + newJoints[11]) / 2;
         Quaternion[] rotations = new Quaternion[14];
+        hips.rotation = XLookRotation(newJoints[8] - newJoints[11], -(root - newJoints[1]));
+        /* HEAD           */ rotations[0]  = Quaternion.identity; // end effector.
+        /* NECK           */ rotations[1]  = YLookRotation(-(newJoints[1] - newJoints[0]), JointsGameObjects[1].TransformDirection(Vector3.back));
+        /* RIGHT_ARM      */ rotations[2]  = XLookRotation(newJoints[3] - newJoints[2], JointsGameObjects[2].TransformDirection(Vector3.up));
+        /* RIGHT_FORE_ARM */ rotations[3]  = XLookRotation(newJoints[4] - newJoints[3], JointsGameObjects[3].TransformDirection(Vector3.up));
+        /* RIGHT_HAND     */ rotations[4]  = Quaternion.identity; // end effector.
+        /* LEFT_ARM       */ rotations[5]  = XLookRotation(-(newJoints[6] - newJoints[5]), JointsGameObjects[5].TransformDirection(Vector3.up));
+        /* LEFT_FORE_ARM  */ rotations[6]  = XLookRotation(-(newJoints[7] - newJoints[6]), JointsGameObjects[6].TransformDirection(Vector3.up));
+        /* LEFT_HAND      */ rotations[7]  = Quaternion.identity; // end effector.
+        /* RIGHT_UP_LEG   */ rotations[8]  = YLookRotation(-(newJoints[9] - newJoints[8]), JointsGameObjects[8].TransformDirection(Vector3.back));
+        /* RIGHT_LEG      */ rotations[9]  = YLookRotation(-(newJoints[10] - newJoints[9]), JointsGameObjects[9].TransformDirection(Vector3.back));
+        /* RIGHT_FOOT     */ rotations[10] = Quaternion.identity; // end effector.
+        /* LEFT_UPLEG     */ rotations[11] = YLookRotation(-(newJoints[12] - newJoints[11]), JointsGameObjects[11].TransformDirection(Vector3.back));
+        /* LEFT_LEG       */ rotations[12] = YLookRotation(-(newJoints[13] - newJoints[12]), JointsGameObjects[12].TransformDirection(Vector3.back));
+        /* LEFT_FOOT      */ rotations[13] = Quaternion.identity; // end effector.
 
-        /* HEAD           */ rotations[0] = Quaternion.identity;
-        /* SPINE          */
-        //rotations[1] = Quaternion.FromToRotation(Vector3.down, (newJoints[1] - newJoints[0]).normalized);
-        //Vector3 tempRotations1 = new Vector3(rotations[1].eulerAngles.x, hips.rotation.eulerAngles.y, rotations[1].eulerAngles.z);
-        
-        //List<Vector3> source = new List<Vector3>() { new Vector3(-1f, 0f, 0f), new Vector3(1f, 0f, 0f), new Vector3(0f,1f,0f) };
-        //List<Vector3> target = new List<Vector3>() { newJoints[(int)EnumJoint.LeftUpLeg], newJoints[(int)EnumJoint.RightUpLeg], newJoints[(int)EnumJoint.Spine1] };
-        rotations[1] = Quaternion.identity;//Triangle3DRot(source, target);
-
-
-        /* RIGHT_ARM      */
-        rotations[2] = XLookRotation(newJoints[3] - newJoints[2], Vector3.up);
-        /* RIGHT_FORE_ARM */ rotations[3] = XLookRotation(newJoints[4] - newJoints[3], Vector3.up);
-        /* RIGHT_HAND     */ rotations[4] = Quaternion.identity;
-        /* LEFT_ARM       */ rotations[5] = XLookRotation(-(newJoints[6] - newJoints[5]), Vector3.up);
-        /* LEFT_FORE_ARM  */ rotations[6] = XLookRotation(-(newJoints[7] - newJoints[6]), Vector3.up);
-        /* LEFT_HAND      */ rotations[7] = Quaternion.identity;
-        /* RIGHT_UP_LEG   */ rotations[8] = Quaternion.FromToRotation(Vector3.down, (newJoints[9] - newJoints[8]).normalized) * Quaternion.AngleAxis(180,Vector3.down);
-        /* RIGHT_LEG      */ rotations[9] = Quaternion.FromToRotation(Vector3.down, (newJoints[10] - newJoints[9]).normalized);
-        /* RIGHT_FOOT     */ rotations[10] = XLookRotation((newJoints[2] - newJoints[1]), Vector3.up);
-        /* LEFT_UPLEG     */ rotations[11] = Quaternion.FromToRotation(Vector3.down, (newJoints[12] - newJoints[11]).normalized) * Quaternion.AngleAxis(180, Vector3.down);
-        /* LEFT_LEG       */ rotations[12] = Quaternion.FromToRotation(Vector3.down, (newJoints[13] - newJoints[12]).normalized);
-        /* LEFT_FOOT      */ rotations[13] = rotations[10];
         return rotations;
     }
 
-
-    public Quaternion[] calculateRawRotationsWithTriangles(Vector3[] j, Transform hips)
-    {
-        throw new NotImplementedException();
-        hips.rotation = getHips(j);
-        Quaternion[] rotations = new Quaternion[14];
-        /* HEAD           */
-        rotations[0] = Quaternion.identity;
-        /* SPINE          */
-        rotations[1] =
-        /* RIGHT_ARM      */
-        rotations[2] =
-        /* RIGHT_FORE_ARM */
-        rotations[3] =
-        /* RIGHT_HAND     */
-        rotations[4] =
-        /* LEFT_ARM       */
-        rotations[5] =
-        /* LEFT_FORE_ARM  */
-        rotations[6] =
-        /* LEFT_HAND      */
-        rotations[7] =
-        /* RIGHT_UP_LEG   */
-        rotations[8] =
-        /* RIGHT_LEG      */
-        rotations[9] =
-        /* RIGHT_FOOT     */
-        rotations[10] =
-        /* LEFT_UPLEG     */
-        rotations[11] =
-        /* LEFT_LEG       */
-        rotations[12] =
-        /* LEFT_FOOT      */
-        rotations[13] = Quaternion.identity;
-        return rotations;
-    }
-
-    private List<Vector3> createTriangle(Vector3 v1, Vector3 v2, Vector3 v3)
-    {
-        return new List<Vector3>() { v1, v3, v3 };
-    }
-
-
-
-    private Quaternion Triangle3DRot(List<Vector3> source, List<Vector3> target)
-    {
-        // https://stackoverflow.com/questions/11217680/how-to-calculate-the-quaternion-that-represents-a-triangles-3d-rotation
-        // Define a triangle plane
-        Vector3 s1, s2, s3, t1, t2, t3;
-        s1 = source[0];
-        s2 = source[1];
-        s3 = source[2];
-
-        // Yes, they are the same.
-        // Debug.Log(s1+","+JointsGameObjects[(int)JointsDefinition.LeftUpLeg].position);
-
-        t1 = target[0];
-        t2 = target[1];
-        t3 = target[2];
-        // Calculations
-        Vector3 normSource = Vector3.Cross((s1 - s2), (s1 - s3));
-        Vector3 normTarget = Vector3.Cross((t1 - t2), (t1 - t3));
-        Quaternion quat1 = Quaternion.FromToRotation(normSource, normTarget);
-        Quaternion quat2 = Quaternion.FromToRotation(quat1 * (s1 - s2), (t1 - t2));
-        Quaternion QuatFinal = quat2 * quat1;
-        return QuatFinal;
-    }
-
-
-
-
-    public static Quaternion getHips(Vector3[] joints)
+    /*
+    public Quaternion calculateHipsRotation(Vector3[] joints)
     {
         // Get Root:
         Vector3 root = (joints[8] + joints[11]) / 2;
@@ -326,7 +244,9 @@ public class Model3D
         Quaternion hips_yz = XLookRotation(joints[8] - joints[11], Vector3.up);
         return getRotation(hips_x, hips_yz, hips_yz);
     }
+    */
 
+    
 
 
 

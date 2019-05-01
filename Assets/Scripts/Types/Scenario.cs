@@ -40,7 +40,8 @@ public class Scenario  {
     public void Save()
     {
         // Create directory.
-        var myUniqueDirName = string.Format(@"{0}", Guid.NewGuid());
+        var myUniqueDirName = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");//string.Format(@"{0}", Guid.NewGuid());
+
         string dirname = "Scenarios\\" + algEstimation + myUniqueDirName;
         System.IO.Directory.CreateDirectory(dirname);
         Base.base_CurrentDir = dirname;
@@ -51,7 +52,7 @@ public class Scenario  {
         var myUniqueFileName = string.Format(@"{0}", DateTime.Now.Ticks);
 
         // Save the log file.
-        //SaveLog(this, dirname, myUniqueFileName+".xml");
+        SaveLog(this, dirname, myUniqueFileName+".xml");
         //OfflineDataProcessing.WriteToBinaryFile(dirname + @"\Scenario"+myUniqueFileName+".sc",this);
         //OfflineDataProcessing.WriteToBinaryFile(dirname + @"\Estimation" + myUniqueFileName, OfflineDataProcessing.getEstimationArray(0));
         //Debug.Log("Scenario has been saved.");
@@ -85,7 +86,7 @@ public class Scenario  {
             if (k >= estimation.Length)
                 break;
             */
-            for (int i = 0; i < n.projection.joints.Length; i++)
+            for (int i = 0; n!=null && n.projection!=null && n.projection.joints!=null && n.projection.joints.Length !=0 && i < n.projection.joints.Length; i++)
             {
                 Vector3 joint = n.projection.joints[i];
                 s.AppendFormat(", {0}, {1}, {2}", joint.x, joint.y, joint.z);

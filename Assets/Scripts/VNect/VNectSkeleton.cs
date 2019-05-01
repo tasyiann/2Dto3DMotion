@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-using static VNectHacker.DataLoader;
+using static AnimationFilesHacker.DataLoader;
 
-namespace VNectHacker
+namespace AnimationFilesHacker
 {
     /* Extension for transform. */
     public static class TransformDeepChildExtension
@@ -45,9 +45,9 @@ namespace VNectHacker
         public float ActualSkeletonHeight;
         public float NormalizedSkeletonHeight;
         public float ScalingFactor;
-        List<VNectFrame> Frames;
+        List<AnimationFrame> Frames;
 
-        public VNectSkeleton(GameObject prefabSkeleton, string name, List<VNectFrame> frames, bool fixedRootRotation, int numOfJoints = 15, bool normalize = true, DataType dataType = DataType.Ik3D,  float targetHeight = 1f)
+        public VNectSkeleton(GameObject prefabSkeleton, string name, List<AnimationFrame> frames, bool fixedRootRotation, int numOfJoints = 15, bool normalize = true, DataType dataType = DataType.Ik3D,  float targetHeight = 1f)
         {
             NUM_JOINTS = numOfJoints;
             instantiateSkeleton(prefabSkeleton, name);
@@ -74,7 +74,7 @@ namespace VNectHacker
 
         public void ApplyFixedRootRotation()
         {
-            foreach (VNectFrame frame in Frames)
+            foreach (AnimationFrame frame in Frames)
             {
                 List<Vector3> frameJoints = frame.SkeletonJoints;
                 // Set initial positions.
@@ -125,7 +125,7 @@ namespace VNectHacker
         
         private void NormalizeFrames(float scalingFactor, DataType dataType)
         {
-            foreach(VNectFrame frame in Frames)
+            foreach(AnimationFrame frame in Frames)
             {
                 NormalizeSkeleton(frame.SkeletonJoints, scalingFactor, dataType);
             }
@@ -136,7 +136,7 @@ namespace VNectHacker
         public float getHeightOfSkeleton()
         {
             float result = 0;
-            foreach (VNectFrame frame in Frames)
+            foreach (AnimationFrame frame in Frames)
             {
                 List<Vector3> s = frame.SkeletonJoints;
                 float FootLeg = Vector3.Distance(s[(int)JointsDefinition.RightFoot], s[(int)JointsDefinition.RightLeg]);

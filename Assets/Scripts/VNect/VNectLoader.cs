@@ -4,13 +4,13 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
-using VNectHacker;
-using static VNectHacker.DataLoader;
+using AnimationFilesHacker;
+using static AnimationFilesHacker.DataLoader;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
 using System.Linq;
 using System;
-using static VNectHacker.VNectSkeleton;
+using static AnimationFilesHacker.VNectSkeleton;
 using System.Text;
 
 [CustomEditor(typeof(VNectLoader))]
@@ -98,7 +98,7 @@ public class ObjectBuilderEditorVNect : Editor
 public class VNectLoader : MonoBehaviour
 {
     #region Variables
-
+    private bool automaticFrames;
     public bool foldOut1 { get; set; }
     public bool foldOut2 { get; set; }
  
@@ -142,6 +142,7 @@ public class VNectLoader : MonoBehaviour
     public float SkeletonHeight = 175f;
     public bool FixedRootRotation = false;
     public bool Show3DModel = false;
+    public bool showTriangle = true;
     public bool showDistances = false;
     [ReadOnly]
     public float AverageDistance = 0;
@@ -155,10 +156,10 @@ public class VNectLoader : MonoBehaviour
 
     // 1st Data
     private VNectSkeleton skeleton_A;
-    public List<VNectFrame> frames_A;
+    public List<AnimationFrame> frames_A;
     // 2nd Data
     private VNectSkeleton skeleton_B;
-    public List<VNectFrame> frames_B;
+    public List<AnimationFrame> frames_B;
 
 
     private bool recordState;
@@ -197,6 +198,7 @@ public class VNectLoader : MonoBehaviour
     #endregion Variables
 
     #region FrameIndex
+    [SerializeField]
     private int frameIndx;
     public int FrameIndx
     {
@@ -241,7 +243,7 @@ public class VNectLoader : MonoBehaviour
     #endregion FrameIndex
 
     #region 1EuroFilter
-    public enum Filters { None, NEW, OneEuro, SGolay, Lerp }
+    public enum Filters { None, RotatedAxis, OneEuro, SGolay, Lerp }
     public Filters Filter { get; set; }
     [HideInInspector, SerializeField]
     private float _filterFrequency;
@@ -284,6 +286,8 @@ public class VNectLoader : MonoBehaviour
 
     void Start()
     {
+        Debug.Log(Quaternion.Euler(0f, -135f, 0f) * Vector3.up);
+        
         Filter = Filters.None;
         playMode = true;
 
@@ -357,12 +361,10 @@ public class VNectLoader : MonoBehaviour
             s.Append("\n");
             frameCounter++;
         }
-        File.WriteAllText("UCY.filtered", s.ToString());
-        Debug.Log("File has been exported!");
+        DirectoryInfo parentDir = Directory.GetParent(dataDirPath_A);
+        File.WriteAllText(parentDir + @"\UCY.filtered", s.ToString());
+        Debug.Log("File has been exported in "+parentDir);
     }
-
-
-
 
     private void Move3Dmodel()
     {
@@ -371,8 +373,8 @@ public class VNectLoader : MonoBehaviour
             case Filters.None:
                 modelController.moveSkeleton(skeleton_A.Joints.ToArray());
                 break;
-            case Filters.NEW:
-                modelController.moveSkeletonNEW(skeleton_A.Joints.ToArray());
+            case Filters.RotatedAxis:
+                modelController.moveSkeletonOTHERAXES(skeleton_A.Joints.ToArray(), Quaternion.Euler(0, -225f, 0));
                 break;
             case Filters.OneEuro:
                 modelController.moveSkeleton_OneEuroFilter(skeleton_A.Joints.ToArray(),rotationFiltersJoints.ToArray(), rotationFiltersJoints[(int)JointsDefinition.Root]);
@@ -420,20 +422,12 @@ public class VNectLoader : MonoBehaviour
     {
         CancelInvoke();
         InvokeRepeating("IncrementFrameIndxByFps", 0f, 1f / FramesPerSecond);
+        automaticFrames = true;
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown("w"))
-        {
-            FrameIndx++;
-        }
-            
-        if (Input.GetKeyDown("s"))
-        {
-            FrameIndx--;
-        }
-            
+        changeFrameViaKeys();
     }
 
     public void stopRecording()
@@ -486,8 +480,15 @@ public class VNectLoader : MonoBehaviour
 
     }
 
+    
+
+    /* Compare Two Skeletons */
     public float CalculateDistance()
     {
+        string perFramePath = "Avg_PerFrame.txt";
+        string perJointPath = "Avg_PerJoint.txt";
+        StringBuilder PerJoint = new StringBuilder();
+        StringBuilder PerFrame = new StringBuilder();
         float overallDistance = 0;
         for (int f=0; f<frames_A.Count; f++)
         {
@@ -496,9 +497,15 @@ public class VNectLoader : MonoBehaviour
             for (int i = 0; i < frames_A[f].SkeletonJoints.Count; i++)
             {
                 distanceInFrame += Vector3.Distance(frames_A[f].SkeletonJoints[i], frames_B[f].SkeletonJoints[i]);
+                PerJoint.Append(distanceInFrame+" ");
             }
+            PerJoint.Append("\n");
             overallDistance += distanceInFrame / frames_A[f].SkeletonJoints.Count;
+            PerFrame.Append((distanceInFrame / frames_A[f].SkeletonJoints.Count) + "\n");
         }
+
+        File.WriteAllText(perJointPath,PerJoint.ToString());
+        File.WriteAllText(perFramePath,PerFrame.ToString());
         return overallDistance / frames_A.Count;
     }
 
@@ -534,6 +541,15 @@ public class VNectLoader : MonoBehaviour
 
     private void OnPostRender()
     {
+        if (showTriangle)
+        {
+            displayTriangle();
+        }
+       
+    }
+
+    private void displayTriangle()
+    {
         // Define a triangle plane
         Vector3 s1, s2, s3, t1, t2, t3;
         s1 = skeleton_A.JointsGameObjects[(int)JointsDefinition.LeftUpLeg].position;
@@ -562,4 +578,28 @@ public class VNectLoader : MonoBehaviour
         GL.End();
     }
 
+    private void changeFrameViaKeys()
+    {
+        if (Input.GetKeyDown("space"))
+        {
+            if (automaticFrames)
+            {
+                CancelInvoke();
+                automaticFrames = false;
+            }
+            else
+            {
+                automaticIncrementFrameIndex();
+            }
+        }
+
+        if (Input.GetKeyDown("w"))
+        {
+            FrameIndx++;
+        }
+        if (Input.GetKeyDown("s"))
+        {
+            FrameIndx--;
+        }
+    }
 }
