@@ -34,12 +34,12 @@ public class Model3D
     {
         public static Vector3[] GlobalAxesOrder = getGlobalAxesOrder();
         public Transform Transform;
-        public EnumJoint Tag;
+        public EnumModel3DJoints Tag;
         public Vector3[] ActualAxesDirection;
         public UcyAxes[] ActualAxesOrder;
 
 
-        public MJoint(Transform transform, EnumJoint enumJoint, Vector3[] axes = null)
+        public MJoint(Transform transform, EnumModel3DJoints enumJoint, Vector3[] axes = null)
         {
             Transform = transform;
             Tag = enumJoint;
@@ -51,10 +51,9 @@ public class Model3D
             return ActualAxesOrder[(int)abstractAxis];
         }
 
-        public Vector3 GetTransformDirection(UcyAxes direction)
+        public Vector3 GetActualDirection(UcyAxes direction)
         {
-            return ActualAxesDirection[(int)ActualAxesOrder[(int)direction]];
-                //Transform.TransformDirection(GlobalAxesOrder[(int)ActualAxesOrder[(int)direction]]);
+            return ActualAxesDirection[(int)getActualAxis(direction)];
         }
 
         private Vector3[] findAxesOrder()
@@ -149,7 +148,6 @@ public class Model3D
 
     Transform model;
     public List<MJoint> Joints;
-    GameObject hips;
     private float angle;
     private float timeCount = 0.0f;
 
@@ -157,13 +155,11 @@ public class Model3D
     {
         UP, RIGHT, FWD, DOWN, LEFT, BACK
     }
-   
 
     public Model3D(Transform model3d)
     {
         model = model3d;
         Joints = setJoints();
-        hips = GameObject.Find(model.name + "/Hips");
     }
 
     public List<Transform> getJointsAsTransforms()
@@ -179,36 +175,23 @@ public class Model3D
     public static void correctlyNameJoints(Transform model, string name = "")
     {
         Transform result;
-        foreach (var val in Enum.GetValues(typeof(EnumJoint)))
+        foreach (var val in Enum.GetValues(typeof(EnumModel3DJoints)))
         {
-            if ((int)val == (int)EnumJoint.Spine1)
-            {
-                result = model.FindDeepChild(name + "Neck");
-                result.name = "Neck";
-            }
-            else
-            {
-                result = model.FindDeepChild(name + val.ToString());
-                result.name = val.ToString();
-            }
+              result = model.FindDeepChild(name + val.ToString());
+              result.name = val.ToString();
         }
-        result = model.FindDeepChild(name + "Hips");
-        result.name = "Hips";
     }
 
     public List<MJoint> setJoints()
     {
         Debug.Log("Getting transforms from model...");
         List<MJoint> list = new List<MJoint>();
-        foreach (EnumJoint val in Enum.GetValues(typeof(EnumJoint)))
+        foreach (EnumModel3DJoints val in Enum.GetValues(typeof(EnumModel3DJoints)))
         {
 
             // Find the joint.
             Transform transform;
-            if ((int)val == (int)EnumJoint.Spine1)
-                transform = model.FindDeepChild("Neck");
-            else
-                transform = model.FindDeepChild(val.ToString());
+            transform = model.FindDeepChild(val.ToString());
             if (!transform)
             {
                 Debug.Log("Joint not found :" + val.ToString());
@@ -226,7 +209,7 @@ public class Model3D
         return list;
     }
 
-    private Vector3[] ybotDefaultAxes(EnumJoint joint)
+    private Vector3[] ybotDefaultAxes(EnumModel3DJoints joint)
     {
         return new Vector3[]
         {
@@ -234,39 +217,39 @@ public class Model3D
         };
     }
 
-    private Vector3[] femaleDefaultAXes(EnumJoint joint)
+    private Vector3[] femaleDefaultAXes(EnumModel3DJoints joint)
     {
         Vector3[] axes = null;
         switch (joint)
         {
-            case EnumJoint.Head:
+            case EnumModel3DJoints.Head:
                 
                 break;
-            case EnumJoint.LeftArm:
+            case EnumModel3DJoints.LeftArm:
                 break;
-            case EnumJoint.LeftFoot:
+            case EnumModel3DJoints.LeftFoot:
                 break;
-            case EnumJoint.LeftForeArm:
+            case EnumModel3DJoints.LeftForeArm:
                 break;
-            case EnumJoint.LeftHand:
+            case EnumModel3DJoints.LeftHand:
                 break;
-            case EnumJoint.LeftLeg:
+            case EnumModel3DJoints.LeftLeg:
                 break;
-            case EnumJoint.LeftUpLeg:
+            case EnumModel3DJoints.LeftUpLeg:
                 break;
-            case EnumJoint.RightArm:
+            case EnumModel3DJoints.RightArm:
                 break;
-            case EnumJoint.RightFoot:
+            case EnumModel3DJoints.RightFoot:
                 break;
-            case EnumJoint.RightForeArm:
+            case EnumModel3DJoints.RightForeArm:
                 break;
-            case EnumJoint.RightHand:
+            case EnumModel3DJoints.RightHand:
                 break;
-            case EnumJoint.RightLeg:
+            case EnumModel3DJoints.RightLeg:
                 break;
-            case EnumJoint.RightUpLeg:
+            case EnumModel3DJoints.RightUpLeg:
                 break;
-            case EnumJoint.Spine1:
+            case EnumModel3DJoints.Neck:
                 break;
         }
         return axes;
@@ -283,8 +266,8 @@ public class Model3D
      */
     public void moveSkeleton(Vector3[] newJointsPositions)
     {
-        Quaternion[] rotations = calculateRawRotations(newJointsPositions, hips.transform);  // Calculate Raw Rotations.
-        for (int i = 0; i < rotations.Length; i++)                                // Set Rotations in joints.
+        Quaternion[] rotations = calculateRawRotations(newJointsPositions);  // Calculate Raw Rotations.
+        for (int i = 0; i < rotations.Length; i++)                           // Set Rotations in joints.
         {
             if (rotations[i] == Quaternion.identity)                         // Skip, if rotation is identity.
                 continue;
@@ -295,9 +278,7 @@ public class Model3D
 
     public void moveSkeleton_OneEuroFilter(Vector3[] newJointsPositions, OneEuroFilter<Quaternion>[] rotationFiltersJoints, OneEuroFilter<Quaternion> rotationFilterHips)
     {
-        Quaternion[] rotations = calculateRawRotations(newJointsPositions, hips.transform);         // Calculate Raw Rotations.
-        hips.transform.rotation = rotationFilterHips.Filter(hips.transform.rotation);               // Set Hips Rotation.
-
+        Quaternion[] rotations = calculateRawRotations(newJointsPositions);  // Calculate Raw Rotations.
         for (int i = 0; i < rotations.Length; i++)                           // Set Rotations in joints.
         {
             if (rotations[i] == Quaternion.identity)                         // Skip, if rotation is identity.
@@ -306,32 +287,22 @@ public class Model3D
         }
     }
 
-    public void moveSkeleton_IK_POSITIONS(Vector3[] newJointsPositions, OneEuroFilter<Vector3>[] positionsFiltersJoints, OneEuroFilter<Quaternion> rotationFilterHips)
-    {
-        hips.transform.rotation = rotationFilterHips.Filter(hips.transform.rotation);    // Set Hips Rotation.
-        for (int i = 0; i < Joints.Count; i++)                                               // Set positions in joints.
-        {
-            Joints[i].Transform.position = positionsFiltersJoints[i].Filter(newJointsPositions[i] + hips.transform.position);
-        }
-    }
 
     public void moveSkeletonLERP(Vector3[] newJointsPositions)
     {
 
-        /* Save current rotations. */
-        Quaternion curr_hipsRot = hips.transform.rotation;
         List<Quaternion> curr_jointsRot = new List<Quaternion>();
-        foreach (var val in Enum.GetValues(typeof(EnumJoint)))
+        foreach (var val in Enum.GetValues(typeof(EnumModel3DJoints)))
         {
             curr_jointsRot.Add(Joints[(int)val].Transform.rotation);
         }
 
         /* Set rotations with LERP. */
-        Quaternion[] rotations = calculateRawRotations(newJointsPositions, hips.transform);              // Calculate Raw Rotations.
-        hips.transform.rotation = Quaternion.Lerp(curr_hipsRot, hips.transform.rotation, timeCount);     // Set Hips Rotation with LEPR.
-        for (int i = 0; i < rotations.Length; i++)                                                       // Set Rotations in joints with LERP.
+        Quaternion[] rotations = calculateRawRotations(newJointsPositions); // Calculate Raw Rotations.
+
+        for (int i = 0; i < rotations.Length; i++)                          // Set Rotations in joints with LERP.
         {
-            if (rotations[i] == Quaternion.identity)                                                     // Skip, if rotation is identity.
+            if (rotations[i] == Quaternion.identity)                        // Skip, if rotation is identity.
                 continue;
             Joints[i].Transform.rotation = Quaternion.Lerp(curr_jointsRot[i], rotations[i], timeCount);
         }
@@ -370,44 +341,56 @@ public class Model3D
     {
         UcyAxes actualAxis = joint.getActualAxis(abstractAxis);
         Vector3 actualAxisDirection = joint.ActualAxesDirection[(int)actualAxis];
+
         // Find the rotation that turns ActualAxisDirection into fwd.
         Quaternion AbstractAxis_To_Forward = Quaternion.FromToRotation(actualAxisDirection, Vector3.forward);
+
+        // After rotating the axes, up-axis might change.
         Quaternion forwardToTarget = Quaternion.LookRotation(targetDirection, upwards);
+        
         return forwardToTarget * AbstractAxis_To_Forward;
     }
 
-    public Quaternion[] calculateRawRotations(Vector3[] newJoints, Transform hips)
+    public Quaternion[] calculateRawRotations(Vector3[] newJoints)
     {
         // The order matters. The rotations should be applied first to the parent and then to the child.
+
         Vector3 root = (newJoints[8] + newJoints[11]) / 2;
-        Quaternion[] rotations = new Quaternion[14];
-        hips.rotation = XLookRotation(newJoints[8] - newJoints[11], -(root - newJoints[1]));
+        Quaternion[] rotations = new Quaternion[15];
+        /* HIPS           */
+        rotations[14] = GenericLookRotation(newJoints[8] - newJoints[11], -(root - newJoints[1]), Joints[14], UcyAxes.RIGHT);
+        Vector3 actualHipsFwd = Joints[14].Transform.TransformDirection(Vector3.back);
+        // forward works with female
+        // back works with ybot
+        // Again, I can rotate it :)
+        // Rotate fwd so it looks to back
+
         /* HEAD           */
         rotations[0] = Quaternion.identity; // end point.
         /* NECK           */
-        rotations[1] = GenericLookRotation(newJoints[0] - newJoints[1], Joints[1].GetTransformDirection(UcyAxes.BACK), Joints[1], UcyAxes.UP);
+        rotations[1] = GenericLookRotation(newJoints[0] - newJoints[1], Joints[1].Transform.TransformDirection(Joints[1].GetActualDirection(UcyAxes.BACK)), Joints[1], UcyAxes.UP);
         /* RIGHT_ARM      */
-        rotations[2] = GenericLookRotation(newJoints[3] - newJoints[2], Joints[2].GetTransformDirection(UcyAxes.UP), Joints[2], UcyAxes.RIGHT);
+        rotations[2] = GenericLookRotation(newJoints[3] - newJoints[2], Joints[2].GetActualDirection(UcyAxes.UP), Joints[2], UcyAxes.RIGHT);
         /* RIGHT_FORE_ARM */
-        rotations[3] = GenericLookRotation(newJoints[4] - newJoints[3], Joints[3].GetTransformDirection(UcyAxes.UP), Joints[3], UcyAxes.RIGHT);
+        rotations[3] = GenericLookRotation(newJoints[4] - newJoints[3], Joints[3].GetActualDirection(UcyAxes.UP), Joints[3], UcyAxes.RIGHT);
         /* RIGHT_HAND     */
         rotations[4] = Quaternion.identity; // end point.
         /* LEFT_ARM       */
-        rotations[5] = GenericLookRotation(newJoints[5] - newJoints[6], Joints[5].GetTransformDirection(UcyAxes.UP), Joints[5], UcyAxes.RIGHT);
+        rotations[5] = GenericLookRotation(newJoints[5] - newJoints[6], Joints[5].GetActualDirection(UcyAxes.UP), Joints[5], UcyAxes.RIGHT);
         /* LEFT_FORE_ARM  */
-        rotations[6] = GenericLookRotation(newJoints[6] - newJoints[7], Joints[6].GetTransformDirection(UcyAxes.UP), Joints[6], UcyAxes.RIGHT);
+        rotations[6] = GenericLookRotation(newJoints[6] - newJoints[7], Joints[6].GetActualDirection(UcyAxes.UP), Joints[6], UcyAxes.RIGHT);
         /* LEFT_HAND      */
         rotations[7] = Quaternion.identity; // end point.
         /* RIGHT_UP_LEG   */
-        rotations[8] = GenericLookRotation(newJoints[8] - newJoints[9], Joints[8].GetTransformDirection(UcyAxes.BACK), Joints[8], UcyAxes.UP);
+        rotations[8] = GenericLookRotation(newJoints[8] - newJoints[9], actualHipsFwd, Joints[8], UcyAxes.UP);
         /* RIGHT_LEG      */
-        rotations[9] = GenericLookRotation(newJoints[9] - newJoints[10], Joints[9].GetTransformDirection(UcyAxes.BACK), Joints[9], UcyAxes.UP);
+        rotations[9] = GenericLookRotation(newJoints[9] - newJoints[10], actualHipsFwd, Joints[9], UcyAxes.UP);
         /* RIGHT_FOOT     */
         rotations[10] = Quaternion.identity; // end point.
         /* LEFT_UPLEG     */
-        rotations[11] = GenericLookRotation(newJoints[11] - newJoints[12], Joints[11].GetTransformDirection(UcyAxes.BACK), Joints[11], UcyAxes.UP);
+        rotations[11] = GenericLookRotation(newJoints[11] - newJoints[12], actualHipsFwd, Joints[11], UcyAxes.UP);
         /* LEFT_LEG       */
-        rotations[12] = GenericLookRotation(newJoints[12] - newJoints[13], Joints[12].GetTransformDirection(UcyAxes.BACK), Joints[12], UcyAxes.UP);
+        rotations[12] = GenericLookRotation(newJoints[12] - newJoints[13], actualHipsFwd, Joints[12], UcyAxes.UP);
         /* LEFT_FOOT      */
         rotations[13] = Quaternion.identity; // end point.
 

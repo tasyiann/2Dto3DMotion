@@ -112,8 +112,8 @@ public class VNectLoader : MonoBehaviour
     public RawImage Image;
     public Text textInfo;
     public Material material;
-    public Transform model3D;
-    private Model3D modelController;
+    public Transform[] model3Ds;
+    private List<Model3D> modelControllers = new List<Model3D>();
 
     // Video Players
     public GameObject VideoplayerGO_A;
@@ -197,6 +197,8 @@ public class VNectLoader : MonoBehaviour
 
     #endregion Variables
 
+    bool areModelsInitialised = false;
+
     #region FrameIndex
     [SerializeField]
     private int frameIndx;
@@ -223,19 +225,29 @@ public class VNectLoader : MonoBehaviour
                     textInfo.text = distancesInfoText();
             }
 
-            if (Show3DModel)
+            if (Show3DModel && model3Ds.Length!=0)
             {
-                if (!model3D.gameObject.activeSelf) model3D.gameObject.SetActive(true);
-                if (model3D != null && modelController == null)
+                for(int i=0; i<model3Ds.Length; i++)
                 {
-                    modelController = new Model3D(model3D);
-                    modelController.DebugAxes(); // <<
+                    if (!model3Ds[i].gameObject.activeSelf)
+                        model3Ds[i].gameObject.SetActive(true);
+
+                    if (model3Ds[i] != null && !areModelsInitialised)
+                    {
+                        modelControllers.Add(new Model3D(model3Ds[i]));
+                        modelControllers[i].DebugAxes(); // <<
+                    }
+                    Move3Dmodel(modelControllers[i]);
                 }
-                Move3Dmodel();
+                areModelsInitialised = true;
             }
             else
             {
-                if (model3D.gameObject.activeSelf) model3D.gameObject.SetActive(false);
+                foreach(Transform model3D in model3Ds)
+                {
+                    if (model3D.gameObject.activeSelf) model3D.gameObject.SetActive(false);
+
+                }
             }
 
             updateVideoPlayers();
@@ -307,6 +319,8 @@ public class VNectLoader : MonoBehaviour
             skeleton_B = new VNectSkeleton(prefabSkeleton_B, Clipfilename+"_B", frames_B, FixedRootRotation, NumberOfJoints, NormalizeSkeleton, FileType_B, SkeletonHeight);
         }
 
+
+
         initializeVideoPlayers();
         initializeOneEuroFilter();
     }
@@ -351,11 +365,11 @@ public class VNectLoader : MonoBehaviour
             s.AppendFormat("{0}",frameCounter);
             // Update Movement!
             skeleton_A.Joints = frames_A[i].SkeletonJoints;
-            Move3Dmodel();
+            Move3Dmodel(modelControllers[0]);
             // Take values!
-            for(int j=0; j< modelController.Joints.Count; j++)
+            for(int j=0; j< modelControllers[0].Joints.Count; j++)
             {
-                Vector3 joint = modelController.Joints[j].Transform.position;
+                Vector3 joint = modelControllers[0].Joints[j].Transform.position;
                 s.AppendFormat(", {0}, {1}, {2}", joint.x, joint.y, joint.z);
             }
             s.Append("\n");
@@ -366,7 +380,7 @@ public class VNectLoader : MonoBehaviour
         Debug.Log("File has been exported in "+parentDir);
     }
 
-    private void Move3Dmodel()
+    private void Move3Dmodel(Model3D modelController)
     {
         switch (Filter)
         {

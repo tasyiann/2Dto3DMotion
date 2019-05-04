@@ -471,7 +471,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &232190589
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -513,8 +513,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 232190588}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -83.81, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalPosition: {x: 141.28, y: -83.81, z: 0}
+  m_LocalScale: {x: 70, y: 70, z: 70}
   m_Children:
   - {fileID: 2078414711}
   - {fileID: 810045255}
@@ -1305,7 +1305,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 369487094}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -79.2, z: 0}
+  m_LocalPosition: {x: -135.52, y: -79.2, z: 0}
   m_LocalScale: {x: 70, y: 70, z: 70}
   m_Children:
   - {fileID: 369258718}
@@ -2493,7 +2493,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &369487095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3694,7 +3694,9 @@ MonoBehaviour:
   Image: {fileID: 972273789}
   textInfo: {fileID: 2105944938}
   material: {fileID: 2100000, guid: a5dc7a167ba62794daeec7dd7d900e94, type: 2}
-  model3D: {fileID: 369258710}
+  model3Ds:
+  - {fileID: 369258710}
+  - {fileID: 232190591}
   VideoplayerGO_A: {fileID: 1518575337}
   VideoplayerGO_B: {fileID: 597607026}
   dataDirPath_A: C:/Users/Tasos/Desktop/VNectData/CMU3DPoints.sample
