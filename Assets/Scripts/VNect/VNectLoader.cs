@@ -229,6 +229,7 @@ public class VNectLoader : MonoBehaviour
                 if (model3D != null && modelController == null)
                 {
                     modelController = new Model3D(model3D);
+                    modelController.DebugAxes(); // <<
                 }
                 Move3Dmodel();
             }
@@ -286,7 +287,6 @@ public class VNectLoader : MonoBehaviour
 
     void Start()
     {
-        Debug.Log(Quaternion.Euler(0f, -135f, 0f) * Vector3.up);
         
         Filter = Filters.None;
         playMode = true;
@@ -353,9 +353,9 @@ public class VNectLoader : MonoBehaviour
             skeleton_A.Joints = frames_A[i].SkeletonJoints;
             Move3Dmodel();
             // Take values!
-            for(int j=0; j< modelController.JointsGameObjects.Count; j++)
+            for(int j=0; j< modelController.Joints.Count; j++)
             {
-                Vector3 joint = modelController.JointsGameObjects[j].transform.position;
+                Vector3 joint = modelController.Joints[j].Transform.position;
                 s.AppendFormat(", {0}, {1}, {2}", joint.x, joint.y, joint.z);
             }
             s.Append("\n");
@@ -372,9 +372,6 @@ public class VNectLoader : MonoBehaviour
         {
             case Filters.None:
                 modelController.moveSkeleton(skeleton_A.Joints.ToArray());
-                break;
-            case Filters.RotatedAxis:
-                modelController.moveSkeletonOTHERAXES(skeleton_A.Joints.ToArray(), Quaternion.Euler(0, -225f, 0));
                 break;
             case Filters.OneEuro:
                 modelController.moveSkeleton_OneEuroFilter(skeleton_A.Joints.ToArray(),rotationFiltersJoints.ToArray(), rotationFiltersJoints[(int)JointsDefinition.Root]);

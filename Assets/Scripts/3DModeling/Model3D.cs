@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
-using Winterdust;
+using UnityEngine.Assertions;
+using System.Text;
 
 /* Extension for transform. */
 public static class TransformDeepChildExtension
@@ -28,21 +28,152 @@ public static class TransformDeepChildExtension
 
 public class Model3D
 {
+
+
+    public class MJoint
+    {
+        public static Vector3[] GlobalAxesOrder = getGlobalAxesOrder();
+        public Transform Transform;
+        public EnumJoint Tag;
+        public Vector3[] ActualAxesDirection;
+        public UcyAxes[] ActualAxesOrder;
+
+
+        public MJoint(Transform transform, EnumJoint enumJoint, Vector3[] axes = null)
+        {
+            Transform = transform;
+            Tag = enumJoint;
+            ActualAxesDirection = findAxesOrder();
+        }
+
+        public UcyAxes getActualAxis(UcyAxes abstractAxis)
+        {
+            return ActualAxesOrder[(int)abstractAxis];
+        }
+
+        public Vector3 GetTransformDirection(UcyAxes direction)
+        {
+            return ActualAxesDirection[(int)ActualAxesOrder[(int)direction]];
+                //Transform.TransformDirection(GlobalAxesOrder[(int)ActualAxesOrder[(int)direction]]);
+        }
+
+        private Vector3[] findAxesOrder()
+        {
+            Array AxesTypes = Enum.GetValues(typeof(UcyAxes));
+            Vector3[] axesOrder = new Vector3[AxesTypes.Length];
+            ActualAxesOrder = new UcyAxes[AxesTypes.Length]; // <<
+
+
+
+
+            foreach (UcyAxes axis in AxesTypes)
+            {
+                Vector3 direction = Transform.TransformDirection(GlobalAxesOrder[(int)axis]).normalized;
+                float minDist = float.MaxValue;
+                int minIndex = 0;
+                for (int i = 0; i < AxesTypes.Length; i++)
+                {
+                    Vector3 globalAxis = GlobalAxesOrder[i];
+                    float dist = Mathf.Abs(Vector3.Angle(direction, globalAxis));
+                    if (dist < minDist)
+                    {
+                        minIndex = i;
+                        minDist = dist;
+                    }
+                }
+                ActualAxesOrder[minIndex] = axis;
+                //axesOrder[minIndex] = direction;
+            }
+
+
+            foreach (UcyAxes axis in AxesTypes)
+            {
+                Vector3 direction = Transform.TransformDirection(GlobalAxesOrder[(int)ActualAxesOrder[(int)axis]]).normalized;
+                axesOrder[(int)axis] = direction;
+            }
+
+            return axesOrder;
+        }
+
+        private static Vector3[] getGlobalAxesOrder()
+        {
+            Array AxesTypes = Enum.GetValues(typeof(UcyAxes));
+            Vector3[] globalAxes = new Vector3[AxesTypes.Length];
+            // Save global axes, in the order of UcyAxes enumeration.
+            foreach (UcyAxes axis in AxesTypes)
+            {
+                Vector3 direction = Vector3.zero;
+                switch (axis)
+                {
+                    case UcyAxes.UP:
+                        direction = Vector3.up;
+                        break;
+                    case UcyAxes.RIGHT:
+                        direction = Vector3.right;
+                        break;
+                    case UcyAxes.FWD:
+                        direction = Vector3.forward;
+                        break;
+                    case UcyAxes.DOWN:
+                        direction = Vector3.down;
+                        break;
+                    case UcyAxes.LEFT:
+                        direction = Vector3.left;
+                        break;
+                    case UcyAxes.BACK:
+                        direction = Vector3.back;
+                        break;
+                }
+                Assert.IsTrue(direction != Vector3.zero);
+                globalAxes[(int)axis] = direction;
+            }
+            return globalAxes;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder s = new StringBuilder();
+            s.AppendFormat("{0}:\nUP     -->{1} : {2}\nRIGHT-->{3} : {4}\nFWD   -->{5} : {6}\nDOWN-->{7} : {8}\nLEFT   -->{9} : {10}\nBACK  -->{11} : {12}\n",
+                Transform.name,
+                ActualAxesOrder[0].ToString(), ActualAxesDirection[(int)ActualAxesOrder[0]],
+                ActualAxesOrder[1].ToString(), ActualAxesDirection[(int)ActualAxesOrder[1]],
+                ActualAxesOrder[2].ToString(), ActualAxesDirection[(int)ActualAxesOrder[2]],
+                ActualAxesOrder[3].ToString(), ActualAxesDirection[(int)ActualAxesOrder[3]],
+                ActualAxesOrder[4].ToString(), ActualAxesDirection[(int)ActualAxesOrder[4]],
+                ActualAxesOrder[5].ToString(), ActualAxesDirection[(int)ActualAxesOrder[5]]);
+
+            return s.ToString();
+        }
+    }
+
+
     Transform model;
-    public List<Transform> JointsGameObjects;
-    List<Vector3> offsets;
+    public List<MJoint> Joints;
     GameObject hips;
     private float angle;
     private float timeCount = 0.0f;
 
+    public enum UcyAxes
+    {
+        UP, RIGHT, FWD, DOWN, LEFT, BACK
+    }
+   
 
-    public Model3D(Transform model3d, float angle = 0)
+    public Model3D(Transform model3d)
     {
         model = model3d;
-        JointsGameObjects = setJoints(model);
+        Joints = setJoints();
         hips = GameObject.Find(model.name + "/Hips");
-        this.angle = angle;
-        offsets = setOffsets();
+    }
+
+    public List<Transform> getJointsAsTransforms()
+    {
+        List<Transform> list = new List<Transform>();
+        foreach (MJoint j in Joints)
+        {
+            list.Add(j.Transform);
+        }
+        return list;
     }
 
     public static void correctlyNameJoints(Transform model, string name = "")
@@ -65,60 +196,85 @@ public class Model3D
         result.name = "Hips";
     }
 
-    public static List<Transform> setJoints(Transform model, string name = "")
+    public List<MJoint> setJoints()
     {
         Debug.Log("Getting transforms from model...");
-        List<Transform> list = new List<Transform>();
-        foreach (var val in Enum.GetValues(typeof(EnumJoint)))
+        List<MJoint> list = new List<MJoint>();
+        foreach (EnumJoint val in Enum.GetValues(typeof(EnumJoint)))
         {
-            //Debug.Log("Searching for..: " + val.ToString());
-            /* EDITED: Neck. Get the movement of neck. */
-            /* OLD: We want Spine, not Spine1. Because Spine is the Parent of Spine1, and moves better the model. */
-            Transform result;
+
+            // Find the joint.
+            Transform transform;
             if ((int)val == (int)EnumJoint.Spine1)
-                result = model.FindDeepChild(name + "Neck");
+                transform = model.FindDeepChild("Neck");
             else
-                result = model.FindDeepChild(name+val.ToString());
-            if (!result)
+                transform = model.FindDeepChild(val.ToString());
+            if (!transform)
             {
-                Debug.Log("Joint not found :" + name+val.ToString());
+                Debug.Log("Joint not found :" + val.ToString());
             }
-            list.Add(result);
+            // Add it to the list.
+            list.Add(new MJoint(transform, val));
         }
         // Print out the list
         string s = "";
-        foreach(Transform g in list)
+        foreach (MJoint joint in list)
         {
-            s += g.name + " ";
+            s += joint.Transform.name + " ";
         }
         Debug.Log(s);
         return list;
     }
 
-    public List<Vector3> setOffsets()
+    private Vector3[] ybotDefaultAxes(EnumJoint joint)
     {
-        List<Vector3> list = new List<Vector3>();
-        foreach (Transform joint in JointsGameObjects)
+        return new Vector3[]
         {
-            list.Add(joint.transform.localPosition); 
+            Vector3.up, Vector3.right, Vector3.forward, Vector3.down, Vector3.left, Vector3.back
+        };
+    }
+
+    private Vector3[] femaleDefaultAXes(EnumJoint joint)
+    {
+        Vector3[] axes = null;
+        switch (joint)
+        {
+            case EnumJoint.Head:
+                
+                break;
+            case EnumJoint.LeftArm:
+                break;
+            case EnumJoint.LeftFoot:
+                break;
+            case EnumJoint.LeftForeArm:
+                break;
+            case EnumJoint.LeftHand:
+                break;
+            case EnumJoint.LeftLeg:
+                break;
+            case EnumJoint.LeftUpLeg:
+                break;
+            case EnumJoint.RightArm:
+                break;
+            case EnumJoint.RightFoot:
+                break;
+            case EnumJoint.RightForeArm:
+                break;
+            case EnumJoint.RightHand:
+                break;
+            case EnumJoint.RightLeg:
+                break;
+            case EnumJoint.RightUpLeg:
+                break;
+            case EnumJoint.Spine1:
+                break;
         }
-        return list;
+        return axes;
     }
 
     private static Quaternion getRotation(Quaternion qX, Quaternion qY, Quaternion qZ)
     {
         return Quaternion.Euler(new Vector3(qX.eulerAngles.x, qY.eulerAngles.y, qZ.eulerAngles.z));
-    }
-
-    public void moveSkeletonOTHERAXES(Vector3[] newJointsPositions, Quaternion AxesRotation)
-    {
-        Quaternion[] rotations = calculateRawRotations(newJointsPositions, hips.transform);  // Calculate Raw Rotations.
-        for (int i = 0; i < rotations.Length; i++)              // Set Rotations in joints.
-        {
-            if (rotations[i] == Quaternion.identity)            // Skip, if rotation is identity.
-                continue;
-            JointsGameObjects[i].rotation = rotations[i];
-        }
     }
 
     /* Try modifying the rotations, using LookRotation function.
@@ -128,14 +284,14 @@ public class Model3D
     public void moveSkeleton(Vector3[] newJointsPositions)
     {
         Quaternion[] rotations = calculateRawRotations(newJointsPositions, hips.transform);  // Calculate Raw Rotations.
-        for(int i=0; i<rotations.Length; i++)                                // Set Rotations in joints.
+        for (int i = 0; i < rotations.Length; i++)                                // Set Rotations in joints.
         {
             if (rotations[i] == Quaternion.identity)                         // Skip, if rotation is identity.
                 continue;
-            JointsGameObjects[i].rotation = rotations[i];
+            Joints[i].Transform.rotation = rotations[i];
         }
     }
-
+    
 
     public void moveSkeleton_OneEuroFilter(Vector3[] newJointsPositions, OneEuroFilter<Quaternion>[] rotationFiltersJoints, OneEuroFilter<Quaternion> rotationFilterHips)
     {
@@ -146,16 +302,16 @@ public class Model3D
         {
             if (rotations[i] == Quaternion.identity)                         // Skip, if rotation is identity.
                 continue;
-            JointsGameObjects[i].rotation = rotationFiltersJoints[i].Filter(rotations[i]);
+            Joints[i].Transform.rotation = rotationFiltersJoints[i].Filter(rotations[i]);
         }
     }
 
     public void moveSkeleton_IK_POSITIONS(Vector3[] newJointsPositions, OneEuroFilter<Vector3>[] positionsFiltersJoints, OneEuroFilter<Quaternion> rotationFilterHips)
     {
         hips.transform.rotation = rotationFilterHips.Filter(hips.transform.rotation);    // Set Hips Rotation.
-        for (int i = 0; i < JointsGameObjects.Count; i++)                                               // Set positions in joints.
+        for (int i = 0; i < Joints.Count; i++)                                               // Set positions in joints.
         {
-            JointsGameObjects[i].position = positionsFiltersJoints[i].Filter(newJointsPositions[i]+hips.transform.position);
+            Joints[i].Transform.position = positionsFiltersJoints[i].Filter(newJointsPositions[i] + hips.transform.position);
         }
     }
 
@@ -167,7 +323,7 @@ public class Model3D
         List<Quaternion> curr_jointsRot = new List<Quaternion>();
         foreach (var val in Enum.GetValues(typeof(EnumJoint)))
         {
-            curr_jointsRot.Add(JointsGameObjects[(int)val].rotation);
+            curr_jointsRot.Add(Joints[(int)val].Transform.rotation);
         }
 
         /* Set rotations with LERP. */
@@ -177,7 +333,7 @@ public class Model3D
         {
             if (rotations[i] == Quaternion.identity)                                                     // Skip, if rotation is identity.
                 continue;
-            JointsGameObjects[i].rotation = Quaternion.Lerp(curr_jointsRot[i],rotations[i],timeCount);
+            Joints[i].Transform.rotation = Quaternion.Lerp(curr_jointsRot[i], rotations[i], timeCount);
         }
 
         /* Keep track of time, because of Lerp. */
@@ -188,7 +344,7 @@ public class Model3D
 
 
 
-    public static Quaternion XLookRotation(Vector3 right, Vector3 up)
+    public Quaternion XLookRotation(Vector3 right, Vector3 up)
     {
         // X becomes FWD
         // Z becomes LEFT
@@ -199,7 +355,7 @@ public class Model3D
         return forwardToTarget * rightToForward;
     }
 
-    public static Quaternion YLookRotation(Vector3 up, Vector3 upwards)
+    public Quaternion YLookRotation(Vector3 up, Vector3 upwards)
     {
         // Y becomes FWD
         // Z becomes DOWN
@@ -210,123 +366,63 @@ public class Model3D
         return forwardToTarget * UpToForward;
     }
 
+    public Quaternion GenericLookRotation(Vector3 targetDirection, Vector3 upwards, MJoint joint, UcyAxes abstractAxis)
+    {
+        UcyAxes actualAxis = joint.getActualAxis(abstractAxis);
+        Vector3 actualAxisDirection = joint.ActualAxesDirection[(int)actualAxis];
+        // Find the rotation that turns ActualAxisDirection into fwd.
+        Quaternion AbstractAxis_To_Forward = Quaternion.FromToRotation(actualAxisDirection, Vector3.forward);
+        Quaternion forwardToTarget = Quaternion.LookRotation(targetDirection, upwards);
+        return forwardToTarget * AbstractAxis_To_Forward;
+    }
+
     public Quaternion[] calculateRawRotations(Vector3[] newJoints, Transform hips)
     {
         // The order matters. The rotations should be applied first to the parent and then to the child.
         Vector3 root = (newJoints[8] + newJoints[11]) / 2;
         Quaternion[] rotations = new Quaternion[14];
         hips.rotation = XLookRotation(newJoints[8] - newJoints[11], -(root - newJoints[1]));
-        /* HEAD           */ rotations[0]  = Quaternion.identity; // end effector.
-        /* NECK           */ rotations[1]  = YLookRotation(-(newJoints[1] - newJoints[0]), JointsGameObjects[1].TransformDirection(Vector3.back));
-        /* RIGHT_ARM      */ rotations[2]  = XLookRotation(newJoints[3] - newJoints[2], JointsGameObjects[2].TransformDirection(Vector3.up));
-        /* RIGHT_FORE_ARM */ rotations[3]  = XLookRotation(newJoints[4] - newJoints[3], JointsGameObjects[3].TransformDirection(Vector3.up));
-        /* RIGHT_HAND     */ rotations[4]  = Quaternion.identity; // end effector.
-        /* LEFT_ARM       */ rotations[5]  = XLookRotation(-(newJoints[6] - newJoints[5]), JointsGameObjects[5].TransformDirection(Vector3.up));
-        /* LEFT_FORE_ARM  */ rotations[6]  = XLookRotation(-(newJoints[7] - newJoints[6]), JointsGameObjects[6].TransformDirection(Vector3.up));
-        /* LEFT_HAND      */ rotations[7]  = Quaternion.identity; // end effector.
-        /* RIGHT_UP_LEG   */ rotations[8]  = YLookRotation(-(newJoints[9] - newJoints[8]), JointsGameObjects[8].TransformDirection(Vector3.back));
-        /* RIGHT_LEG      */ rotations[9]  = YLookRotation(-(newJoints[10] - newJoints[9]), JointsGameObjects[9].TransformDirection(Vector3.back));
-        /* RIGHT_FOOT     */ rotations[10] = Quaternion.identity; // end effector.
-        /* LEFT_UPLEG     */ rotations[11] = YLookRotation(-(newJoints[12] - newJoints[11]), JointsGameObjects[11].TransformDirection(Vector3.back));
-        /* LEFT_LEG       */ rotations[12] = YLookRotation(-(newJoints[13] - newJoints[12]), JointsGameObjects[12].TransformDirection(Vector3.back));
-        /* LEFT_FOOT      */ rotations[13] = Quaternion.identity; // end effector.
+        /* HEAD           */
+        rotations[0] = Quaternion.identity; // end point.
+        /* NECK           */
+        rotations[1] = GenericLookRotation(newJoints[0] - newJoints[1], Joints[1].GetTransformDirection(UcyAxes.BACK), Joints[1], UcyAxes.UP);
+        /* RIGHT_ARM      */
+        rotations[2] = GenericLookRotation(newJoints[3] - newJoints[2], Joints[2].GetTransformDirection(UcyAxes.UP), Joints[2], UcyAxes.RIGHT);
+        /* RIGHT_FORE_ARM */
+        rotations[3] = GenericLookRotation(newJoints[4] - newJoints[3], Joints[3].GetTransformDirection(UcyAxes.UP), Joints[3], UcyAxes.RIGHT);
+        /* RIGHT_HAND     */
+        rotations[4] = Quaternion.identity; // end point.
+        /* LEFT_ARM       */
+        rotations[5] = GenericLookRotation(newJoints[5] - newJoints[6], Joints[5].GetTransformDirection(UcyAxes.UP), Joints[5], UcyAxes.RIGHT);
+        /* LEFT_FORE_ARM  */
+        rotations[6] = GenericLookRotation(newJoints[6] - newJoints[7], Joints[6].GetTransformDirection(UcyAxes.UP), Joints[6], UcyAxes.RIGHT);
+        /* LEFT_HAND      */
+        rotations[7] = Quaternion.identity; // end point.
+        /* RIGHT_UP_LEG   */
+        rotations[8] = GenericLookRotation(newJoints[8] - newJoints[9], Joints[8].GetTransformDirection(UcyAxes.BACK), Joints[8], UcyAxes.UP);
+        /* RIGHT_LEG      */
+        rotations[9] = GenericLookRotation(newJoints[9] - newJoints[10], Joints[9].GetTransformDirection(UcyAxes.BACK), Joints[9], UcyAxes.UP);
+        /* RIGHT_FOOT     */
+        rotations[10] = Quaternion.identity; // end point.
+        /* LEFT_UPLEG     */
+        rotations[11] = GenericLookRotation(newJoints[11] - newJoints[12], Joints[11].GetTransformDirection(UcyAxes.BACK), Joints[11], UcyAxes.UP);
+        /* LEFT_LEG       */
+        rotations[12] = GenericLookRotation(newJoints[12] - newJoints[13], Joints[12].GetTransformDirection(UcyAxes.BACK), Joints[12], UcyAxes.UP);
+        /* LEFT_FOOT      */
+        rotations[13] = Quaternion.identity; // end point.
 
         return rotations;
     }
 
-    /*
-    public Quaternion calculateHipsRotation(Vector3[] joints)
-    {
-        // Get Root:
-        Vector3 root = (joints[8] + joints[11]) / 2;
-        // Hips: Works fine!
-        Quaternion hips_x = YLookRotation((joints[1] - root), Vector3.up);
-        Quaternion hips_yz = XLookRotation(joints[8] - joints[11], Vector3.up);
-        return getRotation(hips_x, hips_yz, hips_yz);
-    }
-    */
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*
-     * https://answers.unity.com/questions/32532/how-to-find-direction-between-two-points.html
-     * 
-     * *
-     * */
-    /* New positions as input. LeftForeArm. */
-
-
-
-    public override string ToString()
-    {
-        string s = "Rotations:\n";
-        foreach (var val in Enum.GetValues(typeof(EnumJoint)))
-        {
-            s += val.ToString() + ":" + (JointsGameObjects[(int)val].rotation.eulerAngles)+"\n";
-        }
-        return s;
-    }
-    /*
-    public string debugDirection(Vector3[] newJoints)
-    {
-        string s = "Directions:\n";
-        string[] names = Enum.GetNames(typeof(EnumJoint));
-        for (int i=0; i<14; i++)
-        {
-            s += names[i] + ": Actual:" + (joints[pairs[i,1]].position - joints[pairs[i, 0]].position).normalized + "Ideal:" + (newJoints[pairs[i, 1]] - newJoints[pairs[i, 0]]).normalized+"\n";
-        }
-        return s;
-    }
-    */
-    public string debugOffsets()
+    public void DebugAxes()
     {
         string s = "";
-        for (int i=0; i<offsets.Count; i++)
+        foreach (MJoint j in Joints)
         {
-            s += i + ": " +offsets[i] +"\n";
+            s += j.ToString();
         }
-
-        return s;
+        Debug.Log(s);
     }
-
-
-
-
-
-
-
-
 
 
 }

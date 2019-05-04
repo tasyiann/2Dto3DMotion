@@ -6,7 +6,6 @@ using UnityEngine;
 public class DebugAllAxes : MonoBehaviour
 {
     public Transform[] gameObjects;
-    public string prefixName="";
     public bool AutomaticSelection;
 
 
@@ -14,15 +13,17 @@ public class DebugAllAxes : MonoBehaviour
     {
         if (AutomaticSelection)
         {
-            gameObjects = Model3D.setJoints(transform, prefixName).ToArray();
+            Model3D m3d = new Model3D(transform);
+            gameObjects = m3d.getJointsAsTransforms().ToArray();
         }
-
 
         foreach (Transform g in gameObjects)
         {
-            if(g.GetComponent<DisplayAxes>() == null)
+            if (g.GetComponent<DisplayAxes>() == null)
                 g.gameObject.AddComponent<DisplayAxes>();
         }
+
+
     }
 
 }

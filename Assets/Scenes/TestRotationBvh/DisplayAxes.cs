@@ -18,9 +18,6 @@ public class DisplayAxes : MonoBehaviour
     private Transform t;
     private List<GameObject> axes;
 
-    // TODO:
-    private LineRenderer fwdTarget;
-    private LineRenderer upwardsTarget;
 
     void Awake()
     {

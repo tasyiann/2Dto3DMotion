@@ -1,16 +1,36 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace UcyModeling
 {
+
+    [CustomEditor(typeof(UcyConfigureModel))]
+    public class UcyConfModelEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            DrawDefaultInspector();
+            UcyConfigureModel myscript = target as UcyConfigureModel;
+            if (GUILayout.Button("Fix names"))
+            {
+                myscript.fixNames();
+            }
+        }
+    }
+
+
+
+
+
     public class UcyConfigureModel : MonoBehaviour
     {
         public string prefixName;
-        private void Awake()
+
+        public void fixNames()
         {
-            // Rename the joints so they are compatible to our methods.
-            Model3D.correctlyNameJoints(transform,prefixName);
+            Model3D.correctlyNameJoints(transform, prefixName);
         }
     }
 
