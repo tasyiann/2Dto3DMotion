@@ -1924,8 +1924,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68056845b31ff704d9a7522c662d4fba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPath: C:/Users/Tasos/Desktop/humanMotion/Scenarios/PrevFrameWindow3D2019-04-27
-    18-05-52/UCY_3D.mddd
+  inputPath: C:/Users/Tasos/Desktop/humanMotion/Scenarios/UseThis_2-AngleA/UCY.filtered
   offsetBetweenFigures: {x: 4, y: 0, z: 0}
   rate: 1
   startingPoint: {x: 0, y: 0, z: 0}
@@ -2865,7 +2864,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2004257447
 MonoBehaviour:
   m_ObjectHideFlags: 0

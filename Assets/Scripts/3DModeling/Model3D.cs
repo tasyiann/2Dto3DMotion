@@ -29,7 +29,6 @@ public static class TransformDeepChildExtension
 public class Model3D
 {
 
-
     public class MJoint
     {
         public static Vector3[] GlobalAxesOrder = getGlobalAxesOrder();
@@ -51,18 +50,38 @@ public class Model3D
             return ActualAxesOrder[(int)abstractAxis];
         }
 
-        public Vector3 GetActualDirection(UcyAxes direction)
+        public Vector3 GetDirectionUsingAbstractAxis(UcyAxes direction)
         {
             return ActualAxesDirection[(int)getActualAxis(direction)];
         }
 
+        private UcyAxes getCorrespondingActualAxis(UcyAxes axis)
+        {
+            Array AxesTypes = Enum.GetValues(typeof(UcyAxes));
+            // TransformDirection : From local space to World Space.
+            // direction is the direction in world space.
+            Vector3 directionWorldSpace = Transform.TransformDirection(GlobalAxesOrder[(int)axis]).normalized;
+            float minDist = float.MaxValue;
+            UcyAxes minAxis = 0;
+            for (int i = 0; i < AxesTypes.Length; i++)
+            {
+                Vector3 globalAxis = GlobalAxesOrder[i];
+                float dist = Mathf.Abs(Vector3.Angle(directionWorldSpace, globalAxis));
+                if (dist < minDist)
+                {
+                    minAxis = (UcyAxes)i;
+                    minDist = dist;
+                }
+            }
+            return minAxis;
+        }
+
+
         private Vector3[] findAxesOrder()
         {
             Array AxesTypes = Enum.GetValues(typeof(UcyAxes));
-            Vector3[] axesOrder = new Vector3[AxesTypes.Length];
+            Vector3[] axesOrderDirection = new Vector3[AxesTypes.Length];
             ActualAxesOrder = new UcyAxes[AxesTypes.Length]; // <<
-
-
 
 
             foreach (UcyAxes axis in AxesTypes)
@@ -81,17 +100,18 @@ public class Model3D
                     }
                 }
                 ActualAxesOrder[minIndex] = axis;
-                //axesOrder[minIndex] = direction;
             }
 
 
             foreach (UcyAxes axis in AxesTypes)
             {
-                Vector3 direction = Transform.TransformDirection(GlobalAxesOrder[(int)ActualAxesOrder[(int)axis]]).normalized;
-                axesOrder[(int)axis] = direction;
+                UcyAxes actualAxis = ActualAxesOrder[(int)axis];
+                Vector3 localDirection = GlobalAxesOrder[(int)actualAxis];
+                Vector3 worldDirection = Transform.TransformDirection(localDirection).normalized;
+                axesOrderDirection[(int)axis] = worldDirection;
             }
 
-            return axesOrder;
+            return axesOrderDirection;
         }
 
         private static Vector3[] getGlobalAxesOrder()
@@ -139,7 +159,8 @@ public class Model3D
                 ActualAxesOrder[2].ToString(), ActualAxesDirection[(int)ActualAxesOrder[2]],
                 ActualAxesOrder[3].ToString(), ActualAxesDirection[(int)ActualAxesOrder[3]],
                 ActualAxesOrder[4].ToString(), ActualAxesDirection[(int)ActualAxesOrder[4]],
-                ActualAxesOrder[5].ToString(), ActualAxesDirection[(int)ActualAxesOrder[5]]);
+                ActualAxesOrder[5].ToString(), ActualAxesDirection[(int)ActualAxesOrder[5]]
+                );
 
             return s.ToString();
         }
@@ -150,10 +171,16 @@ public class Model3D
     public List<MJoint> Joints;
     private float angle;
     private float timeCount = 0.0f;
+    List<Quaternion> curr_jointsRot = new List<Quaternion>();
 
     public enum UcyAxes
     {
         UP, RIGHT, FWD, DOWN, LEFT, BACK
+    }
+
+    public enum Filtering
+    {
+        NONE, LERP, ONEEURO,SGOLAY
     }
 
     public Model3D(Transform model3d)
@@ -177,8 +204,8 @@ public class Model3D
         Transform result;
         foreach (var val in Enum.GetValues(typeof(EnumModel3DJoints)))
         {
-              result = model.FindDeepChild(name + val.ToString());
-              result.name = val.ToString();
+            result = model.FindDeepChild(name + val.ToString());
+            result.name = val.ToString();
         }
     }
 
@@ -223,7 +250,7 @@ public class Model3D
         switch (joint)
         {
             case EnumModel3DJoints.Head:
-                
+
                 break;
             case EnumModel3DJoints.LeftArm:
                 break;
@@ -266,54 +293,22 @@ public class Model3D
      */
     public void moveSkeleton(Vector3[] newJointsPositions)
     {
-        Quaternion[] rotations = calculateRawRotations(newJointsPositions);  // Calculate Raw Rotations.
-        for (int i = 0; i < rotations.Length; i++)                           // Set Rotations in joints.
-        {
-            if (rotations[i] == Quaternion.identity)                         // Skip, if rotation is identity.
-                continue;
-            Joints[i].Transform.rotation = rotations[i];
-        }
+        applyRotations(newJointsPositions,Filtering.NONE);
     }
-    
 
-    public void moveSkeleton_OneEuroFilter(Vector3[] newJointsPositions, OneEuroFilter<Quaternion>[] rotationFiltersJoints, OneEuroFilter<Quaternion> rotationFilterHips)
+    public void moveSkeleton_OneEuroFilter(Vector3[] newJointsPositions, OneEuroFilter<Quaternion>[] rotationFiltersJoints, OneEuroFilter<Quaternion> rotationFilterHips=null)
     {
-        Quaternion[] rotations = calculateRawRotations(newJointsPositions);  // Calculate Raw Rotations.
-        for (int i = 0; i < rotations.Length; i++)                           // Set Rotations in joints.
-        {
-            if (rotations[i] == Quaternion.identity)                         // Skip, if rotation is identity.
-                continue;
-            Joints[i].Transform.rotation = rotationFiltersJoints[i].Filter(rotations[i]);
-        }
+        applyRotations(newJointsPositions, Filtering.ONEEURO, rotationFiltersJoints);
     }
-
 
     public void moveSkeletonLERP(Vector3[] newJointsPositions)
     {
-
-        List<Quaternion> curr_jointsRot = new List<Quaternion>();
-        foreach (var val in Enum.GetValues(typeof(EnumModel3DJoints)))
-        {
-            curr_jointsRot.Add(Joints[(int)val].Transform.rotation);
-        }
-
-        /* Set rotations with LERP. */
-        Quaternion[] rotations = calculateRawRotations(newJointsPositions); // Calculate Raw Rotations.
-
-        for (int i = 0; i < rotations.Length; i++)                          // Set Rotations in joints with LERP.
-        {
-            if (rotations[i] == Quaternion.identity)                        // Skip, if rotation is identity.
-                continue;
-            Joints[i].Transform.rotation = Quaternion.Lerp(curr_jointsRot[i], rotations[i], timeCount);
-        }
-
+        applyRotations(newJointsPositions, Filtering.LERP);
         /* Keep track of time, because of Lerp. */
         timeCount = timeCount + Time.deltaTime;
         timeCount = Mathf.Clamp01(timeCount);
         if (timeCount == 1) timeCount = 0;
     }
-
-
 
     public Quaternion XLookRotation(Vector3 right, Vector3 up)
     {
@@ -337,69 +332,95 @@ public class Model3D
         return forwardToTarget * UpToForward;
     }
 
-    public Quaternion GenericLookRotation(Vector3 targetDirection, Vector3 upwards, MJoint joint, UcyAxes abstractAxis)
+    public Quaternion GenericLookRotation(Vector3 targetDirection, Vector3 upwards, MJoint joint, UcyAxes abstractAxis, Filtering filter, OneEuroFilter<Quaternion>[] rotationFiltersJoints = null)
     {
         UcyAxes actualAxis = joint.getActualAxis(abstractAxis);
         Vector3 actualAxisDirection = joint.ActualAxesDirection[(int)actualAxis];
 
-        // Find the rotation that turns ActualAxisDirection into fwd.
-        Quaternion AbstractAxis_To_Forward = Quaternion.FromToRotation(actualAxisDirection, Vector3.forward);
+        // Find the rotation that points the axis we want to rotate to local fwd.
+        Quaternion AbstractAxis_To_Forward = Quaternion.FromToRotation(actualAxisDirection, joint.ActualAxesDirection[(int)UcyAxes.FWD]);
 
         // After rotating the axes, up-axis might change.
+        // LookRotation: Creates a rotation with specified forward and upwards directions
         Quaternion forwardToTarget = Quaternion.LookRotation(targetDirection, upwards);
+        Quaternion rotation = forwardToTarget * AbstractAxis_To_Forward;
         
-        return forwardToTarget * AbstractAxis_To_Forward;
+        switch (filter)
+        {
+            case Filtering.LERP:    return Quaternion.Lerp(curr_jointsRot[(int)joint.Tag], rotation, timeCount);
+            case Filtering.ONEEURO: return rotationFiltersJoints[(int)joint.Tag].Filter(rotation);
+            default: return rotation;
+        }
     }
 
-    public Quaternion[] calculateRawRotations(Vector3[] newJoints)
+    private Vector3 UpwardsDirection(MJoint curr)
     {
+        // Fix Rolling by defining Upwards direction:
+        Vector3 fwdDirection;
+        UcyAxes hipUPDirection = Joints[14].getActualAxis(UcyAxes.UP);
+        UcyAxes otherUPDirection = curr.getActualAxis(UcyAxes.UP);
+        if (hipUPDirection != otherUPDirection)
+        {
+            // Select the one with the smallest angle distance.
+
+            fwdDirection = Joints[14].GetDirectionUsingAbstractAxis(UcyAxes.FWD); //new Vector3(0,0,1);
+        }
+        else
+        {
+            fwdDirection = Joints[14].GetDirectionUsingAbstractAxis(UcyAxes.BACK); // new Vector3(0, 0, -1);
+        }
+        // The result depends on the current hips direction! 
+        return Joints[14].Transform.TransformDirection(fwdDirection); // upwards
+    }
+
+    public void applyRotations(Vector3[] newJoints, Filtering filter, OneEuroFilter<Quaternion>[] rotationFiltersJoints = null)
+    {
+        // Get current rotations
+        curr_jointsRot = new List<Quaternion>();
+        foreach (var val in Enum.GetValues(typeof(EnumModel3DJoints)))
+        {
+            curr_jointsRot.Add(Joints[(int)val].Transform.rotation);
+        }
+
+      
+
         // The order matters. The rotations should be applied first to the parent and then to the child.
-
-        Vector3 root = (newJoints[8] + newJoints[11]) / 2;
-        Quaternion[] rotations = new Quaternion[15];
-        /* HIPS           */
-        rotations[14] = GenericLookRotation(newJoints[8] - newJoints[11], -(root - newJoints[1]), Joints[14], UcyAxes.RIGHT);
-        Vector3 actualHipsFwd = Joints[14].Transform.TransformDirection(Vector3.back);
-        // forward works with female
-        // back works with ybot
-        // Again, I can rotate it :)
-        // Rotate fwd so it looks to back
-
-        /* HEAD           */
-        rotations[0] = Quaternion.identity; // end point.
-        /* NECK           */
-        rotations[1] = GenericLookRotation(newJoints[0] - newJoints[1], Joints[1].Transform.TransformDirection(Joints[1].GetActualDirection(UcyAxes.BACK)), Joints[1], UcyAxes.UP);
-        /* RIGHT_ARM      */
-        rotations[2] = GenericLookRotation(newJoints[3] - newJoints[2], Joints[2].GetActualDirection(UcyAxes.UP), Joints[2], UcyAxes.RIGHT);
-        /* RIGHT_FORE_ARM */
-        rotations[3] = GenericLookRotation(newJoints[4] - newJoints[3], Joints[3].GetActualDirection(UcyAxes.UP), Joints[3], UcyAxes.RIGHT);
-        /* RIGHT_HAND     */
-        rotations[4] = Quaternion.identity; // end point.
-        /* LEFT_ARM       */
-        rotations[5] = GenericLookRotation(newJoints[5] - newJoints[6], Joints[5].GetActualDirection(UcyAxes.UP), Joints[5], UcyAxes.RIGHT);
-        /* LEFT_FORE_ARM  */
-        rotations[6] = GenericLookRotation(newJoints[6] - newJoints[7], Joints[6].GetActualDirection(UcyAxes.UP), Joints[6], UcyAxes.RIGHT);
-        /* LEFT_HAND      */
-        rotations[7] = Quaternion.identity; // end point.
-        /* RIGHT_UP_LEG   */
-        rotations[8] = GenericLookRotation(newJoints[8] - newJoints[9], actualHipsFwd, Joints[8], UcyAxes.UP);
-        /* RIGHT_LEG      */
-        rotations[9] = GenericLookRotation(newJoints[9] - newJoints[10], actualHipsFwd, Joints[9], UcyAxes.UP);
-        /* RIGHT_FOOT     */
-        rotations[10] = Quaternion.identity; // end point.
-        /* LEFT_UPLEG     */
-        rotations[11] = GenericLookRotation(newJoints[11] - newJoints[12], actualHipsFwd, Joints[11], UcyAxes.UP);
-        /* LEFT_LEG       */
-        rotations[12] = GenericLookRotation(newJoints[12] - newJoints[13], actualHipsFwd, Joints[12], UcyAxes.UP);
-        /* LEFT_FOOT      */
-        rotations[13] = Quaternion.identity; // end point.
-
-        return rotations;
+        Vector3 root = (newJoints[8] + newJoints[11]) / 2; 
+        // HIPS           
+        Joints[14].Transform.rotation = GenericLookRotation(newJoints[8] - newJoints[11], newJoints[1] - root, Joints[14], UcyAxes.RIGHT, filter, rotationFiltersJoints);
+        // HEAD
+        // ----
+        // NECK
+        Joints[1].Transform.rotation = GenericLookRotation(newJoints[0] - newJoints[1], UpwardsDirection(Joints[1]), Joints[1], UcyAxes.UP, filter, rotationFiltersJoints);
+        // RIGHT_ARM
+        Joints[2].Transform.rotation = GenericLookRotation(newJoints[3] - newJoints[2], UpwardsDirection(Joints[2]), Joints[2], UcyAxes.RIGHT, filter, rotationFiltersJoints);
+        // RIGHT_FORE_ARM
+        Joints[3].Transform.rotation = GenericLookRotation(newJoints[4] - newJoints[3], UpwardsDirection(Joints[3]), Joints[3], UcyAxes.RIGHT, filter, rotationFiltersJoints);
+        // RIGHT_HAND
+        // ----
+        // LEFT_ARM       
+        Joints[5].Transform.rotation = GenericLookRotation(newJoints[5] - newJoints[6], UpwardsDirection(Joints[5]), Joints[5], UcyAxes.RIGHT, filter, rotationFiltersJoints);
+        // LEFT_FORE_ARM
+        Joints[6].Transform.rotation = GenericLookRotation(newJoints[6] - newJoints[7], UpwardsDirection(Joints[6]), Joints[6], UcyAxes.RIGHT, filter, rotationFiltersJoints);
+        // LEFT_HAND    
+        // ----
+        // RIGHT_UP_LEG  
+        Joints[8].Transform.rotation = GenericLookRotation(newJoints[8] - newJoints[9], UpwardsDirection(Joints[8]), Joints[8], UcyAxes.UP, filter, rotationFiltersJoints);
+        // RIGHT_LEG     
+        Joints[9].Transform.rotation = GenericLookRotation(newJoints[9] - newJoints[10], UpwardsDirection(Joints[9]), Joints[9], UcyAxes.UP, filter, rotationFiltersJoints);
+        // RIGHT_FOOT    
+        // ----
+        // LEFT_UPLEG    
+        Joints[11].Transform.rotation = GenericLookRotation(newJoints[11] - newJoints[12], UpwardsDirection(Joints[11]), Joints[11], UcyAxes.UP, filter, rotationFiltersJoints);
+        // LEFT_LEG      
+        Joints[12].Transform.rotation = GenericLookRotation(newJoints[12] - newJoints[13], UpwardsDirection(Joints[12]), Joints[12], UcyAxes.UP, filter, rotationFiltersJoints);
+        // LEFT_FOOT     
+        // ----
     }
 
     public void DebugAxes()
     {
-        string s = "";
+        string s = model.name+":\n";
         foreach (MJoint j in Joints)
         {
             s += j.ToString();

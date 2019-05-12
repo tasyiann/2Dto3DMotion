@@ -19,30 +19,30 @@ public class ObjectBuilderEditorVNect : Editor
     public override void OnInspectorGUI()
     {
         GUILayout.Label("Load, Compare, and Fbx Export Data.");
-        
+
         VNectLoader myScript = (VNectLoader)target;
 
         if (GUILayout.Button("Update FPS"))
         {
             myScript.automaticIncrementFrameIndex();
         }
-        if (GUILayout.Button(myScript.RecordState ? "Stop Manually Recording FBX [ybot_A]" : "Start Manually Recording FBX [ybot_A]"))
+        if (GUILayout.Button(myScript.RecordState ? "Stop Manually Recording FBX [3D Model]" : "Start Manually Recording FBX [3D Model]"))
         {
             myScript.RecordState = !myScript.RecordState;
         }
         EditorGUI.BeginDisabledGroup(!myScript.playMode || myScript.RecordState);
-        if(GUILayout.Button("Automatic Recording [ybot_A]"))
+        if (GUILayout.Button("Automatic Recording [3D Model]"))
         {
             myScript.AutomaticState = true;
             myScript.RecordState = true;
-            
+
         }
 
-        
+
 
         //if (GUILayout.Button("Load Images As Textures"))
         //{
-            // myScript.textures = myScript.ConvertImagesAsTextures(myScript.ImagesPath);
+        // myScript.textures = myScript.ConvertImagesAsTextures(myScript.ImagesPath);
         //}
         EditorGUI.EndDisabledGroup();
 
@@ -51,7 +51,7 @@ public class ObjectBuilderEditorVNect : Editor
             if (myScript.frames_A.Count != myScript.frames_B.Count)
             {
                 Debug.LogError("Cannot compare Skeletons due to different number of frames!" +
-                    "A: "+myScript.frames_A.Count + ", B: "+myScript.frames_B.Count);
+                    "A: " + myScript.frames_A.Count + ", B: " + myScript.frames_B.Count);
             }
             else
             {
@@ -59,7 +59,7 @@ public class ObjectBuilderEditorVNect : Editor
             }
         }
 
-        if(GUILayout.Button("Export Positions from [ybot_A]"))
+        if (GUILayout.Button("Export Positions from [3D Model]"))
         {
             myScript.exportPositionsFromModel3D();
         }
@@ -74,14 +74,14 @@ public class ObjectBuilderEditorVNect : Editor
             EditorGUI.indentLevel = level;
         }
 
-        myScript.Filter = (VNectLoader.Filters)EditorGUILayout.EnumPopup("Filter",myScript.Filter);
+        myScript.Filter = (VNectLoader.Filters)EditorGUILayout.EnumPopup("Filter", myScript.Filter);
 
         myScript.foldOut2 = EditorGUILayout.Foldout(myScript.foldOut2, "1EuroFilter");
         if (myScript.foldOut2)
         {
             var level = EditorGUI.indentLevel;
             EditorGUI.indentLevel++;
-            myScript.FilterFrequency = EditorGUILayout.FloatField("Frequency",myScript.FilterFrequency);
+            myScript.FilterFrequency = EditorGUILayout.FloatField("Frequency", myScript.FilterFrequency);
             myScript.FilterMinCutoff = EditorGUILayout.FloatField("Min Cutoff", myScript.FilterMinCutoff);
             myScript.FilterBeta = EditorGUILayout.FloatField("Beta", myScript.FilterBeta);
             myScript.FilterDcutoff = EditorGUILayout.FloatField("Dcutoff", myScript.FilterDcutoff);
@@ -101,7 +101,7 @@ public class VNectLoader : MonoBehaviour
     private bool automaticFrames;
     public bool foldOut1 { get; set; }
     public bool foldOut2 { get; set; }
- 
+
     [HideInInspector]
     public bool editInspector = true;
     [HideInInspector]
@@ -123,7 +123,7 @@ public class VNectLoader : MonoBehaviour
 
     public readonly int NumberOfJoints = 15;
 
-    
+
 
     [Header("Import Data")]
     [FileSelect(AssetRelativePath = true, ButtonName = "A : Data File", SelectMode = FileSelectionMode.File)]
@@ -148,8 +148,9 @@ public class VNectLoader : MonoBehaviour
     public float AverageDistance = 0;
 
     [Header("Export to Fbx")]
-    [FileSelect(AssetRelativePath = true, ButtonName = "Path to save Fbx", SelectMode = FileSelectionMode.Folder)]
-    public string PathToSaveFbx;
+    //[FileSelect(AssetRelativePath = true, ButtonName = "Path to save Fbx", SelectMode = FileSelectionMode.Folder)]
+    [ReadOnly]
+    public string PathToSaveFbx = "Assets";
     public string Clipfilename;
     public int FramesPerSecond = 24;
     private string Clipfilename_Ready;
@@ -163,11 +164,18 @@ public class VNectLoader : MonoBehaviour
 
 
     private bool recordState;
-    public bool RecordState { get => recordState;
+    public bool RecordState
+    {
+        get => recordState;
         set
         {
+            if (model3Ds.Length == 0 || model3Ds[0] == null)
+            {
+                Debug.LogError("Undefined 3D Model. Couldn't record fbx.");
+                return;
+            }
+
             recordState = value;
-            Debug.Log("Inside setter: " + RecordState.ToString());
             if (RecordState)
                 startRecording();
             else
@@ -178,7 +186,9 @@ public class VNectLoader : MonoBehaviour
     private AnimationClip clip;
 
     private bool automaticState;
-    public bool AutomaticState { get => automaticState;
+    public bool AutomaticState
+    {
+        get => automaticState;
         set
         {
             automaticState = value;
@@ -225,9 +235,9 @@ public class VNectLoader : MonoBehaviour
                     textInfo.text = distancesInfoText();
             }
 
-            if (Show3DModel && model3Ds.Length!=0)
+            if (Show3DModel && model3Ds.Length != 0)
             {
-                for(int i=0; i<model3Ds.Length; i++)
+                for (int i = 0; i < model3Ds.Length; i++)
                 {
                     if (!model3Ds[i].gameObject.activeSelf)
                         model3Ds[i].gameObject.SetActive(true);
@@ -237,13 +247,13 @@ public class VNectLoader : MonoBehaviour
                         modelControllers.Add(new Model3D(model3Ds[i]));
                         modelControllers[i].DebugAxes(); // <<
                     }
-                    Move3Dmodel(modelControllers[i]);
+                    Move3Dmodel(modelControllers[i],i);
                 }
                 areModelsInitialised = true;
             }
             else
             {
-                foreach(Transform model3D in model3Ds)
+                foreach (Transform model3D in model3Ds)
                 {
                     if (model3D.gameObject.activeSelf) model3D.gameObject.SetActive(false);
 
@@ -263,7 +273,7 @@ public class VNectLoader : MonoBehaviour
     public float FilterFrequency { get => _filterFrequency; set { _filterFrequency = value; updateParametersRotationFilters(); } }
     [HideInInspector, SerializeField]
     private float _filterMinCutoff;
-    public float FilterMinCutoff { get=> _filterMinCutoff; set { _filterMinCutoff = value; updateParametersRotationFilters(); } }
+    public float FilterMinCutoff { get => _filterMinCutoff; set { _filterMinCutoff = value; updateParametersRotationFilters(); } }
     [HideInInspector, SerializeField]
     private float _filterBeta;
     public float FilterBeta { get => _filterBeta; set { _filterBeta = value; updateParametersRotationFilters(); } }
@@ -273,23 +283,31 @@ public class VNectLoader : MonoBehaviour
     [HideInInspector, SerializeField]
     private float _noiseAmount;
     public float FilterNoiseAmount { get => _noiseAmount; set { _noiseAmount = value; updateParametersRotationFilters(); } }
-    private List<OneEuroFilter<Quaternion>> rotationFiltersJoints = new List<OneEuroFilter<Quaternion>>();
+    private List<List<OneEuroFilter<Quaternion>>> ListOfrotationFiltersJoints = new List<List<OneEuroFilter<Quaternion>>>();
 
 
     private void initializeOneEuroFilter()
     {
-        for (int i = 0; i < NumberOfJoints; i++)
+        ListOfrotationFiltersJoints = new List<List<OneEuroFilter<Quaternion>>>();
+        foreach (Transform x in model3Ds)
         {
-            rotationFiltersJoints.Add( new OneEuroFilter<Quaternion>(FilterFrequency));
+            List<OneEuroFilter<Quaternion>> rotationFiltersJoints = new List<OneEuroFilter<Quaternion>>();
+            ListOfrotationFiltersJoints.Add(rotationFiltersJoints);
+            for (int i = 0; i < NumberOfJoints; i++)
+            {
+                rotationFiltersJoints.Add(new OneEuroFilter<Quaternion>(FilterFrequency));
+            }
         }
+            
     }
 
     private void updateParametersRotationFilters()
     {
-        foreach (OneEuroFilter<Quaternion> rotfilter in rotationFiltersJoints)
-        {
-            rotfilter.UpdateParams(FilterFrequency, FilterMinCutoff, FilterBeta, FilterDcutoff);
-        }
+        foreach (List<OneEuroFilter<Quaternion>> rotationFiltersJoints in ListOfrotationFiltersJoints)
+            foreach (OneEuroFilter<Quaternion> rotfilter in rotationFiltersJoints)
+            {
+                rotfilter.UpdateParams(FilterFrequency, FilterMinCutoff, FilterBeta, FilterDcutoff);
+            }
     }
 
 
@@ -299,11 +317,11 @@ public class VNectLoader : MonoBehaviour
 
     void Start()
     {
-        
+
         Filter = Filters.None;
         playMode = true;
 
-        if (dataDirPath_A != null && dataDirPath_A.Length!=0)
+        if (dataDirPath_A != null && dataDirPath_A.Length != 0)
         {
             DataLoader loader = new DataLoader(dataDirPath_A);
             frames_A = loader.getAllFrames(FileType_A);
@@ -316,7 +334,7 @@ public class VNectLoader : MonoBehaviour
         {
             DataLoader loader = new DataLoader(dataDirPath_B);
             frames_B = loader.getAllFrames(FileType_B);
-            skeleton_B = new VNectSkeleton(prefabSkeleton_B, Clipfilename+"_B", frames_B, FixedRootRotation, NumberOfJoints, NormalizeSkeleton, FileType_B, SkeletonHeight);
+            skeleton_B = new VNectSkeleton(prefabSkeleton_B, Clipfilename + "_B", frames_B, FixedRootRotation, NumberOfJoints, NormalizeSkeleton, FileType_B, SkeletonHeight);
         }
 
 
@@ -334,13 +352,13 @@ public class VNectLoader : MonoBehaviour
         StringBuilder s = new StringBuilder();
         string[] JointNames = Enum.GetNames(typeof(JointsDefinition));
         List<Vector3> jointsA = skeleton_A.Joints;
-        s.AppendFormat("Frame:{0}\nJoint Distances:\n",FrameIndx);
-        for (int i=0; i<NumberOfJoints; i++)
+        s.AppendFormat("Frame:{0}\nJoint Distances:\n", FrameIndx);
+        for (int i = 0; i < NumberOfJoints; i++)
         {
             float dist = Vector3.Distance(skeleton_A.Joints[i], skeleton_B.Joints[i]);
-            s.AppendFormat("{0}: {1}\n",JointNames[i],dist);
+            s.AppendFormat("{0}: {1}\n", JointNames[i], dist);
         }
-        s.AppendFormat("Average dist for {0} frames: {1}\n",frames_A.Count, AverageDistance);
+        s.AppendFormat("Average dist for {0} frames: {1}\n", frames_A.Count, AverageDistance);
         s.AppendFormat("A' skeleton:\n" + skeleton_A.skeletonInfoScale());
         s.AppendFormat("\nB' skeleton:\n" + skeleton_B.skeletonInfoScale());
         return s.ToString();
@@ -355,19 +373,26 @@ public class VNectLoader : MonoBehaviour
     // Simulate motion and take values meanwhile!
     public void exportPositionsFromModel3D()
     {
+        // Reset some things, before exporting...
+        Debug.Log("Pausing auto frames, and resetting 1EuroFilter lists...");
+        initializeOneEuroFilter();
+        CancelInvoke();
+        automaticFrames = false;
+
+        // Start exporting..
         StringBuilder s = new StringBuilder();
         int frameCounter = 0;
         s.AppendFormat("University of Cyprus 3D Estimation :" +
             " With 1 Euro Filtering (freq: {0}, minCutoff: {1}, beta:{2}, dcutoff:{3}, noiseAmount:{4})\n",
-            FilterFrequency,FilterMinCutoff,FilterBeta,FilterDcutoff,FilterNoiseAmount);
-        for(int i=0; i<frames_A.Count; i++)
+            FilterFrequency, FilterMinCutoff, FilterBeta, FilterDcutoff, FilterNoiseAmount);
+        for (int i = 0; i < frames_A.Count; i++)
         {
-            s.AppendFormat("{0}",frameCounter);
+            s.AppendFormat("{0}", frameCounter);
             // Update Movement!
             skeleton_A.Joints = frames_A[i].SkeletonJoints;
-            Move3Dmodel(modelControllers[0]);
+            Move3Dmodel(modelControllers[0], 0);
             // Take values!
-            for(int j=0; j< modelControllers[0].Joints.Count; j++)
+            for (int j = 0; j < modelControllers[0].Joints.Count; j++)
             {
                 Vector3 joint = modelControllers[0].Joints[j].Transform.position;
                 s.AppendFormat(", {0}, {1}, {2}", joint.x, joint.y, joint.z);
@@ -377,10 +402,10 @@ public class VNectLoader : MonoBehaviour
         }
         DirectoryInfo parentDir = Directory.GetParent(dataDirPath_A);
         File.WriteAllText(parentDir + @"\UCY.filtered", s.ToString());
-        Debug.Log("File has been exported in "+parentDir);
+        Debug.Log("File has been exported in " + parentDir);
     }
 
-    private void Move3Dmodel(Model3D modelController)
+    private void Move3Dmodel(Model3D modelController, int modelIndex)
     {
         switch (Filter)
         {
@@ -388,7 +413,7 @@ public class VNectLoader : MonoBehaviour
                 modelController.moveSkeleton(skeleton_A.Joints.ToArray());
                 break;
             case Filters.OneEuro:
-                modelController.moveSkeleton_OneEuroFilter(skeleton_A.Joints.ToArray(),rotationFiltersJoints.ToArray(), rotationFiltersJoints[(int)JointsDefinition.Root]);
+                modelController.moveSkeleton_OneEuroFilter(skeleton_A.Joints.ToArray(), ListOfrotationFiltersJoints[modelIndex].ToArray());
                 break;
             case Filters.SGolay:
                 break;
@@ -401,19 +426,19 @@ public class VNectLoader : MonoBehaviour
     private void initializeVideoPlayers()
     {
 
-        if (VideoplayerGO_A != null && VideoPath_A != null && VideoPath_A.Length!=0)
+        if (VideoplayerGO_A != null && VideoPath_A != null && VideoPath_A.Length != 0)
         {
             videoPlayer_A = VideoplayerGO_A.GetComponent(typeof(UnityEngine.Video.VideoPlayer)) as UnityEngine.Video.VideoPlayer;
             videoPlayer_A.url = VideoPath_A;
             videoPlayer_A.Pause();
-     
+
         }
-        if (VideoplayerGO_B != null && VideoPath_B != null && VideoPath_B.Length!= 0)
+        if (VideoplayerGO_B != null && VideoPath_B != null && VideoPath_B.Length != 0)
         {
             videoPlayer_B = VideoplayerGO_B.GetComponent(typeof(UnityEngine.Video.VideoPlayer)) as UnityEngine.Video.VideoPlayer;
             videoPlayer_B.url = VideoPath_B;
             videoPlayer_B.Pause();
-        
+
         }
     }
 
@@ -460,15 +485,15 @@ public class VNectLoader : MonoBehaviour
 
     public void startRecording()
     {
+        GameObject go_ToRecord = model3Ds[0].gameObject;
         // Create the GameObjectRecorder.
-        m_Recorder = new GameObjectRecorder(skeleton_A.SkeletonGameObject);
+        m_Recorder = new GameObjectRecorder(go_ToRecord);
         // Bind all the Transforms on the GameObject and all its children.
-        m_Recorder.BindComponentsOfType<Transform>(skeleton_A.SkeletonGameObject, true);
+        m_Recorder.BindComponentsOfType<Transform>(go_ToRecord, true);
         Debug.Log("Start Recording");
         if (Clipfilename == null)
             return;
-        string PathToSaveFbx_Ready = "Assets" + PathToSaveFbx.Substring(Application.dataPath.Length); // Important!
-        Clipfilename_Ready = PathToSaveFbx_Ready + @"/" + Clipfilename;
+        Clipfilename_Ready = "Assets" + @"/" + Clipfilename;
     }
 
     void LateUpdate()
@@ -480,7 +505,7 @@ public class VNectLoader : MonoBehaviour
 
         if (AutomaticState)
         {
-            if(FrameIndx == frames_A.Count - 1)
+            if (FrameIndx == frames_A.Count - 1)
             {
                 stopRecording();
                 AutomaticState = false;
@@ -491,7 +516,7 @@ public class VNectLoader : MonoBehaviour
 
     }
 
-    
+
 
     /* Compare Two Skeletons */
     public float CalculateDistance()
@@ -501,22 +526,22 @@ public class VNectLoader : MonoBehaviour
         StringBuilder PerJoint = new StringBuilder();
         StringBuilder PerFrame = new StringBuilder();
         float overallDistance = 0;
-        for (int f=0; f<frames_A.Count; f++)
+        for (int f = 0; f < frames_A.Count; f++)
         {
             float distanceInFrame = 0;
             Assert.IsTrue(frames_A[f].SkeletonJoints.Count == frames_B[f].SkeletonJoints.Count);
             for (int i = 0; i < frames_A[f].SkeletonJoints.Count; i++)
             {
                 distanceInFrame += Vector3.Distance(frames_A[f].SkeletonJoints[i], frames_B[f].SkeletonJoints[i]);
-                PerJoint.Append(distanceInFrame+" ");
+                PerJoint.Append(distanceInFrame + " ");
             }
             PerJoint.Append("\n");
             overallDistance += distanceInFrame / frames_A[f].SkeletonJoints.Count;
             PerFrame.Append((distanceInFrame / frames_A[f].SkeletonJoints.Count) + "\n");
         }
 
-        File.WriteAllText(perJointPath,PerJoint.ToString());
-        File.WriteAllText(perFramePath,PerFrame.ToString());
+        File.WriteAllText(perJointPath, PerJoint.ToString());
+        File.WriteAllText(perFramePath, PerFrame.ToString());
         return overallDistance / frames_A.Count;
     }
 
@@ -527,7 +552,7 @@ public class VNectLoader : MonoBehaviour
     }
 
     /* Create Textures from Images */
-   
+
     private Texture2D createTexture(string filename)
     {
         Texture2D texture = new Texture2D((int)(TextureSize.x), (int)(TextureSize.y));
@@ -541,9 +566,9 @@ public class VNectLoader : MonoBehaviour
     {
         List<Texture2D> textures = new List<Texture2D>();
         var sorted = Directory.GetFiles(path).OrderBy(f => f);
-        foreach(var fileName in sorted)
+        foreach (var fileName in sorted)
         {
-            if(fileName.EndsWith(".jpg"))
+            if (fileName.EndsWith(".jpg"))
                 textures.Add(createTexture(fileName));
         }
         //WriteToBinaryFile(path+@"\Textures.mat",textures);
@@ -556,7 +581,7 @@ public class VNectLoader : MonoBehaviour
         {
             displayTriangle();
         }
-       
+
     }
 
     private void displayTriangle()

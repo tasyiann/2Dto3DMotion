@@ -64,9 +64,6 @@ public class OPPose
         return minimumID;
     }
 
-
-
-
     /// <summary>
     ///  TODO: ID! ID SHOULD BE CALCULATED BEFORE SCALING!
     /// </summary>
@@ -151,7 +148,6 @@ public class OPPose
         return Vector2.Distance(rootA,rootB);
     }
 
-
     public float AverageDistance2Djoints_IMG_RAW(OPPose op)
     {
         float sum = 0;
@@ -175,8 +171,6 @@ public class OPPose
         return sum / countIterations;
     }
 
-
-
     /* Sets the jsonpositions of a person, from Json file. */
     private void fillBodyPositions(Keypoints k)
     {
@@ -195,9 +189,6 @@ public class OPPose
                 available[i / 3] = true;
         }
     }
-
-
-
 
     /* Convert Position from image positions to positions from root. */
     private void convertPositionsToRoot(bool flipImage=false)
@@ -292,7 +283,6 @@ public class OPPose
         return previousScalingFactors.ToArray();
     }
 
-    
     public string jointsToString(bool isRaw)
     {
         string s = "";
@@ -308,14 +298,13 @@ public class OPPose
         return s;
     }
 
-
     public IList<Cluster> getSelectedClusters()
     {
         return selectedClusters;
     }
+
     public void setSelectedClusters(IList<Cluster> clusters)
     {
         selectedClusters = new List<Cluster>(clusters);
     }
-
 }

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using UnityEngine;
 using System.Runtime.Serialization;
 
 [System.Serializable()]
@@ -23,10 +20,6 @@ public class BvhProjection {
         rotationFileID = rotationID;
         clusterID = fileID;
     }
-
-
-    
-
 
     /* Repositioning according to root. << IS THIS CORRECT?? */
     public void convertPositionsToRoot()
@@ -68,7 +61,6 @@ public class BvhProjection {
            
         }
     }
-
 
     public float Distance2D(OPPose op)
     {
@@ -123,15 +115,6 @@ public class BvhProjection {
     }
 
 }
-
-
-
-
-
-
-
-
-
 
 public class Vector3SerializationSurrogate : ISerializationSurrogate
 {

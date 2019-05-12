@@ -18,7 +18,8 @@ public class Visual_ApplyOn3DModel : MonoBehaviour
     public OPPose selectedPoseToDebug;
     #region OneEuroFilterParams
     // 1 Euro filter - JOINTS
-    OneEuroFilter<Quaternion>[] rotationFiltersJoints = new OneEuroFilter<Quaternion>[14];
+    static int JointsLength = Enum.GetValues(typeof(EnumModel3DJoints)).Length;
+    OneEuroFilter<Quaternion>[] rotationFiltersJoints = new OneEuroFilter<Quaternion>[JointsLength];
     public float filterFrequency = 120.0f;
     public float filterMinCutoff = 1.0f;
     public float filterBeta = 0.0f;
@@ -26,12 +27,14 @@ public class Visual_ApplyOn3DModel : MonoBehaviour
     public float noiseAmount = 1.0f;
 
     // 1 Euro filter - HIPS
+    /*
     OneEuroFilter<Quaternion> rotationFilterHips;
     public float filterFrequency_hips = 120.0f;
     public float filterMinCutoff_hips = 1.0f;
     public float filterBeta_hips = 0.0f;
     public float filterDcutoff_hips = 1.0f;
     public float noiseAmount_hips = 1.0f;
+    */
     #endregion OneEuroFilterParams
 
     public bool keepUpdatingParameters = false;
@@ -103,7 +106,7 @@ public class Visual_ApplyOn3DModel : MonoBehaviour
             switch (AnimationSmoothness)
             {
                 case smoothMovement.LERP: { m3d.moveSkeletonLERP(jointsPositions);                                                           break; }
-                case smoothMovement.ONE_EURO: { m3d.moveSkeleton_OneEuroFilter(jointsPositions, rotationFiltersJoints, rotationFilterHips);  break; }
+                case smoothMovement.ONE_EURO: { m3d.moveSkeleton_OneEuroFilter(jointsPositions, rotationFiltersJoints);                      break; }
                 case smoothMovement.SGOLAY: { m3d.moveSkeletonLERP(getSgolayVectorOfJoints());                                               break; }
                 default: { m3d.moveSkeleton(jointsPositions);                                                                                break; }
             }
@@ -123,7 +126,7 @@ public class Visual_ApplyOn3DModel : MonoBehaviour
 
     private void updateParametersRotationFilters()
     {
-        rotationFilterHips.UpdateParams(filterFrequency_hips, filterMinCutoff_hips, filterBeta_hips, filterDcutoff_hips);
+        
         foreach (OneEuroFilter<Quaternion> rotfilter in rotationFiltersJoints)
         {
             rotfilter.UpdateParams(filterFrequency, filterMinCutoff, filterBeta, filterDcutoff);
@@ -136,7 +139,7 @@ public class Visual_ApplyOn3DModel : MonoBehaviour
         {
             rotationFiltersJoints[i] = new OneEuroFilter<Quaternion>(filterFrequency);
         }
-        rotationFilterHips = new OneEuroFilter<Quaternion>(filterFrequency);
+
         updateParametersRotationFilters();
     }
 
