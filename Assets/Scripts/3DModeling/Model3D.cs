@@ -291,19 +291,33 @@ public class Model3D
      * https://gamedev.stackexchange.com/questions/136712/locking-a-rotation-on-an-axisyaw-pitch-roll-based-on-a-parental-transform/136743#136743
        https://gamedev.stackexchange.com/questions/139515/lookrotation-make-x-axis-face-the-target-instead-of-z
      */
-    public void moveSkeleton(Vector3[] newJointsPositions)
+    public void moveSkeleton(Vector3[] newJointsPositions, Vector3? rootTranslation=null)
     {
         applyRotations(newJointsPositions,Filtering.NONE);
+        if (rootTranslation != null)
+        {
+            Joints[(int)EnumModel3DJoints.Hips].Transform.position = rootTranslation.Value;
+        }
     }
 
-    public void moveSkeleton_OneEuroFilter(Vector3[] newJointsPositions, OneEuroFilter<Quaternion>[] rotationFiltersJoints, OneEuroFilter<Quaternion> rotationFilterHips=null)
+    public void moveSkeleton_OneEuroFilter(Vector3[] newJointsPositions, OneEuroFilter<Quaternion>[] rotationFiltersJoints, OneEuroFilter<Quaternion> rotationFilterHips=null, Vector3? rootTranslation = null)
     {
         applyRotations(newJointsPositions, Filtering.ONEEURO, rotationFiltersJoints);
+        if (rootTranslation != null)
+        {
+            Joints[(int)EnumModel3DJoints.Hips].Transform.position = rootTranslation.Value;
+        }
     }
 
-    public void moveSkeletonLERP(Vector3[] newJointsPositions)
+    public void moveSkeletonLERP(Vector3[] newJointsPositions, Vector3? rootTranslation = null)
     {
         applyRotations(newJointsPositions, Filtering.LERP);
+
+        if (rootTranslation != null)
+        {
+            Joints[(int)EnumModel3DJoints.Hips].Transform.position = rootTranslation.Value;
+        }
+
         /* Keep track of time, because of Lerp. */
         timeCount = timeCount + Time.deltaTime;
         timeCount = Mathf.Clamp01(timeCount);
