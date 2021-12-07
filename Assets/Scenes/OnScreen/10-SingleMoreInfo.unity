@@ -509,6 +509,11 @@ MonoBehaviour:
   showGrid: 1
   material: {fileID: 2100000, guid: a5dc7a167ba62794daeec7dd7d900e94, type: 2}
   showEstimationScript: {fileID: 855675116}
+  inputColor: {r: 1, g: 0.98463297, b: 0, a: 1}
+  bestColor: {r: 0.25564075, g: 1, b: 0, a: 1}
+  axisColor: {r: 1, g: 1, b: 1, a: 1}
+  showBest: 1
+  showInput: 1
 --- !u!81 &899245265
 AudioListener:
   m_ObjectHideFlags: 0
@@ -535,7 +540,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
@@ -1153,6 +1158,31 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8393441459485263530, guid: 5a441a0308516e740803d824b23ee20b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -11.179932
+      objectReference: {fileID: 0}
+    - target: {fileID: 5116890792351634262, guid: 5a441a0308516e740803d824b23ee20b,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5116890792351634262, guid: 5a441a0308516e740803d824b23ee20b,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5116890792351634262, guid: 5a441a0308516e740803d824b23ee20b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5116890792351634262, guid: 5a441a0308516e740803d824b23ee20b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5a441a0308516e740803d824b23ee20b, type: 3}
 --- !u!1 &1952679191
@@ -1352,7 +1382,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
@@ -1447,7 +1477,9 @@ MonoBehaviour:
   mat: {fileID: 2100000, guid: a5dc7a167ba62794daeec7dd7d900e94, type: 2}
   representativeScaling: 1
   projectionsScaling: 1
-  projectionsColor: {r: 0.49056602, g: 0, b: 0, a: 1}
-  representativeColor: {r: 0, g: 0, b: 0, a: 1}
+  projectionsColor: {r: 1, g: 1, b: 1, a: 1}
+  representativeColor: {r: 1, g: 0.8187932, b: 0, a: 1}
+  neighbourColor: {r: 1, g: 0.22514582, b: 0, a: 1}
+  winnerColor: {r: 0, g: 1, b: 0, a: 1}
   representativePosition: {x: 0, y: 0, z: 0}
   projectionsPosition: {x: 0, y: 0, z: 0}

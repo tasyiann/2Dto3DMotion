@@ -26,11 +26,11 @@ public class DebugAllAxes : MonoBehaviour
         }
         */
         
-        foreach (Transform g in gameObjects)
-        {
-            if (g.GetComponent<DisplayAxes>() == null)
-                g.gameObject.AddComponent<DisplayAxes>();
-        }
+        //foreach (Transform g in gameObjects)
+        //{
+        //    if (g.GetComponent<DisplayAxes>() == null)
+        //        g.gameObject.AddComponent<DisplayAxes>();
+        //}
         
 
     }

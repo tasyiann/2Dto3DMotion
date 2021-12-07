@@ -4,7 +4,8 @@
 //using UnityEngine.UI;
 //using OpenPose.Example;
 
-//public class VScalingRealTime : MonoBehaviour {
+//public class VScalingRealTime : MonoBehaviour
+//{
 
 
 //    // Input is the figure
@@ -29,12 +30,13 @@
 
 
 //    // Use this for initialization
-//    void Start () {
+//    void Start()
+//    {
 //        gL = new GLDraw(Material);
 //        center = camera.transform.position;
 //        newpos = (int)center.x;
 //    }
-	
+
 //    void Update()
 //    {
 //        figure = OpenPoseUserScript.selectedPoseToDebug;
@@ -48,7 +50,7 @@
 //        scalingFactorText[sfText_index].color = Color.green;
 //        scalingFactorText[sfText_index].text = figure != null ? (figure.limbFactor.ToString()) : "";
 //        //float diff = figure == null || prevFigure == null ? 0 : (figure.scaleFactor - prevFigure.scaleFactor);
-//        if (figure!=null && figure.limbFactor!=EnumBONES.UP_TORSO) scalingFactorText[sfText_index].color = Color.red;
+//        if (figure != null && figure.limbFactor != EnumBONES.UP_TORSO) scalingFactorText[sfText_index].color = Color.red;
 //        sfText_index++; // move to the next text
 //    }
 
@@ -58,7 +60,7 @@
 //        {
 //            return;
 //        }
-//        pos = new Vector3(center.x,0f,0f);
+//        pos = new Vector3(center.x, 0f, 0f);
 //        // NORMALIZED DATA
 //        gL.drawFigure(true, Color.yellow, figure.joints, figure.available, pos);
 //        if (figure.available[(int)EnumJoint.Head] && (figure.available[(int)EnumJoint.RightFoot] || figure.available[(int)EnumJoint.LeftFoot]))
@@ -77,8 +79,8 @@
 
 //    private void drawBoundings(Color color, Vector3 head, Vector3 rightFoot, Vector3 leftFoot, float length, Vector3 translation, float scaling = 1f)
 //    {
-//        gL.drawHorizontalLine(color, (head * scaling).y+translation.y, length, translation.x);
-//        gL.drawHorizontalLine(color, minNum((rightFoot * scaling).y+translation.y, (leftFoot * scaling).y+translation.y), length, translation.x);
+//        gL.drawHorizontalLine(color, (head * scaling).y + translation.y, length, translation.x);
+//        gL.drawHorizontalLine(color, minNum((rightFoot * scaling).y + translation.y, (leftFoot * scaling).y + translation.y), length, translation.x);
 //    }
 
 //    private float minNum(float a, float b)

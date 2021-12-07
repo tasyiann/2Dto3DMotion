@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4465781, g: 0.49641407, b: 0.57481617, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641484, b: 0.5748173, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -794,6 +794,31 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5754012210210180978, guid: 5a441a0308516e740803d824b23ee20b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8393441459485263530, guid: 5a441a0308516e740803d824b23ee20b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -11.179932
+      objectReference: {fileID: 0}
+    - target: {fileID: 5116890792351634262, guid: 5a441a0308516e740803d824b23ee20b,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5116890792351634262, guid: 5a441a0308516e740803d824b23ee20b,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5116890792351634262, guid: 5a441a0308516e740803d824b23ee20b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5116890792351634262, guid: 5a441a0308516e740803d824b23ee20b,
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
@@ -3761,55 +3786,6 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.0000009536743, y: -0.09565458, z: 0.021622837}
     m_Extent: {x: 0.97342485, y: 0.90236723, z: 0.18213426}
   m_DirtyAABB: 0
---- !u!114 &6776219350439859048
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6776219350439859052}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b38c6f7ee38d35d4f9e1afe8d66aef66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  script: {fileID: 1508302185}
-  currentCluster: 0
-  startingRadius: 10.89
-  radiusOffset: 0.4
-  perCircleINIT: 13
-  perCircleOFFSET: 0.1
-  mat: {fileID: 2100000, guid: a5dc7a167ba62794daeec7dd7d900e94, type: 2}
-  representativeScaling: 1
-  projectionsScaling: 1
-  representative:
-    cluster:
-      projections: []
-    rotationFileID: 10
-    frameNum: 204
-    angle: 276
-    joints:
-    - {x: -0.15688, y: 4.7079, z: -1.7802}
-    - {x: -0.18003, y: 3.4546, z: -1.3864}
-    - {x: -1.2002, y: 3.4249, z: -1.3141}
-    - {x: -1.3397, y: 1.794, z: -0.85744}
-    - {x: -1.5562, y: 0.58945, z: -1.8943}
-    - {x: 0.83808, y: 3.5135, z: -1.4687}
-    - {x: 1.27, y: 1.9115, z: -1.1013}
-    - {x: 1.3853, y: 0.60879, z: -2.03}
-    - {x: -0.81658, y: -0.0012155, z: 0.088814}
-    - {x: -0.78204, y: -2.0383, z: -0.70232}
-    - {x: -0.77042, y: -3.8116, z: -0.09152}
-    - {x: 0.81658, y: 0.0012159, z: -0.088814}
-    - {x: 0.86337, y: -2.0585, z: -0.8183}
-    - {x: 1.1293, y: -3.7622, z: -0.080438}
-    distanceFromRepresentative: 0
-  cluster:
-    projections: []
-  projectionsColor: {r: 1, g: 1, b: 1, a: 1}
-  representativeColor: {r: 1, g: 0, b: 0, a: 1}
-  representativePosition: {x: 0, y: 0, z: 0}
-  projectionsPosition: {x: -12.728632, y: -52.571064, z: 0}
 --- !u!1 &6776219350439859052
 GameObject:
   m_ObjectHideFlags: 0
@@ -3821,7 +3797,7 @@ GameObject:
   - component: {fileID: 6776219350439859055}
   - component: {fileID: 6776219350439859054}
   - component: {fileID: 6776219350439859053}
-  - component: {fileID: 6776219350439859048}
+  - component: {fileID: 6776219350439859056}
   m_Layer: 0
   m_Name: Cluster_View
   m_TagString: MainCamera
@@ -3893,3 +3869,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6776219350439859056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6776219350439859052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbe1b2c531820114d91ead80cdf55211, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  script: {fileID: 1508302185}
+  startingRadius: 10.89
+  radiusOffset: 0.4
+  perCircleINIT: 13
+  perCircleOFFSET: 0.1
+  mat: {fileID: 2100000, guid: a5dc7a167ba62794daeec7dd7d900e94, type: 2}
+  representativeScaling: 1
+  projectionsScaling: 1
+  representative:
+    cluster:
+      projections: []
+    rotationFileID: 0
+    frameNum: 0
+    angle: 0
+    joints: []
+    distanceFromRepresentative: 0
+  cluster:
+    projections: []
+  projectionsColor: {r: 1, g: 1, b: 1, a: 1}
+  representativeColor: {r: 1, g: 0, b: 0, a: 1}
+  representativePosition: {x: 0, y: 0, z: 0}
+  projectionsPosition: {x: -12.72863, y: -52.57106, z: 0}

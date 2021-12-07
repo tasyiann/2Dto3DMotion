@@ -36,7 +36,7 @@ EditorBuildSettings:
     path: Assets/Scenes/OnScreen/9-Post Proc.unity
     guid: 298cd10e38599d24395b8d764709601c
   - enabled: 1
-    path: Assets/OpenPose/Examples/Scenes/RealTimeAdvanced.unity
+    path: Assets/Scenes/OnScreen/RealTimeAdvanced.unity
     guid: 8f74bd4781377f144b9f6ed73f991db3
   - enabled: 1
     path: Assets/Scenes/OnScreen/10-SingleMoreInfo.unity

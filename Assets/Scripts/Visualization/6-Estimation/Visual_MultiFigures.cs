@@ -8,7 +8,9 @@ public class Visual_MultiFigures : MonoBehaviour
     public List<GameObject> modelsRaw;            // List of the models.
     public List<GameObject> modelsFiltered;       // List of the models.
     private List<OPPose> figures;
+    [HideInInspector]
     public List<Visual_ApplyOn3DModel> components_toSetData_Raw;
+    [HideInInspector]
     public List<Visual_ApplyOn3DModel> components_toSetData_Filtered;
     public Camera cameraRaw;
     public Camera cameraFiltered;
