@@ -1,6 +1,9 @@
 
 <!-- PROJECT LOGO -->
-<br />
+<div align="center">
+  <img src="https://img.shields.io/badge/C%23-Script-Blue?logo=csharp"/>
+  <img src="https://img.shields.io/badge/Unity->=2020.3.24f1 LTS-Blue?logo=unity"/>
+</div>
 <div align="center">
   <h1 align="center">Real-time 3D human pose and motion reconstruction from monocular RGB videos</h3>
   <p align="center">
@@ -69,6 +72,8 @@ Otherwise, you can explore the offline features.
 Always, start with the ```0-MAIN_SCENE_LOAD DATABASE``` scene, to automatically load the dataset.
 
 Then, proceed either with Offline, or Real-Time.
+
+In the Scenes, try interacting using `w`, `a`, `s` & `d` keys. 
 
 ### Offline
 - Run the ```0-MAIN_SCENE_LOAD DATABASE``` scene.
