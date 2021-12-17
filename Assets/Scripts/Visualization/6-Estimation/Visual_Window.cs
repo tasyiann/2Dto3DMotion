@@ -176,48 +176,6 @@ public class Visual_Window : MonoBehaviour
     }
 
 
-
-
-
-
-
-
-
-    // TODO :)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     private void initiateFigures()
     {
         figures = new List<Model3DObject>();
@@ -279,14 +237,6 @@ public class Visual_Window : MonoBehaviour
         }
         
     }
-
-
-
-
-
-
-
-
 
 
     private void update3DModels()
@@ -360,9 +310,6 @@ public class Visual_Window : MonoBehaviour
             prevFigures[windowSize-i].setJoints(joints);
         }
     }
-
-
-   
 
 
     private void destroyFigures()

@@ -60,46 +60,6 @@ public class FigureIdentifier
         identifications = new Dictionary<int, Identification>();
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="frame"></param>
-    /// <returns>Sorted list of figures</returns>
-    //public List<OPPose> sortFiguresInFrame(OPFrame frame)
-    //{
-    //    if (frame == null || frame.figures == null)
-    //        return null;
-    //    /* 1. Remove any poses that hips can not be identified.      */
-    //    /* 2. Find the id number with the nearest hips (root).       */
-    //    /* 3. Assign the id number to the pose.                      */
-    //    /* 4. Save the pose to its corresponding identification log. */
-    //    /* 5. In each frame, each identification should be assigned a value. pose or null */
-    //    SortedList<int, OPPose> list = new SortedList<int, OPPose>();
-    //    List<int> idsUsedInThisFrame = new List<int>();
-    //    foreach (OPPose figure in frame.figures)
-    //    {
-    //        if (isPoseValid(figure))
-    //        {
-    //            int id = identifyFigure(figure);
-    //            figure.id = id;
-    //            if (id != -1)
-    //            {
-    //                list.Add(id, figure);
-    //                SavePoseInPositionHistory(figure, id);
-    //                idsUsedInThisFrame.Add(id);
-    //            }
-    //        }
-    //    }
-        
-    //    for(int i=0; i<identifications.Count; i++)
-    //    {
-    //        if (!idsUsedInThisFrame.Contains(i))
-    //            identifications[i].Enqueue(null);
-    //    }
-    //    Debug.Log(ToString());
-    //    return new List<OPPose>(list.Values);
-    //}
-
 
     public override string ToString()
     {

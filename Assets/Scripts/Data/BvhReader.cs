@@ -44,41 +44,7 @@ public class BvhReader
             k++;
         }
         return order;
-    }
-
-
-
-
-
-
-    //// Get positions joints from bvh
-    //public static Vector3[] getPositionsfromBvh(BVH bvh, int frame, bool normalized = false)
-    //{
-
-    //    // Get the order of selected joints
-    //    int[] order = BvhReader.getOrderOfJoints(bvh);
-    //    Vector3[] joints = new Vector3[Enum.GetValues(typeof(EnumJoint)).Length];
-
-    //    foreach (var val in Enum.GetValues(typeof(EnumJoint)))
-    //    {
-    //        int index = (int)val;
-    //        Matrix4x4 matrix = bvh.allBones[order[index]].getWorldMatrix(ref bvh.allBones, frame);
-    //        // Save the position of joint
-    //        joints[index] = new Vector3(matrix.m03, matrix.m13, matrix.m23);
-    //    }
-    //    if(!normalized)
-    //        return joints;
-    //    else
-    //    {
-    //        bvh.scale(getScaleFactor(bvh, order));
-    //        BvhProjection projection = new BvhProjection(0,0,0,joints);
-    //        projection.convertPositionsToRoot();
-            
-    //        return projection.joints;
-    //    }
-    //}
-
-    
+    }    
 
 
     /* Get rotations LIMITED using file reading. 
@@ -102,10 +68,6 @@ public class BvhReader
     }
 
 
-
-
-
-
     public static List<Vector3> getRotations(BVH bvh, int frame)
     {
         List<Vector3> list = new List<Vector3>();
@@ -117,20 +79,5 @@ public class BvhReader
     }
 
 
-
-
-
-
-
-
-
-
-
 }
-
-
-
-
-
-
 

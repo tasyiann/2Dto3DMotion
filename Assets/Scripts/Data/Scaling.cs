@@ -71,8 +71,6 @@ public class Scaling {
     }
 
 
-
-
     /// <summary>
     /// The scaling global factor is calculated by the ratio of ﬁgure’s bones 
     /// and the corresponding bones of a ﬁxed normalized skeleton. 
@@ -175,8 +173,6 @@ public class Scaling {
     }
 
 
-
-
     /// <summary>
     /// The global scaling factor is calculated using the height of the figure.
     /// Finds the lowest and highest point in y-axis.
@@ -237,9 +233,6 @@ public class Scaling {
     }
 
 
-
-
-
     public static List<float> getBonesSizes(Vector3[] joints)
     {
         // Initialize list
@@ -253,10 +246,6 @@ public class Scaling {
         }
         return boneSizes;
     }
-
-
-
-
 
 
     /* Reads from file the standard scaling. */
@@ -274,36 +263,6 @@ public class Scaling {
         Debug.Log("Scaling standards have been set.");
         return limbs;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     private static ScaleInfo selectScalingFactor(List<ScaleInfo> factors)
@@ -337,13 +296,6 @@ public class Scaling {
     }
 
 
-
-
-
-
-
-
-
     private static List<ScaleInfo> calculateAllScalingFactors(EnumBONES[] bones, Vector3[] joints)
     {
         List<ScaleInfo> factors = new List<ScaleInfo>();
@@ -368,37 +320,5 @@ public class Scaling {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

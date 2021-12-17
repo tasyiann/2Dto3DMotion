@@ -41,10 +41,6 @@ public class ProjectionManager : MonoBehaviour {
     }
 
 
-
-
-
-
     private void CreateFiles(string bvhfilename)
     {
         if(!Directory.Exists(OutputDirectory))
@@ -89,38 +85,6 @@ public class ProjectionManager : MonoBehaviour {
         positionsStreamWriter.Close();
         rotationsStreamWriter.Close();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     /* In use. */

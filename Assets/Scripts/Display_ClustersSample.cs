@@ -64,18 +64,11 @@ public class Display_ClustersSample : MonoBehaviour
     }
 
 
-    
-
-
-
     void Update()
     {
         cluster = script.selectedCluster;
         if(cluster!=null)
             representative = cluster.Representative;
     }
-
-
-
 
 }
