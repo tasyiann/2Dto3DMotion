@@ -4,6 +4,8 @@
 <div align="center">
   <h1 align="center">Real-time 3D human pose and motion reconstruction from monocular RGB videos</h3>
   <p align="center">
+    With this repository you have access to all the Unity tools presented in the <a href="https://www.youtube.com/watch?v=vyZjVTGWUUk">demo</a>. 
+    <br />
     <br />
     <a href="https://onlinelibrary.wiley.com/doi/full/10.1002/cav.1887"><strong>:page_facing_up: Publication DOI »</strong></a>
     <br />
@@ -29,7 +31,7 @@ Real-time three-dimensional (3D) pose estimation is of high interest in interact
     <br />
     <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="https://user-images.githubusercontent.com/31446189/140064054-ce6a6b21-d94c-4933-bd31-e4ebdfdd5fea.png">
     <img src="https://user-images.githubusercontent.com/31446189/140064054-ce6a6b21-d94c-4933-bd31-e4ebdfdd5fea.png" width="85%">
   </a>
 </div>
@@ -61,6 +63,27 @@ Otherwise, you can explore the offline features.
    ```
    Assets/OpenPose/getPlugins.bat
    ```
+
+<!-- USAGE -->
+## Usage
+Always, start with the ```0-MAIN_SCENE_LOAD DATABASE``` scene, to automatically load the dataset.
+
+Then, proceed either with Offline, or Real-Time.
+
+### Offline
+- Run the ```0-MAIN_SCENE_LOAD DATABASE``` scene.
+- Click on ```Input``` and select the example scenario from ```Scenarios\example```.
+- Click on ```GO OFFLINE```. 
+- Navigate through the different views, using the UI.
+
+### Real-Time
+- Run the ```0-MAIN_SCENE_LOAD DATABASE``` scene.
+- Click on ```GO REAL-TIME```
+- Make sure you have completed the OpenPose setup from the Installation steps.
+- A webcam is required.
+
+
+
 
 <!-- LICENSE -->
 ## License
